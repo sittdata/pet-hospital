@@ -17,6 +17,8 @@ import { Button, ButtonLink } from '@/components/base/buttons/button';
 import { SocialButton } from '@/components/base/social-button/social-button';
 import { StatusDot } from '@/components/base/badges/status-dot';
 import { Chip } from '@/components/base/badges/chip';
+import { DateCalendar } from '@/components/base/date-picker/date-calendar';
+import { parseDate, today, getLocalTimeZone } from '@internationalized/date';
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -42,14 +44,6 @@ const STANDARD_SERVICES = [
   'ศูนย์ฟื้นฟูและกายภาพบำบัดธาราบำบัด',
   'ศูนย์ฉุกเฉินและกู้ชีพ 24 ชม.',
 ];
-
-const getTodayLocalDateString = (): string => {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
 
 const getTomorrowLocalDateString = (): string => {
   const tomorrow = new Date();
@@ -502,19 +496,34 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       </div>
 
                       <div>
-                        <label htmlFor="booking-date" className="block text-caption-1-semibold text-text-primary mb-1">
-                          วันที่สะดวกเข้ารับบริการ <span className="text-status-rose-text">*</span>
-                        </label>
-                        <input
-                          id="booking-date"
-                          type="date"
-                          value={formData.preferredDate}
-                          min={getTodayLocalDateString()}
-                          onChange={(e) => setFormData({ ...formData, preferredDate: e.target.value })}
-                          className={`w-full px-3.5 py-2.5 rounded-xl border text-body-medium text-text-primary bg-background-primary-default focus:outline-none focus:ring-2 focus:ring-border-focus-ring ${
-                            errors.preferredDate ? 'border-status-rose-text bg-status-rose-background/20' : 'border-border-button-default'
-                          }`}
-                        />
+                        <div className="flex items-center justify-between mb-2">
+                          <label className="block text-caption-1-semibold text-text-primary">
+                            วันที่สะดวกเข้ารับบริการ <span className="text-status-rose-text">*</span>
+                          </label>
+                          <span className="text-caption-2-medium text-text-secondary bg-background-secondary-default px-2.5 py-0.5 rounded-lg border border-border-button-default font-mono">
+                            {formData.preferredDate || 'เลือกวันที่'}
+                          </span>
+                        </div>
+                        <div className="flex justify-center p-2 rounded-2xl border border-border-button-default bg-background-secondary-default/40">
+                          <DateCalendar
+                            aria-label="วันที่สะดวกเข้ารับบริการ"
+                            value={formData.preferredDate ? parseDate(formData.preferredDate) : today(getLocalTimeZone())}
+                            onChange={(newDate) => {
+                              if (newDate) {
+                                setFormData((prev) => ({ ...prev, preferredDate: newDate.toString() }));
+                                if (errors.preferredDate) {
+                                  setErrors((prev) => {
+                                    const next = { ...prev };
+                                    delete next.preferredDate;
+                                    return next;
+                                  });
+                                }
+                              }
+                            }}
+                            minValue={today(getLocalTimeZone())}
+                            className="w-full justify-center"
+                          />
+                        </div>
                         {errors.preferredDate && <p className="text-caption-2-medium text-status-rose-text mt-1">{errors.preferredDate}</p>}
                       </div>
 
