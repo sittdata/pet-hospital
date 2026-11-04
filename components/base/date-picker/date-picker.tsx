@@ -14,7 +14,6 @@ import {
   MonthPanel,
   formatTriggerDate,
   popoverClassName,
-  triggerButtonClassName,
 } from "@/components/base/date-picker/shared";
 import { cx } from "@/utils/cx";
 import { useDismissOnOutsidePress } from "@/utils/use-dismiss-on-outside-press";
@@ -50,6 +49,8 @@ export interface DatePickerProps {
   isDisabled?: boolean;
   className?: string;
   "aria-label"?: string;
+  minValue?: CalendarDate;
+  placement?: "bottom start" | "bottom end" | "bottom";
   /** Anchor the popover to an external element instead of DatePicker's own
    *  trigger button (which is hidden when this is provided). Pair with
    *  `isOpen`/`onOpenChange` for full external control. */
@@ -65,6 +66,8 @@ export function DatePicker({
   isDisabled,
   className,
   "aria-label": ariaLabel = "Date",
+  minValue,
+  placement = "bottom start",
   triggerRef: externalTriggerRef,
   isOpen: controlledIsOpen,
   onOpenChange: controlledOnOpenChange,
@@ -126,11 +129,20 @@ export function DatePicker({
           type="button"
           disabled={isDisabled}
           onClick={() => openChange(!isOpen)}
-          className={cx(triggerButtonClassName, className)}
+          className={cx(
+            "w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-border-button-default bg-background-primary-default text-body-medium text-text-primary shadow-xs outline-none transition-colors hover:bg-background-secondary-hover focus-visible:ring-2 focus-visible:ring-border-focus-ring cursor-pointer",
+            isDisabled && "cursor-not-allowed bg-background-primary-disabled text-text-tertiary",
+            className
+          )}
         >
-          <RiCalendarLine className="size-5 shrink-0 text-foreground-icon-primary" aria-hidden />
-          <span className="flex items-center justify-center whitespace-nowrap px-1 text-body-medium text-text-primary">
-            {committedValue ? formatTriggerDate(committedValue, locale) : "Select date"}
+          <div className="flex items-center gap-2">
+            <RiCalendarLine className="size-5 shrink-0 text-accent-500" aria-hidden />
+            <span className="text-body-medium text-text-primary font-medium">
+              {committedValue ? formatTriggerDate(committedValue, locale) : "เลือกวันที่"}
+            </span>
+          </div>
+          <span className="text-caption-2-medium text-text-secondary bg-background-secondary-default px-2.5 py-0.5 rounded-lg border border-border-button-default font-mono">
+            {committedValue ? `${String(committedValue.day).padStart(2, "0")}/${String(committedValue.month).padStart(2, "0")}/${committedValue.year}` : "DD/MM/YYYY"}
           </span>
         </button>
       )}
@@ -139,15 +151,24 @@ export function DatePicker({
         triggerRef={triggerRef}
         isOpen={isOpen}
         onOpenChange={openChange}
-        offset={4}
-        placement="bottom end"
+        offset={6}
+        placement={placement}
         isNonModal
         className={popoverClassName}
       >
         <Dialog aria-label={ariaLabel} className="outline-none">
-          <Calendar key={openKey} aria-label={ariaLabel} value={pendingValue} onChange={setPendingValue}>
+          <Calendar
+            key={openKey}
+            aria-label={ariaLabel}
+            value={pendingValue}
+            minValue={minValue}
+            onChange={(next) => {
+              setPendingValue(next);
+              if (next) commit(next);
+            }}
+          >
             <div className="flex flex-col pt-2 pe-2 pb-3 ps-2">
-              <MonthPanel offset={0} showPrev showNext />
+              <MonthPanel offset={0} showPrev showNext showToday />
               <div className="flex items-center justify-between pt-3 pe-4 ps-4">
                 <div>
                   <AnimatePresence>
@@ -159,7 +180,7 @@ export function DatePicker({
                         exit={{ opacity: 0, y: -12 }}
                         transition={{ duration: 0.25, ease: [0.34, 1.2, 0.64, 1] }}
                       >
-                        <DateChipInput date={pendingValue} label="Date" onCommit={setPendingValue} />
+                        <DateChipInput date={pendingValue} label="Date" onCommit={(d) => { setPendingValue(d); commit(d); }} />
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -172,10 +193,10 @@ export function DatePicker({
                       setIsOpen(false);
                     }}
                   >
-                    Cancel
+                    ยกเลิก
                   </Button>
                   <Button onClick={() => commit(pendingValue)} disabled={!pendingValue}>
-                    Apply
+                    ตกลง
                   </Button>
                 </div>
               </div>
