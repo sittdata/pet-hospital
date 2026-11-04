@@ -9,7 +9,7 @@ import { HeroPetCardDeck } from './HeroPetCardDeck';
 import { HospitalTaskList } from './HospitalTaskList';
 
 interface HeroProps {
-  onOpenBooking: () => void;
+  onOpenBooking: (prefillPetType?: string) => void;
 }
 
 export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
@@ -42,7 +42,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
                   variant="primary"
                   size="medium"
                   leadingIcon={RiCalendarEventLine}
-                  onClick={onOpenBooking}
+                  onClick={() => onOpenBooking()}
                   className="justify-center"
                 >
                   นัดหมายตรวจล่วงหน้า

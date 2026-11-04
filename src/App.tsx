@@ -109,7 +109,10 @@ export function App() {
       {/* Main Page Sections */}
       <main className="flex-1">
         {/* Hero Section */}
-        <Hero onOpenBooking={() => handleOpenBooking()} />
+        <Hero onOpenBooking={(pet) => {
+          if (pet === 'cat' || pet === 'dog') setBookingPetType(pet);
+          handleOpenBooking();
+        }} />
 
         {/* BoardUI Official StatCards KPI Row (Variant Footer with Gradient Tiles) */}
         <section className="py-10 bg-background-secondary-default/60 border-b border-border-button-default">
