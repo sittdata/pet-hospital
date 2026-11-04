@@ -31,6 +31,7 @@ export function App() {
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [bookingPetType, setBookingPetType] = useState<PetType>('cat');
   const [bookingService, setBookingService] = useState<string>('');
+  const [bookingDoctor, setBookingDoctor] = useState<string>('');
 
   // BoardUI Auth State
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -42,8 +43,9 @@ export function App() {
     setAuthModalOpen(true);
   };
 
-  const handleOpenBooking = (serviceName?: string) => {
+  const handleOpenBooking = (serviceName?: string, doctorName?: string) => {
     if (serviceName) setBookingService(serviceName);
+    setBookingDoctor(doctorName || '');
     setBookingModalOpen(true);
   };
 
@@ -169,10 +171,12 @@ export function App() {
       <Suspense fallback={null}>
         {bookingModalOpen && (
           <BookingModal
+            key={`${bookingPetType}-${bookingService}-${bookingDoctor}`}
             isOpen={bookingModalOpen}
             onClose={() => setBookingModalOpen(false)}
             initialPetType={bookingPetType}
             initialService={bookingService}
+            initialDoctor={bookingDoctor}
           />
         )}
       </Suspense>

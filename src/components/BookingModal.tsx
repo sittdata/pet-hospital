@@ -32,6 +32,17 @@ const EMERGENCY_KEYWORDS = [
   'ช็อกโกแลต', 'พารา', 'เลือดไหล', 'รถชน', 'ตกตึก', 'ซีด', 'ช็อก'
 ];
 
+const STANDARD_SERVICES = [
+  'ตรวจสุขภาพทั่วไปและฉีดวัคซีน',
+  'คลินิกแมวปลอดความเครียด (ISFM)',
+  'ศูนย์ศัลยกรรมและผ่าตัดกระดูก/ข้อ',
+  'ศูนย์สัตว์พิเศษ Exotic Pets',
+  'ตรวจหัวใจและเอคโค่ (Echo)',
+  'ศูนย์รังสีวินิจฉัย CT Scan / Ultrasound',
+  'ศูนย์ฟื้นฟูและกายภาพบำบัดธาราบำบัด',
+  'ศูนย์ฉุกเฉินและกู้ชีพ 24 ชม.',
+];
+
 const getTodayLocalDateString = (): string => {
   const today = new Date();
   const year = today.getFullYear();
@@ -63,7 +74,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const [dismissedEmergencyWarning, setDismissedEmergencyWarning] = useState<boolean>(false);
   const modalRef = useRef<HTMLDivElement>(null);
 
-  const [formData, setFormData] = useState<AppointmentFormData>({
+  const [formData, setFormData] = useState<AppointmentFormData>(() => ({
     petType: initialPetType,
     petName: '',
     petBreed: '',
@@ -72,20 +83,13 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     preferredDate: getTomorrowLocalDateString(),
     preferredTimeSlot: 'morning',
     isEmergencyCase: false,
-    symptomsDescription: '',
+    symptomsDescription: initialDoctor ? `ระบุแพทย์: ${initialDoctor}` : '',
     ownerName: '',
     ownerPhone: '',
     ownerLineId: '',
-  });
+  }));
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-
-  useEffect(() => {
-    if (initialPetType) setFormData((prev) => ({ ...prev, petType: initialPetType }));
-    if (initialService) setFormData((prev) => ({ ...prev, serviceCategory: initialService }));
-    if (initialDoctor) setFormData((prev) => ({ ...prev, symptomsDescription: `ระบุแพทย์: ${initialDoctor}` }));
-    setDismissedEmergencyWarning(false);
-  }, [initialPetType, initialService, initialDoctor, isOpen]);
 
   const handleResetAndClose = useCallback(() => {
     setIsSuccess(false);
@@ -94,21 +98,51 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     onClose();
   }, [onClose]);
 
-  // Focus trap & Escape key handling
+  const previousActiveElement = useRef<HTMLElement | null>(null);
+
+  // Focus trap, initial focus, body scroll lock & Escape key handling
   useEffect(() => {
     if (!isOpen) return;
+
+    previousActiveElement.current = document.activeElement as HTMLElement | null;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    // Auto-focus first interactive element inside modal
+    const focusTimer = setTimeout(() => {
+      const focusable = modalRef.current?.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusable && focusable.length > 0) {
+        focusable[0].focus();
+      }
+    }, 50);
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         handleResetAndClose();
         return;
       }
       if (e.key === 'Tab') {
-        const focusableElements = modalRef.current?.querySelectorAll<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
-        if (!focusableElements || focusableElements.length === 0) return;
+        const focusableElements = Array.from(
+          modalRef.current?.querySelectorAll<HTMLElement>(
+            'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          ) || []
+        ).filter((el) => el.offsetParent !== null || el.offsetWidth > 0 || el.offsetHeight > 0);
+
+        if (focusableElements.length === 0) {
+          e.preventDefault();
+          return;
+        }
+
         const firstElement = focusableElements[0];
         const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (!modalRef.current?.contains(document.activeElement)) {
+          e.preventDefault();
+          firstElement.focus();
+          return;
+        }
 
         if (e.shiftKey) {
           if (document.activeElement === firstElement) {
@@ -124,7 +158,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       }
     };
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    return () => {
+      clearTimeout(focusTimer);
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+      previousActiveElement.current?.focus();
+    };
   }, [isOpen, handleResetAndClose]);
 
   if (!isOpen) return null;
@@ -360,7 +399,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                         <label className="block text-caption-1-semibold text-text-tertiary uppercase tracking-wider mb-2">
                           ประเภทสัตว์เลี้ยง
                         </label>
-                        <div className="grid grid-cols-4 gap-2">
+                        <div role="group" aria-label="เลือกประเภทสัตว์เลี้ยง" className="grid grid-cols-4 gap-2">
                           {[
                             { id: 'cat' as const, label: 'แมว', Icon: CatIcon },
                             { id: 'dog' as const, label: 'สุนัข', Icon: DogIcon },
@@ -451,14 +490,14 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                           onChange={(e) => setFormData({ ...formData, serviceCategory: e.target.value })}
                           className="w-full px-3.5 py-2.5 rounded-xl border border-border-button-default text-body-medium text-text-primary bg-background-primary-default focus:outline-none focus:ring-2 focus:ring-border-focus-ring"
                         >
-                          <option value="ตรวจสุขภาพทั่วไปและฉีดวัคซีน">ตรวจสุขภาพทั่วไปและฉีดวัคซีน</option>
-                          <option value="คลินิกแมวปลอดความเครียด (ISFM)">คลินิกแมวปลอดความเครียด (ISFM)</option>
-                          <option value="ศูนย์ศัลยกรรมและผ่าตัดกระดูก/ข้อ">ศูนย์ศัลยกรรมและผ่าตัดกระดูก/ข้อ</option>
-                          <option value="ศูนย์สัตว์พิเศษ Exotic Pets">ศูนย์สัตว์พิเศษ Exotic Pets</option>
-                          <option value="ตรวจหัวใจและเอคโค่ (Echo)">ตรวจหัวใจและเอคโค่ (Echo)</option>
-                          <option value="ศูนย์รังสีวินิจฉัย CT Scan / Ultrasound">ศูนย์รังสีวินิจฉัย CT Scan / Ultrasound</option>
-                          <option value="ศูนย์ฟื้นฟูและกายภาพบำบัดธาราบำบัด">ศูนย์ฟื้นฟูและกายภาพบำบัดธาราบำบัด</option>
-                          <option value="ศูนย์ฉุกเฉินและกู้ชีพ 24 ชม.">ศูนย์ฉุกเฉินและกู้ชีพ 24 ชม. (เคสเร่งด่วน)</option>
+                          {!STANDARD_SERVICES.includes(formData.serviceCategory) && (
+                            <option value={formData.serviceCategory}>{formData.serviceCategory}</option>
+                          )}
+                          {STANDARD_SERVICES.map((s) => (
+                            <option key={s} value={s}>
+                              {s === 'ศูนย์ฉุกเฉินและกู้ชีพ 24 ชม.' ? `${s} (เคสเร่งด่วน)` : s}
+                            </option>
+                          ))}
                         </select>
                       </div>
 
@@ -483,7 +522,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                         <label className="block text-caption-1-semibold text-text-tertiary uppercase tracking-wider mb-2">
                           ช่วงเวลาที่ต้องการ
                         </label>
-                        <div className="grid grid-cols-3 gap-2">
+                        <div role="group" aria-label="เลือกช่วงเวลาที่สะดวก" className="grid grid-cols-3 gap-2">
                           {[
                             { id: 'morning' as const, label: 'เช้า (09:00 - 12:00)' },
                             { id: 'afternoon' as const, label: 'บ่าย (13:00 - 17:00)' },

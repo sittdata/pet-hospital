@@ -29,8 +29,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
-    { label: 'ศูนย์การแพทย์', href: '#services' },
     { label: 'ตามชนิดสัตว์', href: '#pet-treatments' },
+    { label: 'ศูนย์การแพทย์', href: '#services' },
     { label: 'ทีมสัตวแพทย์', href: '#doctors' },
     { label: 'รีวิวบริการ', href: '#reviews' },
     { label: 'คำถามที่พบบ่อย', href: '#faq' },

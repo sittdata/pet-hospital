@@ -27,21 +27,51 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setSuccessToast(null);
   }
 
-  // Focus trap & Escape key handling
+  const previousActiveElement = useRef<HTMLElement | null>(null);
+
+  // Focus trap, initial focus, body scroll lock & Escape key handling
   useEffect(() => {
     if (!isOpen) return;
+
+    previousActiveElement.current = document.activeElement as HTMLElement | null;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    // Auto-focus first interactive element inside modal
+    const focusTimer = setTimeout(() => {
+      const focusable = modalRef.current?.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusable && focusable.length > 0) {
+        focusable[0].focus();
+      }
+    }, 50);
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         onClose();
         return;
       }
       if (e.key === 'Tab') {
-        const focusableElements = modalRef.current?.querySelectorAll<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
-        if (!focusableElements || focusableElements.length === 0) return;
+        const focusableElements = Array.from(
+          modalRef.current?.querySelectorAll<HTMLElement>(
+            'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          ) || []
+        ).filter((el) => el.offsetParent !== null || el.offsetWidth > 0 || el.offsetHeight > 0);
+
+        if (focusableElements.length === 0) {
+          e.preventDefault();
+          return;
+        }
+
         const firstElement = focusableElements[0];
         const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (!modalRef.current?.contains(document.activeElement)) {
+          e.preventDefault();
+          firstElement.focus();
+          return;
+        }
 
         if (e.shiftKey) {
           if (document.activeElement === firstElement) {
@@ -57,7 +87,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       }
     };
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    return () => {
+      clearTimeout(focusTimer);
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+      previousActiveElement.current?.focus();
+    };
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
@@ -97,7 +132,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         ref={modalRef}
         role="dialog"
         aria-modal="true"
-        aria-label={mode === 'signin' ? 'เข้าสู่ระบบ' : 'สร้างบัญชี'}
+        aria-labelledby="auth-modal-title"
         className="relative w-full max-w-[440px] animate-boardui-modal"
         onClick={(e) => e.stopPropagation()}
       >
@@ -140,9 +175,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </div>
           }
           title={
-            mode === 'signin'
-              ? 'ยินดีต้อนรับกลับสู่ แม็กเหนือวินเหนือพิกโก้'
-              : 'สร้างบัญชีเจ้าของสัตว์เลี้ยง'
+            <span id="auth-modal-title">
+              {mode === 'signin'
+                ? 'ยินดีต้อนรับกลับสู่ แม็กเหนือวินเหนือพิกโก้'
+                : 'สร้างบัญชีเจ้าของสัตว์เลี้ยง'}
+            </span>
           }
           description={
             mode === 'signin'

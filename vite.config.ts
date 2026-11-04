@@ -18,22 +18,23 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (id.includes('node_modules')) {
+          const normalized = id.replace(/\\/g, '/');
+          if (normalized.includes('node_modules/')) {
             if (
-              id.includes('react-aria-components') ||
-              id.includes('@react-aria') ||
-              id.includes('@react-stately') ||
-              id.includes('@internationalized')
+              normalized.includes('react-aria-components') ||
+              normalized.includes('@react-aria') ||
+              normalized.includes('@react-stately') ||
+              normalized.includes('@internationalized')
             ) {
               return 'vendor-react-aria';
             }
-            if (id.includes('@remixicon/react')) {
+            if (normalized.includes('@remixicon/react')) {
               return 'vendor-remix-icons';
             }
-            if (id.includes('motion')) {
+            if (normalized.includes('motion')) {
               return 'vendor-motion';
             }
-            if (id.includes('react/') || id.includes('react-dom/')) {
+            if (normalized.includes('/react/') || normalized.includes('/react-dom/')) {
               return 'vendor-react';
             }
           }

@@ -12,7 +12,7 @@ import { StatusDot } from '@/components/base/badges/status-dot';
 
 interface DoctorsProps {
   onBookWithDoctor?: (doctorName: string, specialty: string) => void;
-  onOpenBooking?: (serviceName?: string) => void;
+  onOpenBooking?: (serviceName?: string, doctorName?: string) => void;
 }
 
 export const Doctors: React.FC<DoctorsProps> = ({ onBookWithDoctor, onOpenBooking }) => {
@@ -131,7 +131,7 @@ export const Doctors: React.FC<DoctorsProps> = ({ onBookWithDoctor, onOpenBookin
                   leadingIcon={RiCalendarEventLine}
                   onClick={() => {
                     if (onOpenBooking) {
-                      onOpenBooking(`ปรึกษา ${doc.name} (${doc.specialty})`);
+                      onOpenBooking(`ปรึกษา ${doc.name} (${doc.specialty})`, doc.name);
                     } else if (onBookWithDoctor) {
                       onBookWithDoctor(doc.name, doc.specialty);
                     }
