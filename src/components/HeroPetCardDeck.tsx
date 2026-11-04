@@ -5,9 +5,6 @@ import {
   RiArrowDownSLine,
   RiMicLine,
   RiArrowUpLine,
-  RiGitBranchLine,
-  RiFolderLine,
-  RiInfinityLine,
 } from '@remixicon/react';
 
 export interface CardStackItem {
@@ -265,34 +262,6 @@ export const HeroPetCardDeck: React.FC<HeroPetCardDeckProps> = ({ onOpenBooking 
                 >
                   <RiArrowUpLine className="size-5 text-white" />
                 </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Composer Official Status Bar (Directly below the pill) */}
-          <div className="flex h-[24px] w-full items-center justify-between px-3 mt-1.5 text-caption-2-medium text-text-tertiary">
-            {/* Left Status: Hospital Branch & ER unit */}
-            <div className="flex items-center gap-2.5">
-              <div className="flex items-center gap-1 text-text-secondary">
-                <RiGitBranchLine className="size-3.5 -scale-y-100 text-accent-500" />
-                <span>ทองหล่อ (Main)</span>
-              </div>
-              <span className="text-text-placeholder">•</span>
-              <div className="flex items-center gap-1 text-text-secondary">
-                <RiFolderLine className="size-3.5 text-foreground-icon-tertiary" />
-                <span>24/7 ER & Surgery</span>
-              </div>
-            </div>
-
-            {/* Right Status: Triage & Live Readiness Meter */}
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1 text-text-secondary">
-                <RiInfinityLine className="size-3.5 text-accent-500" />
-                <span>Vet Triage</span>
-              </div>
-              <div className="flex items-center gap-1 rounded-full bg-status-lime-background/80 px-2 py-0.5 text-status-lime-text font-semibold">
-                <span className="size-1.5 rounded-full bg-status-lime-text animate-pulse" />
-                <span>Ready 100%</span>
               </div>
             </div>
           </div>
