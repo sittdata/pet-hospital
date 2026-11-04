@@ -140,29 +140,34 @@ export function App() {
       <Footer />
 
       {/* Floating 24/7 Hotline & Quick Booking Bar */}
-      <aside aria-label="Quick Emergency and Booking Actions" className="fixed bottom-4 right-4 z-40 flex items-center gap-2">
-        <ButtonLink
-          href="tel:028889999"
-          variant="danger"
-          size="medium"
-          leadingIcon={RiPhoneFill}
-          className="shadow-lg shadow-status-rose-text/25"
-          title="โทรฉุกเฉินสัตว์เลี้ยง 24 ชั่วโมง"
+      {!bookingModalOpen && !authModalOpen && (
+        <aside
+          aria-label="Quick Emergency and Booking Actions"
+          className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-3 sm:right-4 z-40 flex items-center gap-1.5 sm:gap-2 p-1.5 rounded-full bg-background-primary-default/90 backdrop-blur-md border border-border-button-default shadow-xl sm:p-0 sm:bg-transparent sm:backdrop-blur-none sm:border-0 sm:shadow-none transition-all"
         >
-          <span className="hidden sm:inline">โทรฉุกเฉิน 24 ชม.</span>
-        </ButtonLink>
+          <ButtonLink
+            href="tel:028889999"
+            variant="danger"
+            size="medium"
+            leadingIcon={RiPhoneFill}
+            className="shadow-lg shadow-status-rose-text/25"
+            title="โทรฉุกเฉินสัตว์เลี้ยง 24 ชั่วโมง"
+          >
+            <span className="hidden sm:inline">โทรฉุกเฉิน 24 ชม.</span>
+          </ButtonLink>
 
-        <Button
-          variant="primary"
-          size="medium"
-          leadingIcon={RiCalendarEventLine}
-          onClick={() => handleOpenBooking()}
-          className="shadow-lg shadow-accent-500/25"
-          title="จองนัดหมายตรวจ"
-        >
-          <span className="hidden sm:inline">นัดหมาย</span>
-        </Button>
-      </aside>
+          <Button
+            variant="primary"
+            size="medium"
+            leadingIcon={RiCalendarEventLine}
+            onClick={() => handleOpenBooking()}
+            className="shadow-lg shadow-accent-500/25"
+            title="จองนัดหมายตรวจ"
+          >
+            <span className="hidden sm:inline">นัดหมาย</span>
+          </Button>
+        </aside>
+      )}
 
       {/* Interactive Booking Modal (Code Splitting with Suspense) */}
       <Suspense fallback={null}>

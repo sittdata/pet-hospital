@@ -209,7 +209,7 @@ export function MonthPanel({
   );
 
   return (
-    <div className={bare ? "w-[296px] shrink-0" : "w-[326px] shrink-0 rounded-2xl bg-background-primary-default p-[15px] shadow-xs"}>
+    <div className={bare ? "w-[296px] max-w-full shrink-0" : "w-[326px] max-w-full shrink-0 rounded-2xl bg-background-primary-default p-3 sm:p-[15px] shadow-xs"}>
       <div className="flex flex-col gap-5">
         {!hideHeader && (
           <div className="flex items-center justify-between">
@@ -322,7 +322,7 @@ export const triggerButtonClassName = cx(
  *  "Calendar component" surface) for both pickers. */
 export const popoverClassName = cx(
   // Above the modal layer (z-100), like the menu surfaces.
-  "z-110 origin-top rounded-3xl bg-background-secondary-default shadow-dropdown",
+  "z-110 origin-top rounded-3xl bg-background-secondary-default shadow-dropdown max-w-[calc(100vw-24px)] overflow-hidden",
   "transition duration-150 ease-out",
   "data-[entering]:opacity-0 data-[entering]:scale-95 data-[entering]:blur-[2px]",
   "data-[exiting]:opacity-0 data-[exiting]:scale-95 data-[exiting]:blur-[2px]",

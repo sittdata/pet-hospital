@@ -227,11 +227,11 @@ export const HeroPetCardDeck: React.FC<HeroPetCardDeckProps> = ({ onOpenBooking 
                 <span className="inline-block w-0.5 h-4 bg-accent-500 ms-0.5 shrink-0 animate-pulse" />
               </div>
 
-              {/* Model / Category Selector Tag */}
+              {/* Model / Category Selector Tag (hidden on small mobile to maximize prompt text space) */}
               <button
                 type="button"
                 onClick={handlePromptClick}
-                className="flex h-8 shrink-0 cursor-pointer items-center justify-center gap-0.5 rounded-xl bg-background-secondary-default py-1 pe-1 ps-2 outline-none transition-colors duration-150 ease hover:bg-background-secondary-hover border border-border-button-default/50"
+                className="hidden sm:flex h-8 shrink-0 cursor-pointer items-center justify-center gap-0.5 rounded-xl bg-background-secondary-default py-1 pe-1 ps-2 outline-none transition-colors duration-150 ease hover:bg-background-secondary-hover border border-border-button-default/50"
               >
                 <span className="px-0.5 text-caption-1-semibold whitespace-nowrap text-text-secondary">
                   {currentCard.serviceTag}
@@ -241,12 +241,12 @@ export const HeroPetCardDeck: React.FC<HeroPetCardDeckProps> = ({ onOpenBooking 
 
               {/* Right Controls: Voice Call + Send Button */}
               <div className="flex shrink-0 items-center gap-1.5 ps-1">
-                {/* Voice hotline button */}
+                {/* Voice hotline button (hidden on very compact screens) */}
                 <button
                   type="button"
                   aria-label="โทรด่วน 24 ชั่วโมง"
                   onClick={() => window.open('tel:028889999')}
-                  className="flex size-9 cursor-pointer items-center justify-center rounded-full border border-border-button-default bg-background-primary-default p-2 shadow-2xs transition-colors duration-150 ease hover:bg-background-secondary-default text-foreground-icon-secondary hover:text-foreground-icon-primary"
+                  className="hidden xs:flex size-9 cursor-pointer items-center justify-center rounded-full border border-border-button-default bg-background-primary-default p-2 shadow-2xs transition-colors duration-150 ease hover:bg-background-secondary-default text-foreground-icon-secondary hover:text-foreground-icon-primary"
                   title="โทรสายด่วน 02-888-9999"
                 >
                   <RiMicLine className="size-4.5" />
