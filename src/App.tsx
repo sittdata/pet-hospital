@@ -1,0 +1,174 @@
+import { useState } from 'react';
+import { PetType } from './types';
+import { Navbar } from './components/Navbar';
+import { Hero } from './components/Hero';
+import { PetTreatmentExplorer } from './components/PetTreatmentExplorer';
+import { Services } from './components/Services';
+import { FAQ } from './components/FAQ';
+import { LocationHours } from './components/LocationHours';
+import { Footer } from './components/Footer';
+import { BookingModal } from './components/BookingModal';
+import { AuthModal } from './components/AuthModal';
+import { Button, ButtonLink } from '@/components/base/buttons/button';
+import {
+  RiPhoneFill,
+  RiCalendarEventLine,
+  RiHeartFill,
+  RiScissors2Fill,
+  RiStethoscopeFill,
+  RiHospitalFill,
+} from '@remixicon/react';
+import { StatCards, type Stat } from '@/components/application/dashboard/stat-cards';
+
+export function App() {
+  const [bookingModalOpen, setBookingModalOpen] = useState(false);
+  const [bookingPetType, setBookingPetType] = useState<PetType>('cat');
+  const [bookingService, setBookingService] = useState<string>('');
+
+  // BoardUI Auth State
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
+  const [currentUser, setCurrentUser] = useState<{ name: string; email: string } | null>(null);
+
+  const handleOpenAuth = (mode: 'signin' | 'signup' = 'signin') => {
+    setAuthMode(mode);
+    setAuthModalOpen(true);
+  };
+
+  const handleOpenBooking = (serviceName?: string) => {
+    if (serviceName) setBookingService(serviceName);
+    setBookingModalOpen(true);
+  };
+
+  const handleSelectTreatmentBooking = (petType: PetType, serviceTitle: string) => {
+    setBookingPetType(petType);
+    setBookingService(serviceTitle);
+    setBookingModalOpen(true);
+  };
+
+  const hospitalStats: Stat[] = [
+    {
+      icon: RiHeartFill,
+      label: "จำนวนเคสที่เราดูแล",
+      value: "421 K+",
+      delta: "เคสสะสม",
+      deltaColor: "lime",
+      tone: "emerald",
+      hint: "สถิติจำนวนสัตว์เลี้ยงที่เข้ารับการดูแลและรักษาสำเร็จสะสมกว่า 421,000 เคส",
+      caption: "การรักษาและศัลยกรรมสะสม",
+    },
+    {
+      icon: RiScissors2Fill,
+      label: "จำนวนเคสอาบน้ำตัดขน",
+      value: "10,000+ ต่อเดือน",
+      delta: "Grooming & Spa",
+      deltaColor: "lime",
+      tone: "blue",
+      hint: "บริการอาบน้ำ ตัดแต่งขน สปาบำรุงผิวหนังและขนสำหรับสัตว์เลี้ยงกว่า 10,000 เคสต่อเดือน",
+      caption: "มาตรฐานสุขอนามัยสัตว์เลี้ยง",
+    },
+    {
+      icon: RiStethoscopeFill,
+      label: "จำนวนสัตวแพทย์",
+      value: "300+",
+      delta: "ทีมแพทย์เฉพาะทาง",
+      deltaColor: "lime",
+      tone: "orange",
+      hint: "ทีมอาจารย์สัตวแพทย์ผู้เชี่ยวชาญเฉพาะทางทุกสาขา พร้อมดูแลตลอด 24 ชั่วโมง",
+      caption: "พร้อมดูแลทุกเคส 24 ชม.",
+    },
+    {
+      icon: RiHospitalFill,
+      label: "ทั้งในและต่างประเทศ",
+      value: "21 สาขา",
+      delta: "เครือข่ายครอบคลุม",
+      deltaColor: "lime",
+      tone: "pink",
+      hint: "เครือข่ายศูนย์การแพทย์และโรงพยาบาลสัตว์เลี้ยง 21 สาขา ทั้งในประเทศและระดับภูมิภาค",
+      caption: "เครือข่ายโรงพยาบาลมาตรฐานสากล",
+    },
+  ];
+
+  return (
+    <div className="min-h-screen flex flex-col bg-background-full text-text-primary selection:bg-accent-500/20 selection:text-accent-700 relative transition-colors">
+      {/* Main Sticky Navbar with ThemeToggle & Auth */}
+      <Navbar
+        onOpenBooking={() => handleOpenBooking()}
+        onOpenAuth={handleOpenAuth}
+        currentUser={currentUser}
+        onSignOut={() => setCurrentUser(null)}
+      />
+
+      {/* Main Page Sections */}
+      <main className="flex-1">
+        {/* Hero Section */}
+        <Hero onOpenBooking={() => handleOpenBooking()} />
+
+        {/* BoardUI Official StatCards KPI Row (Variant Footer with Gradient Tiles) */}
+        <section className="py-10 bg-background-secondary-default/60 border-b border-border-button-default">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <StatCards stats={hospitalStats} variant="footer" />
+          </div>
+        </section>
+
+        {/* Pet-Type Specific Treatment Explorer with Animated Pill Tabs */}
+        <PetTreatmentExplorer onSelectBooking={handleSelectTreatmentBooking} />
+
+        {/* Medical Services Catalog */}
+        <Services onOpenBooking={handleOpenBooking} />
+
+        {/* Interactive FAQ Section with BoardUI Accordion */}
+        <FAQ />
+
+        {/* Location & Operating Hours */}
+        <LocationHours />
+      </main>
+
+      {/* Hospital Footer */}
+      <Footer />
+
+      {/* Floating 24/7 Hotline & Quick Booking Bar */}
+      <aside aria-label="Quick Emergency and Booking Actions" className="fixed bottom-4 right-4 z-40 flex items-center gap-2">
+        <ButtonLink
+          href="tel:028889999"
+          variant="danger"
+          size="medium"
+          leadingIcon={RiPhoneFill}
+          className="shadow-lg shadow-status-rose-text/25"
+          title="โทรฉุกเฉินสัตว์เลี้ยง 24 ชั่วโมง"
+        >
+          <span className="hidden sm:inline">โทรฉุกเฉิน 24 ชม.</span>
+        </ButtonLink>
+
+        <Button
+          variant="primary"
+          size="medium"
+          leadingIcon={RiCalendarEventLine}
+          onClick={() => handleOpenBooking()}
+          className="shadow-lg shadow-accent-500/25"
+          title="จองนัดหมายตรวจ"
+        >
+          <span className="hidden sm:inline">นัดหมาย</span>
+        </Button>
+      </aside>
+
+      {/* Interactive Booking Modal */}
+      <BookingModal
+        isOpen={bookingModalOpen}
+        onClose={() => setBookingModalOpen(false)}
+        initialPetType={bookingPetType}
+        initialService={bookingService}
+      />
+
+      {/* BoardUI Official Sign-in & Sign-up Auth Modal */}
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        initialMode={authMode}
+        onSuccess={(user) => setCurrentUser(user)}
+      />
+    </div>
+  );
+}
+
+export default App;
