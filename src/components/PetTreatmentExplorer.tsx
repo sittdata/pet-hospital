@@ -82,7 +82,7 @@ export const PetTreatmentExplorer: React.FC<PetTreatmentExplorerProps> = ({ onSe
                 )}
               >
                 {/* Top bar: Badge & Radio indicator */}
-                <div className="flex items-center justify-between w-full gap-2">
+                <div className="flex items-center justify-between w-full gap-2 relative z-20">
                   <Chip
                     color={isSelected ? 'blue' : 'neutral'}
                     variant="bold"
@@ -103,17 +103,25 @@ export const PetTreatmentExplorer: React.FC<PetTreatmentExplorerProps> = ({ onSe
                 </div>
 
                 {/* Pet Artwork Visual Container */}
-                <div className="relative my-3 h-28 sm:h-36 w-full rounded-2xl bg-background-secondary-default/70 flex items-center justify-center p-2 overflow-hidden transition-colors group-hover:bg-accent-500/5">
+                <div className="relative my-3 h-28 sm:h-36 w-full rounded-2xl bg-background-secondary-default/70 flex items-center justify-center p-2 transition-colors group-hover:bg-accent-500/5">
+                  {/* Subtle depth shadow at the bottom */}
+                  <div className="absolute inset-x-6 bottom-1.5 h-4 bg-black/10 dark:bg-black/30 rounded-full blur-md pointer-events-none" />
+
                   <img
                     src={petImageMap[cat.id]}
                     alt={cat.name}
-                    className="h-full w-auto max-w-full object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-md select-none"
+                    className={cx(
+                      'transition-all duration-300 select-none pointer-events-none',
+                      cat.id === 'cat'
+                        ? 'h-36 sm:h-44 w-auto max-w-none -translate-y-4 sm:-translate-y-5 scale-125 sm:scale-135 group-hover:scale-140 sm:group-hover:scale-145 group-hover:-translate-y-6 drop-shadow-[0_14px_20px_rgba(0,0,0,0.22)] dark:drop-shadow-[0_14px_24px_rgba(0,0,0,0.6)] z-10'
+                        : 'h-full w-auto max-w-full object-contain drop-shadow-md group-hover:scale-105'
+                    )}
                     loading="lazy"
                   />
                 </div>
 
                 {/* Bottom Details */}
-                <div className="space-y-0.5 w-full">
+                <div className="space-y-0.5 w-full relative z-20">
                   <div className="flex items-center justify-between gap-1">
                     <h3
                       className={cx(
