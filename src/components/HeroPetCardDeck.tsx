@@ -1,6 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { cx } from '@/utils/cx';
-import { RiArrowRightLine, RiSparklingFill } from '@remixicon/react';
+import {
+  RiAddLine,
+  RiArrowDownSLine,
+  RiMicLine,
+  RiArrowUpLine,
+  RiGitBranchLine,
+  RiFolderLine,
+  RiInfinityLine,
+} from '@remixicon/react';
 
 export interface CardStackItem {
   id: string;
@@ -18,7 +26,7 @@ const defaultCards: CardStackItem[] = [
     alt: 'สัตวแพทย์ผู้เชี่ยวชาญกอดน้องหมาโกลเด้นยิ้มสดใส',
     prompt: 'ตรวจสุขภาพและฉีดวัคซีนสุนัข นัดหมายอาจารย์สัตวแพทย์เฉพาะทาง',
     petType: 'dog',
-    serviceTag: 'Canine Wellness',
+    serviceTag: 'Canine Care',
   },
   {
     id: 'cat',
@@ -26,7 +34,7 @@ const defaultCards: CardStackItem[] = [
     alt: 'อาจารย์สัตวแพทย์ตรวจดูแลน้องแมวอย่างอ่อนโยน',
     prompt: 'น้องแมวซึม ไม่ทานน้ำ ตรวจแล็บด่วน คลินิกแมวปลอดความเครียด 24 ชม.',
     petType: 'cat',
-    serviceTag: 'ISFM Feline Clinic',
+    serviceTag: 'ISFM Feline',
   },
   {
     id: 'corgi',
@@ -34,7 +42,7 @@ const defaultCards: CardStackItem[] = [
     alt: 'สัตวแพทย์กอดน้องคอร์กี้อย่างอบอุ่น',
     prompt: 'ผ่าตัดส่องกล้องแผลเล็ก และตรวจหัวใจสัตว์เลี้ยงครบวงจร 24 ชม.',
     petType: 'dog',
-    serviceTag: 'Micro-Surgery ICU',
+    serviceTag: 'ER & Surgery',
   },
 ];
 
@@ -63,7 +71,7 @@ export const HeroPetCardDeck: React.FC<HeroPetCardDeckProps> = ({ onOpenBooking 
   const currentCard = defaultCards[activeIndex];
   const displayedText = currentCard.prompt.slice(0, charCount);
 
-  // Hostinger-style Typewriter & Auto-Cycling loop
+  // Auto-Cycling & Typewriter loop synchronized with 3D cards
   const pauseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const checkIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -113,7 +121,7 @@ export const HeroPetCardDeck: React.FC<HeroPetCardDeckProps> = ({ onOpenBooking 
 
   return (
     <div
-      className="relative w-full flex flex-col items-center justify-center pt-2 pb-8 sm:pb-10 select-none overflow-visible"
+      className="relative w-full flex flex-col items-center justify-center pt-2 pb-12 sm:pb-14 select-none overflow-visible"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -123,10 +131,6 @@ export const HeroPetCardDeck: React.FC<HeroPetCardDeckProps> = ({ onOpenBooking 
         style={{ perspective: '1200px' }}
       >
         {defaultCards.map((card, idx) => {
-          // Relative position in the circular 3-card stack:
-          // 0 = Front/Center (active)
-          // 1 = Right card
-          // 2 = Left card
           const relPos = (idx - activeIndex + defaultCards.length) % defaultCards.length;
           const isCenter = relPos === 0;
           const isRight = relPos === 1;
@@ -185,51 +189,112 @@ export const HeroPetCardDeck: React.FC<HeroPetCardDeckProps> = ({ onOpenBooking 
                 className="w-full h-full object-cover pointer-events-none"
               />
 
-              {/* Subtle gradient vignette to blend bottom with prompt bar */}
-              <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/60 via-black/20 to-transparent pointer-events-none" />
+              {/* Gradient vignette to blend smoothly with Composer below */}
+              <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/65 via-black/25 to-transparent pointer-events-none" />
             </button>
           );
         })}
 
-        {/* Hostinger-style Floating Typewriter Prompt Pill Bar (On top of cards, at the bottom) */}
-        <div
-          onClick={handlePromptClick}
-          className="absolute -bottom-4 sm:-bottom-6 left-1/2 -translate-x-1/2 z-40 w-[92%] xs:w-[88%] sm:w-[480px] max-w-[95%] bg-background-primary-default/95 dark:bg-background-primary-default/90 backdrop-blur-xl border-2 border-accent-500/40 dark:border-accent-400/30 rounded-2xl sm:rounded-3xl p-3 sm:p-3.5 shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)] flex items-center gap-2.5 sm:gap-3.5 cursor-pointer hover:border-accent-500 hover:shadow-[0_20px_45px_-8px_rgba(37,99,235,0.25)] transition-all duration-200 group/pill"
-          role="button"
-          tabIndex={0}
-          aria-label="คลิกเพื่อนัดหมายบริการนี้"
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              handlePromptClick();
-            }
-          }}
-        >
-          {/* Sparkle Icon */}
-          <div className="size-9 sm:size-10 rounded-xl sm:rounded-2xl bg-accent-500/10 text-accent-500 flex items-center justify-center shrink-0 group-hover/pill:scale-105 group-hover/pill:bg-accent-500 group-hover/pill:text-white transition-all duration-200">
-            <RiSparklingFill className="size-4 sm:size-5" />
+        {/* BoardUI Official AI Chat Composer (Reverse-Engineered 1:1 with BoardUI Semantic Tokens) */}
+        <div className="absolute -bottom-7 sm:-bottom-9 left-1/2 -translate-x-1/2 z-40 w-[94%] xs:w-[90%] sm:w-[500px] max-w-[96%]">
+          {/* Main Pill Wrapper */}
+          <div className="relative">
+            {/* Background shadow & soft blur */}
+            <span
+              aria-hidden="true"
+              className="absolute inset-0 rounded-full bg-black/15 dark:bg-black/40 blur-xl pointer-events-none"
+            />
+
+            {/* Pill Container */}
+            <div className="flex h-[52px] w-full items-center gap-2 rounded-full bg-background-primary-default border border-border-button-default py-1.5 pe-1.5 ps-1.5 shadow-lg relative transition-colors duration-200">
+              {/* Left Action / Attachment '+' Button */}
+              <button
+                type="button"
+                onClick={handlePromptClick}
+                aria-label="เลือกบริการเพิ่มเติม"
+                className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full p-2 outline-none transition-colors duration-150 ease hover:bg-background-secondary-default text-foreground-icon-primary focus-visible:ring-2 focus-visible:ring-border-focus-ring"
+                title="เลือกบริการตรวจและรักษา"
+              >
+                <RiAddLine className="size-5" />
+              </button>
+
+              {/* Typewriter Prompt Text Area */}
+              <div
+                onClick={handlePromptClick}
+                className="h-5 min-w-0 flex-1 flex items-center cursor-pointer select-none overflow-hidden px-1"
+                title="คลิกเพื่อส่งนัดหมายตรวจ"
+              >
+                <span className="text-body-regular text-text-primary truncate">
+                  {displayedText}
+                </span>
+                <span className="inline-block w-0.5 h-4 bg-accent-500 ms-0.5 shrink-0 animate-pulse" />
+              </div>
+
+              {/* Model / Category Selector Tag */}
+              <button
+                type="button"
+                onClick={handlePromptClick}
+                className="flex h-8 shrink-0 cursor-pointer items-center justify-center gap-0.5 rounded-xl bg-background-secondary-default py-1 pe-1 ps-2 outline-none transition-colors duration-150 ease hover:bg-background-secondary-hover border border-border-button-default/50"
+              >
+                <span className="px-0.5 text-caption-1-semibold whitespace-nowrap text-text-secondary">
+                  {currentCard.serviceTag}
+                </span>
+                <RiArrowDownSLine className="size-4 shrink-0 text-foreground-icon-secondary" />
+              </button>
+
+              {/* Right Controls: Voice Call + Send Button */}
+              <div className="flex shrink-0 items-center gap-1.5 ps-1">
+                {/* Voice hotline button */}
+                <button
+                  type="button"
+                  aria-label="โทรด่วน 24 ชั่วโมง"
+                  onClick={() => window.open('tel:028889999')}
+                  className="flex size-9 cursor-pointer items-center justify-center rounded-full border border-border-button-default bg-background-primary-default p-2 shadow-2xs transition-colors duration-150 ease hover:bg-background-secondary-default text-foreground-icon-secondary hover:text-foreground-icon-primary"
+                  title="โทรสายด่วน 02-888-9999"
+                >
+                  <RiMicLine className="size-4.5" />
+                </button>
+
+                {/* Send / Book button (Accent Blue with White Arrow Up) */}
+                <button
+                  type="button"
+                  aria-label="นัดหมายตรวจ"
+                  onClick={handlePromptClick}
+                  className="flex size-9 cursor-pointer items-center justify-center rounded-full bg-accent-500 hover:bg-accent-600 text-white p-2 transition-all duration-200 ease shadow-xs hover:scale-105 active:scale-95"
+                  title="ส่งคำขอนัดหมาย"
+                >
+                  <RiArrowUpLine className="size-5 text-white" />
+                </button>
+              </div>
+            </div>
           </div>
 
-          {/* Typewriter Prompt Text */}
-          <div className="min-w-0 flex-1 py-0.5">
-            <div className="flex items-center gap-1.5 mb-0.5">
-              <span className="text-[10px] sm:text-[11px] font-semibold text-accent-600 dark:text-accent-400 uppercase tracking-wider">
-                {currentCard.serviceTag}
-              </span>
-              <span className="text-[10px] text-text-tertiary hidden xs:inline">• แตะเพื่อจอง</span>
+          {/* Composer Official Status Bar (Directly below the pill) */}
+          <div className="flex h-[24px] w-full items-center justify-between px-3 mt-1.5 text-caption-2-medium text-text-tertiary">
+            {/* Left Status: Hospital Branch & ER unit */}
+            <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-1 text-text-secondary">
+                <RiGitBranchLine className="size-3.5 -scale-y-100 text-accent-500" />
+                <span>ทองหล่อ (Main)</span>
+              </div>
+              <span className="text-text-placeholder">•</span>
+              <div className="flex items-center gap-1 text-text-secondary">
+                <RiFolderLine className="size-3.5 text-foreground-icon-tertiary" />
+                <span>24/7 ER & Surgery</span>
+              </div>
             </div>
-            <div className="text-caption-1-medium sm:text-body-medium text-text-primary leading-snug line-clamp-2 font-medium">
-              <span>{displayedText}</span>
-              <span className="inline-block w-0.5 h-3.5 sm:h-4 bg-accent-500 ms-0.5 animate-pulse align-middle" />
-            </div>
-          </div>
 
-          {/* Action Arrow Button */}
-          <div
-            className="size-9 sm:size-10 rounded-xl sm:rounded-2xl bg-accent-500 hover:bg-accent-600 text-white flex items-center justify-center shrink-0 shadow-sm group-hover/pill:translate-x-0.5 transition-transform"
-            title="นัดหมายบริการนี้"
-          >
-            <RiArrowRightLine className="size-4 sm:size-5 text-white" />
+            {/* Right Status: Triage & Live Readiness Meter */}
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 text-text-secondary">
+                <RiInfinityLine className="size-3.5 text-accent-500" />
+                <span>Vet Triage</span>
+              </div>
+              <div className="flex items-center gap-1 rounded-full bg-status-lime-background/80 px-2 py-0.5 text-status-lime-text font-semibold">
+                <span className="size-1.5 rounded-full bg-status-lime-text animate-pulse" />
+                <span>Ready 100%</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
