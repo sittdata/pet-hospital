@@ -6,7 +6,7 @@ import {
 import { Button, ButtonLink } from '@/components/base/buttons/button';
 import { HeatmapChartCard } from '@/components/application/charts/heatmap-chart-card';
 import { HeroPetCardDeck } from './HeroPetCardDeck';
-import { HospitalTaskList } from './HospitalTaskList';
+import { HospitalHighlights } from './HospitalHighlights';
 
 interface HeroProps {
   onOpenBooking: (prefillPetType?: string) => void;
@@ -73,8 +73,8 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
             {/* Bento Card 1: 3D Fanned Pet Medical Passport Deck (FANCY Style) */}
             <HeroPetCardDeck onOpenBooking={onOpenBooking} />
 
-            {/* Patient Workflow Live Task List */}
-            <HospitalTaskList />
+            {/* Hospital Highlights, Awards & Campaigns (Medical Profile Style) */}
+            <HospitalHighlights />
           </div>
 
         </div>
