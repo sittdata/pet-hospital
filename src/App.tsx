@@ -4,8 +4,6 @@ import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { PetTreatmentExplorer } from './components/PetTreatmentExplorer';
 import { Services } from './components/Services';
-import { Doctors } from './components/Doctors';
-import { Reviews } from './components/Reviews';
 import { FAQ } from './components/FAQ';
 import { LocationHours } from './components/LocationHours';
 import { Footer } from './components/Footer';
@@ -126,11 +124,7 @@ export function App() {
         {/* Medical Services Catalog */}
         <Services onOpenBooking={handleOpenBooking} />
 
-        {/* Specialized Veterinary Doctors Team */}
-        <Doctors onOpenBooking={handleOpenBooking} />
 
-        {/* Client Reviews & Testimonials */}
-        <Reviews />
 
         {/* Interactive FAQ Section with BoardUI Accordion */}
         <FAQ />
