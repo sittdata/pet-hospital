@@ -170,9 +170,9 @@ export const HeroPetCardDeck: React.FC<HeroPetCardDeckProps> = ({ onOpenBooking 
                 handleCardClick(idx);
               }}
               className={cx(
-                'absolute inset-0 m-auto w-[230px] xs:w-[260px] sm:w-[320px] lg:w-[340px] h-[280px] xs:h-[310px] sm:h-[370px] lg:h-[390px] rounded-3xl overflow-hidden border border-white/20 focus:outline-hidden cursor-pointer transition-all duration-500 ease-out',
+                'absolute inset-0 m-auto w-[230px] xs:w-[260px] sm:w-[320px] lg:w-[340px] h-[280px] xs:h-[310px] sm:h-[370px] lg:h-[390px] rounded-3xl overflow-hidden focus:outline-hidden cursor-pointer transition-all duration-500 ease-out',
                 isCenter
-                  ? 'shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] ring-2 ring-accent-500/20'
+                  ? 'shadow-[0_25px_50px_-12px_rgba(0,0,0,0.45)]'
                   : 'shadow-xl hover:opacity-100'
               )}
               style={{
