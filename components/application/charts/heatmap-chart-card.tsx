@@ -62,9 +62,9 @@ const DEFAULT_ROWS: HeatmapRow[] = [
 const RAMP_STEPS = [0.08, 0.28, 0.52, 0.76, 1.0];
 
 export function HeatmapChartCard({
-  title = "24/7 Clinic Traffic & Wait Time",
-  headline = "Avg. Wait < 5 Mins",
-  delta = "Smooth Flow 84%",
+  title = "Busy Hours",
+  headline = "Emergency Care Open 24/7",
+  delta = "Best for Check-ups: Mornings",
   deltaColor = "lime",
   rows = DEFAULT_ROWS,
   columns = DEFAULT_COLUMNS,
@@ -208,7 +208,7 @@ export function HeatmapChartCard({
       <div className="flex w-full items-center justify-between pt-3 mt-2 border-t border-border-button-default text-[11px] text-text-tertiary">
         <span className="flex items-center gap-1 text-text-tertiary">
           <RiInformationFill className="size-3.5 text-foreground-icon-tertiary" />
-          <span>Hover cells to view average wait time</span>
+          <span>Tap or hover a cell to see estimated visitors</span>
         </span>
 
         <div className="flex items-center gap-1.5">

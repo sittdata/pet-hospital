@@ -26,14 +26,13 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
           <div className="lg:col-span-6 space-y-6">
             {/* Main Headline */}
             <h1 className="text-title-1-semibold xs:text-large-title-bold sm:text-display-1-bold text-text-primary tracking-tight leading-[1.15]">
-              เคียงข้างทุกชีวิตสัตว์เลี้ยง <br className="hidden sm:inline" />
-              <span className="text-accent-500">บริบาลด้วยมาตรฐานสากล</span> ตลอด 24 ชั่วโมง
+              เคียงข้างทุกชีวิตสัตว์เลี้ยง <br />
+              <span className="text-accent-500">พร้อมดูแลคุณทุกวินาที</span> ตลอด 24 ชั่วโมง
             </h1>
 
             {/* Sub-headline */}
             <p className="text-body-medium text-text-secondary leading-relaxed font-normal">
-              ศูนย์การแพทย์สัตว์เลี้ยงครบวงจร พร้อมศูนย์ศัลยกรรมปลอดเชื้อความดันบวก คลินิกแมวปลอดความเครียด 
-              และศูนย์สัตว์พิเศษ Exotic Pets วินิจฉัยแม่นยำด้วยห้องแล็บด่วนและอาจารย์สัตวแพทย์เฉพาะทาง
+              ดูแลทั้งเรื่องด่วนและเรื่องทั่วไป ตั้งแต่ตรวจสุขภาพ ฉีดวัคซีน ไปจนถึงผ่าตัดและดูแลอาการวิกฤต โดยสัตวแพทย์เฉพาะทาง ที่คอยอยู่เคียงข้างคุณและสัตว์เลี้ยง
             </p>
 
             {/* Action Buttons with Strict BoardUI Hierarchy */}

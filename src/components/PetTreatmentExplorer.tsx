@@ -54,11 +54,10 @@ export const PetTreatmentExplorer: React.FC<PetTreatmentExplorerProps> = ({ onSe
         {/* Section Header without banned eyebrow */}
         <div className="text-center max-w-3xl mx-auto mb-10">
           <h2 className="text-title-1-semibold sm:text-large-title-bold text-text-primary tracking-tight">
-            แผนกบริบาลเฉพาะทางตามชนิดสัตว์เลี้ยง
+            ดูแลเฉพาะทาง ตามชนิดสัตว์เลี้ยง
           </h2>
           <p className="mt-3 text-body-medium text-text-secondary leading-relaxed">
-            สัตว์เลี้ยงแต่ละสายพันธุ์มีสรีรวิทยา ความเครียด และโรคเฉพาะตัวที่ต่างกัน 
-            แตะเลือกชนิดสัตว์เลี้ยงด้านล่างเพื่อเปิดดูมาตรฐานการบริบาลและคลินิกเฉพาะทาง
+            สัตว์แต่ละชนิดมีความต้องการและโรคที่ต่างกัน เลือกชนิดสัตว์เลี้ยงของคุณเพื่อดูบริการที่เหมาะสม
           </p>
         </div>
 
