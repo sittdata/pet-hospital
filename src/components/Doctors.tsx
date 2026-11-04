@@ -11,10 +11,11 @@ import { Button } from '@/components/base/buttons/button';
 import { StatusDot } from '@/components/base/badges/status-dot';
 
 interface DoctorsProps {
-  onBookWithDoctor: (doctorName: string, specialty: string) => void;
+  onBookWithDoctor?: (doctorName: string, specialty: string) => void;
+  onOpenBooking?: (serviceName?: string) => void;
 }
 
-export const Doctors: React.FC<DoctorsProps> = ({ onBookWithDoctor }) => {
+export const Doctors: React.FC<DoctorsProps> = ({ onBookWithDoctor, onOpenBooking }) => {
   const [filterCategory, setFilterCategory] = useState<string>('all');
 
   const categories = [
@@ -128,7 +129,13 @@ export const Doctors: React.FC<DoctorsProps> = ({ onBookWithDoctor }) => {
                   variant="secondary"
                   size="small"
                   leadingIcon={RiCalendarEventLine}
-                  onClick={() => onBookWithDoctor(doc.name, doc.specialty)}
+                  onClick={() => {
+                    if (onOpenBooking) {
+                      onOpenBooking(`ปรึกษา ${doc.name} (${doc.specialty})`);
+                    } else if (onBookWithDoctor) {
+                      onBookWithDoctor(doc.name, doc.specialty);
+                    }
+                  }}
                   className="w-full justify-center"
                 >
                   นัดหมายตรวจกับ {doc.name.split(' ')[1] || doc.name}

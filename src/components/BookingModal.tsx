@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   RiCloseLine,
   RiCheckLine,
@@ -32,6 +32,23 @@ const EMERGENCY_KEYWORDS = [
   'ช็อกโกแลต', 'พารา', 'เลือดไหล', 'รถชน', 'ตกตึก', 'ซีด', 'ช็อก'
 ];
 
+const getTodayLocalDateString = (): string => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const getTomorrowLocalDateString = (): string => {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const year = tomorrow.getFullYear();
+  const month = String(tomorrow.getMonth() + 1).padStart(2, '0');
+  const day = String(tomorrow.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 export const BookingModal: React.FC<BookingModalProps> = ({
   isOpen,
   onClose,
@@ -44,6 +61,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [bookingRefCode, setBookingRefCode] = useState<string>('');
   const [dismissedEmergencyWarning, setDismissedEmergencyWarning] = useState<boolean>(false);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   const [formData, setFormData] = useState<AppointmentFormData>({
     petType: initialPetType,
@@ -51,7 +69,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     petBreed: '',
     petAge: '',
     serviceCategory: initialService || 'ตรวจสุขภาพทั่วไปและฉีดวัคซีน',
-    preferredDate: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+    preferredDate: getTomorrowLocalDateString(),
     preferredTimeSlot: 'morning',
     isEmergencyCase: false,
     symptomsDescription: '',
@@ -69,14 +87,45 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     setDismissedEmergencyWarning(false);
   }, [initialPetType, initialService, initialDoctor, isOpen]);
 
-  // Handle escape key
+  const handleResetAndClose = useCallback(() => {
+    setIsSuccess(false);
+    setDismissedEmergencyWarning(false);
+    setStep(1);
+    onClose();
+  }, [onClose]);
+
+  // Focus trap & Escape key handling
   useEffect(() => {
+    if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) onClose();
+      if (e.key === 'Escape') {
+        handleResetAndClose();
+        return;
+      }
+      if (e.key === 'Tab') {
+        const focusableElements = modalRef.current?.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (!focusableElements || focusableElements.length === 0) return;
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
+        }
+      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  }, [isOpen, handleResetAndClose]);
 
   if (!isOpen) return null;
 
@@ -122,9 +171,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       const refCode = `ARAK-${Math.floor(1000 + Math.random() * 9000)}`;
       setBookingRefCode(refCode);
 
-      // Save to localStorage
+      // Safe save to localStorage
       try {
-        const existing = JSON.parse(localStorage.getItem('arak_appointments') || '[]');
+        const raw = localStorage.getItem('arak_appointments');
+        const parsed = raw ? JSON.parse(raw) : [];
+        const existing = Array.isArray(parsed) ? parsed : [];
         existing.push({ ...formData, refCode, createdAt: new Date().toISOString() });
         localStorage.setItem('arak_appointments', JSON.stringify(existing));
       } catch (err) {
@@ -136,16 +187,16 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     }, 700);
   };
 
-  const handleResetAndClose = () => {
-    setIsSuccess(false);
-    setDismissedEmergencyWarning(false);
-    setStep(1);
-    onClose();
-  };
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in"
+      onClick={handleResetAndClose}
+    >
       <div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="booking-modal-title"
         className="bg-background-primary-default text-text-primary rounded-3xl w-full max-w-xl shadow-2xl border border-border-button-default overflow-hidden animate-boardui-modal relative flex flex-col max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
@@ -156,7 +207,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               <RiCalendarEventLine className="size-4.5" />
             </div>
             <div>
-              <h3 className="font-bold text-title-3-semibold text-text-primary leading-none">นัดหมายตรวจล่วงหน้า</h3>
+              <h3 id="booking-modal-title" className="font-bold text-title-3-semibold text-text-primary leading-none">นัดหมายตรวจล่วงหน้า</h3>
               <p className="text-caption-1-medium text-text-tertiary mt-0.5">แม็กเหนือวินเหนือพิกโก้ สัตวแพทย์</p>
             </div>
           </div>
@@ -334,10 +385,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       </div>
 
                       <div>
-                        <label className="block text-caption-1-semibold text-text-primary mb-1">
+                        <label htmlFor="booking-pet-name" className="block text-caption-1-semibold text-text-primary mb-1">
                           ชื่อสัตว์เลี้ยง <span className="text-status-rose-text">*</span>
                         </label>
                         <input
+                          id="booking-pet-name"
                           type="text"
                           placeholder="เช่น ข้าวเหนียว, ชาโคล"
                           value={formData.petName}
@@ -351,8 +403,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
                       <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <label className="block text-caption-1-semibold text-text-primary mb-1">สายพันธุ์ (ถ้ามี)</label>
+                          <label htmlFor="booking-pet-breed" className="block text-caption-1-semibold text-text-primary mb-1">สายพันธุ์ (ถ้ามี)</label>
                           <input
+                            id="booking-pet-breed"
                             type="text"
                             placeholder="เช่น บริติชช็อตแฮร์, โกลเด้น"
                             value={formData.petBreed}
@@ -361,8 +414,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                           />
                         </div>
                         <div>
-                          <label className="block text-caption-1-semibold text-text-primary mb-1">อายุโดยประมาณ</label>
+                          <label htmlFor="booking-pet-age" className="block text-caption-1-semibold text-text-primary mb-1">อายุโดยประมาณ</label>
                           <input
+                            id="booking-pet-age"
                             type="text"
                             placeholder="เช่น 2 ปี 4 เดือน"
                             value={formData.petAge}
@@ -373,8 +427,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       </div>
 
                       <div>
-                        <label className="block text-caption-1-semibold text-text-primary mb-1">อาการเบื้องต้นที่สังเกตพบ</label>
+                        <label htmlFor="booking-symptoms" className="block text-caption-1-semibold text-text-primary mb-1">อาการเบื้องต้นที่สังเกตพบ</label>
                         <textarea
+                          id="booking-symptoms"
                           rows={2}
                           placeholder="เช่น ซึม ไม่กินข้าว อาเจียน 2 ครั้ง หรือนัดตรวจสุขภาพประจำปี"
                           value={formData.symptomsDescription}
@@ -389,8 +444,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   {step === 2 && (
                     <div className="space-y-4 animate-fade-in">
                       <div>
-                        <label className="block text-caption-1-semibold text-text-primary mb-1">แผนก / บริการที่ต้องการ</label>
+                        <label htmlFor="booking-service" className="block text-caption-1-semibold text-text-primary mb-1">แผนก / บริการที่ต้องการ</label>
                         <select
+                          id="booking-service"
                           value={formData.serviceCategory}
                           onChange={(e) => setFormData({ ...formData, serviceCategory: e.target.value })}
                           className="w-full px-3.5 py-2.5 rounded-xl border border-border-button-default text-body-medium text-text-primary bg-background-primary-default focus:outline-none focus:ring-2 focus:ring-border-focus-ring"
@@ -407,13 +463,14 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       </div>
 
                       <div>
-                        <label className="block text-caption-1-semibold text-text-primary mb-1">
+                        <label htmlFor="booking-date" className="block text-caption-1-semibold text-text-primary mb-1">
                           วันที่สะดวกเข้ารับบริการ <span className="text-status-rose-text">*</span>
                         </label>
                         <input
+                          id="booking-date"
                           type="date"
                           value={formData.preferredDate}
-                          min={new Date().toISOString().split('T')[0]}
+                          min={getTodayLocalDateString()}
                           onChange={(e) => setFormData({ ...formData, preferredDate: e.target.value })}
                           className={`w-full px-3.5 py-2.5 rounded-xl border text-body-medium text-text-primary bg-background-primary-default focus:outline-none focus:ring-2 focus:ring-border-focus-ring ${
                             errors.preferredDate ? 'border-status-rose-text bg-status-rose-background/20' : 'border-border-button-default'
@@ -501,10 +558,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       </div>
 
                       <div>
-                        <label className="block text-caption-1-semibold text-text-primary mb-1">
+                        <label htmlFor="booking-owner-name" className="block text-caption-1-semibold text-text-primary mb-1">
                           ชื่อ-นามสกุล เจ้าของสัตว์เลี้ยง <span className="text-status-rose-text">*</span>
                         </label>
                         <input
+                          id="booking-owner-name"
                           type="text"
                           placeholder="เช่น สมชาย ใจดี"
                           value={formData.ownerName}
@@ -517,10 +575,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       </div>
 
                       <div>
-                        <label className="block text-caption-1-semibold text-text-primary mb-1">
+                        <label htmlFor="booking-owner-phone" className="block text-caption-1-semibold text-text-primary mb-1">
                           เบอร์โทรศัพท์ที่ติดต่อได้สะดวก <span className="text-status-rose-text">*</span>
                         </label>
                         <input
+                          id="booking-owner-phone"
                           type="tel"
                           placeholder="เช่น 0812345678"
                           value={formData.ownerPhone}
@@ -533,8 +592,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       </div>
 
                       <div>
-                        <label className="block text-caption-1-semibold text-text-primary mb-1">LINE ID (ถ้ามี)</label>
+                        <label htmlFor="booking-owner-line" className="block text-caption-1-semibold text-text-primary mb-1">LINE ID (ถ้ามี)</label>
                         <input
+                          id="booking-owner-line"
                           type="text"
                           placeholder="เช่น @somchai"
                           value={formData.ownerLineId}

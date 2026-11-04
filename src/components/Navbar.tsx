@@ -31,6 +31,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   const navLinks = [
     { label: 'ศูนย์การแพทย์', href: '#services' },
     { label: 'ตามชนิดสัตว์', href: '#pet-treatments' },
+    { label: 'ทีมสัตวแพทย์', href: '#doctors' },
+    { label: 'รีวิวบริการ', href: '#reviews' },
     { label: 'คำถามที่พบบ่อย', href: '#faq' },
     { label: 'ที่ตั้งและเวลา', href: '#location' },
   ];
@@ -148,6 +150,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               leadingIcon={mobileMenuOpen ? RiCloseLine : RiMenuLine}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="เมนูหลัก"
+              aria-expanded={mobileMenuOpen}
             />
           </div>
         </div>

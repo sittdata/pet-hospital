@@ -1,14 +1,14 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { PetType } from './types';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { PetTreatmentExplorer } from './components/PetTreatmentExplorer';
 import { Services } from './components/Services';
+import { Doctors } from './components/Doctors';
+import { Reviews } from './components/Reviews';
 import { FAQ } from './components/FAQ';
 import { LocationHours } from './components/LocationHours';
 import { Footer } from './components/Footer';
-import { BookingModal } from './components/BookingModal';
-import { AuthModal } from './components/AuthModal';
 import { Button, ButtonLink } from '@/components/base/buttons/button';
 import {
   RiPhoneFill,
@@ -19,6 +19,13 @@ import {
   RiHospitalFill,
 } from '@remixicon/react';
 import { StatCards, type Stat } from '@/components/application/dashboard/stat-cards';
+
+const BookingModal = lazy(() =>
+  import('./components/BookingModal').then((m) => ({ default: m.BookingModal }))
+);
+const AuthModal = lazy(() =>
+  import('./components/AuthModal').then((m) => ({ default: m.AuthModal }))
+);
 
 export function App() {
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
@@ -117,6 +124,12 @@ export function App() {
         {/* Medical Services Catalog */}
         <Services onOpenBooking={handleOpenBooking} />
 
+        {/* Specialized Veterinary Doctors Team */}
+        <Doctors onOpenBooking={handleOpenBooking} />
+
+        {/* Client Reviews & Testimonials */}
+        <Reviews />
+
         {/* Interactive FAQ Section with BoardUI Accordion */}
         <FAQ />
 
@@ -152,21 +165,29 @@ export function App() {
         </Button>
       </aside>
 
-      {/* Interactive Booking Modal */}
-      <BookingModal
-        isOpen={bookingModalOpen}
-        onClose={() => setBookingModalOpen(false)}
-        initialPetType={bookingPetType}
-        initialService={bookingService}
-      />
+      {/* Interactive Booking Modal (Code Splitting with Suspense) */}
+      <Suspense fallback={null}>
+        {bookingModalOpen && (
+          <BookingModal
+            isOpen={bookingModalOpen}
+            onClose={() => setBookingModalOpen(false)}
+            initialPetType={bookingPetType}
+            initialService={bookingService}
+          />
+        )}
+      </Suspense>
 
-      {/* BoardUI Official Sign-in & Sign-up Auth Modal */}
-      <AuthModal
-        isOpen={authModalOpen}
-        onClose={() => setAuthModalOpen(false)}
-        initialMode={authMode}
-        onSuccess={(user) => setCurrentUser(user)}
-      />
+      {/* BoardUI Official Sign-in & Sign-up Auth Modal (Code Splitting with Suspense) */}
+      <Suspense fallback={null}>
+        {authModalOpen && (
+          <AuthModal
+            isOpen={authModalOpen}
+            onClose={() => setAuthModalOpen(false)}
+            initialMode={authMode}
+            onSuccess={(user) => setCurrentUser(user)}
+          />
+        )}
+      </Suspense>
     </div>
   );
 }

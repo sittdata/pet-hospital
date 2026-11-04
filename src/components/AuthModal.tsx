@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { RiCloseLine, RiHeartPulseFill } from '@remixicon/react';
 import { AuthCard, type AuthMode } from '@/components/application/auth/auth-card';
 import { Button } from '@/components/base/buttons/button';
@@ -17,16 +17,44 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   onSuccess,
 }) => {
   const [mode, setMode] = useState<AuthMode>(initialMode);
+  const [prevInitialMode, setPrevInitialMode] = useState<AuthMode>(initialMode);
   const [successToast, setSuccessToast] = useState<string | null>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  if (prevInitialMode !== initialMode) {
+    setPrevInitialMode(initialMode);
     setMode(initialMode);
     setSuccessToast(null);
-  }, [initialMode, isOpen]);
+  }
 
+  // Focus trap & Escape key handling
   useEffect(() => {
+    if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) onClose();
+      if (e.key === 'Escape') {
+        onClose();
+        return;
+      }
+      if (e.key === 'Tab') {
+        const focusableElements = modalRef.current?.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (!focusableElements || focusableElements.length === 0) return;
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
+        }
+      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
@@ -66,6 +94,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       onClick={onClose}
     >
       <div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={mode === 'signin' ? 'เข้าสู่ระบบ' : 'สร้างบัญชี'}
         className="relative w-full max-w-[440px] animate-boardui-modal"
         onClick={(e) => e.stopPropagation()}
       >
