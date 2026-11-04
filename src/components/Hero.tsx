@@ -25,8 +25,8 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
           {/* Left Column: Clinical Core Presentation + Heatmap Chart Card */}
           <div className="lg:col-span-6 space-y-6">
             {/* Main Headline */}
-            <h1 className="text-title-1-semibold xs:text-large-title-bold sm:text-display-1-bold text-text-primary tracking-tight leading-[1.15]">
-              เคียงข้างทุกชีวิตสัตว์เลี้ยง <br />
+            <h1 className="text-2xl sm:text-3xl lg:text-[2.15rem] xl:text-[2.35rem] font-bold text-text-primary tracking-tight leading-snug sm:leading-tight">
+              เคียงข้างทุกชีวิตสัตว์เลี้ยง <br className="hidden sm:inline" />
               <span className="text-accent-500">พร้อมดูแลคุณทุกวินาที</span> ตลอด 24 ชั่วโมง
             </h1>
 
