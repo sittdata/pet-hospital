@@ -4,7 +4,7 @@ import {
   RiLineFill,
 } from '@remixicon/react';
 import { Button, ButtonLink } from '@/components/base/buttons/button';
-import { HeatmapChartCard } from '@/components/application/charts/heatmap-chart-card';
+import { HospitalAlertsCard } from './HospitalAlertsCard';
 import { HeroPetCardDeck } from './HeroPetCardDeck';
 import { HospitalTaskList } from './HospitalTaskList';
 
@@ -64,7 +64,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
 
             {/* Heatmap Chart Card (Replaced the 3 micro stat cards) */}
             <div className="pt-2">
-              <HeatmapChartCard />
+              <HospitalAlertsCard />
             </div>
           </div>
 
