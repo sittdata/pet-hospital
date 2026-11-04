@@ -14,7 +14,7 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
   return (
-    <section className="relative overflow-hidden bg-background-primary-default pt-8 pb-16 lg:pt-12 lg:pb-20 border-b border-border-button-default transition-colors">
+    <section className="relative overflow-hidden overflow-x-clip bg-background-primary-default pt-6 pb-12 sm:pt-8 sm:pb-16 lg:pt-12 lg:pb-20 border-b border-border-button-default transition-colors">
       {/* Background High-End Subtle Geometry */}
       <div className="absolute top-0 right-0 -mr-24 -mt-24 size-96 rounded-full bg-accent-500/10 blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 -ml-24 -mb-24 size-96 rounded-full bg-status-blue-background/30 blur-3xl pointer-events-none" />
@@ -25,8 +25,8 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
           {/* Left Column: Clinical Core Presentation + Heatmap Chart Card */}
           <div className="lg:col-span-6 space-y-6">
             {/* Main Headline */}
-            <h1 className="text-large-title-bold sm:text-display-1-bold text-text-primary tracking-tight leading-[1.12]">
-              เคียงข้างทุกชีวิตสัตว์เลี้ยง <br />
+            <h1 className="text-title-1-semibold xs:text-large-title-bold sm:text-display-1-bold text-text-primary tracking-tight leading-[1.15]">
+              เคียงข้างทุกชีวิตสัตว์เลี้ยง <br className="hidden sm:inline" />
               <span className="text-accent-500">บริบาลด้วยมาตรฐานสากล</span> ตลอด 24 ชั่วโมง
             </h1>
 

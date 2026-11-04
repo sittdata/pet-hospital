@@ -33,6 +33,14 @@ export const HeroPetCardDeck: React.FC<HeroPetCardDeckProps> = () => {
   const [cards, setCards] = useState<CardStackItem[]>(defaultCards);
   const [isHovered, setIsHovered] = useState(false);
   const [hoveredCardId, setHoveredCardId] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 640);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Click card to bring it to the front/center
   const handleCardClick = (clickedId: string) => {
@@ -46,10 +54,10 @@ export const HeroPetCardDeck: React.FC<HeroPetCardDeckProps> = () => {
   };
 
   return (
-    <div className="relative w-full flex items-center justify-center py-4 select-none overflow-visible">
+    <div className="relative w-full flex items-center justify-center py-2 sm:py-4 select-none overflow-hidden sm:overflow-visible">
       {/* Centered Large Card Stack Stage (Frameless, Floats Directly on Page) */}
       <div
-        className="relative w-full max-w-[540px] h-[370px] sm:h-[420px] flex items-center justify-center cursor-pointer group"
+        className="relative w-full max-w-[540px] h-[310px] xs:h-[340px] sm:h-[420px] flex items-center justify-center cursor-pointer group"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => {
           setIsHovered(false);
@@ -79,13 +87,13 @@ export const HeroPetCardDeck: React.FC<HeroPetCardDeckProps> = () => {
           let opacity = isCenter ? 1 : 0.88;
 
           if (isLeft) {
-            translateX = -18;
-            translateY = 10;
-            rotate = -8;
+            translateX = isMobile ? -10 : -18;
+            translateY = isMobile ? 6 : 10;
+            rotate = isMobile ? -6 : -8;
           } else if (isRight) {
-            translateX = 20;
-            translateY = 8;
-            rotate = 7;
+            translateX = isMobile ? 10 : 20;
+            translateY = isMobile ? 5 : 8;
+            rotate = isMobile ? 5 : 7;
           } else {
             translateX = 0;
             translateY = 0;
@@ -96,23 +104,23 @@ export const HeroPetCardDeck: React.FC<HeroPetCardDeckProps> = () => {
           if (isHovered) {
             opacity = 1;
             if (isLeft) {
-              translateX = -115;
-              translateY = 6;
-              rotate = -14;
+              translateX = isMobile ? -46 : -115;
+              translateY = isMobile ? 4 : 6;
+              rotate = isMobile ? -9 : -14;
             } else if (isRight) {
-              translateX = 115;
-              translateY = 6;
-              rotate = 14;
+              translateX = isMobile ? 46 : 115;
+              translateY = isMobile ? 4 : 6;
+              rotate = isMobile ? 9 : 14;
             } else {
               translateX = 0;
-              translateY = -15;
-              scale = 1.03;
+              translateY = isMobile ? -8 : -15;
+              scale = isMobile ? 1.02 : 1.03;
             }
           }
 
           // Individual Card Hover Boost
           if (isDirectlyHovered) {
-            scale = 1.07;
+            scale = isMobile ? 1.04 : 1.07;
             zIndex = 35;
           }
 
@@ -128,7 +136,7 @@ export const HeroPetCardDeck: React.FC<HeroPetCardDeckProps> = () => {
               onMouseEnter={() => setHoveredCardId(card.id)}
               onMouseLeave={() => setHoveredCardId(null)}
               className={cx(
-                'absolute inset-0 m-auto w-[270px] sm:w-[310px] lg:w-[330px] h-[330px] sm:h-[370px] lg:h-[390px] rounded-3xl overflow-hidden shadow-2xl border border-white/20 focus:outline-hidden',
+                'absolute inset-0 m-auto w-[220px] xs:w-[250px] sm:w-[310px] lg:w-[330px] h-[280px] xs:h-[310px] sm:h-[370px] lg:h-[390px] rounded-3xl overflow-hidden shadow-2xl border border-white/20 focus:outline-hidden',
                 isCenter ? 'shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]' : 'shadow-xl'
               )}
               style={{

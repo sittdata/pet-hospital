@@ -37,24 +37,26 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header className="sticky top-0 z-40 bg-background-primary-default/90 backdrop-blur-md border-b border-border-button-default transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20 gap-4">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 sm:h-20 gap-2 sm:gap-4">
           {/* Logo & Brand */}
-          <a href="#" className="flex items-center gap-2.5 shrink-0 group">
-            <div className="size-11 rounded-2xl bg-gradient-to-b from-accent-500 to-accent-600 flex items-center justify-center text-white shadow-xs group-hover:opacity-95 transition-opacity shrink-0">
-              <RiHeartPulseFill className="size-6 text-white" />
+          <a href="#" className="flex items-center gap-2 sm:gap-2.5 min-w-0 group">
+            <div className="size-9 sm:size-11 rounded-xl sm:rounded-2xl bg-gradient-to-b from-accent-500 to-accent-600 flex items-center justify-center text-white shadow-xs group-hover:opacity-95 transition-opacity shrink-0">
+              <RiHeartPulseFill className="size-5 sm:size-6 text-white" />
             </div>
-            <div className="shrink-0">
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-title-3-semibold text-text-primary tracking-tight whitespace-nowrap">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="font-bold text-headline-medium sm:text-title-3-semibold text-text-primary tracking-tight truncate max-w-[155px] xs:max-w-[210px] sm:max-w-none">
                   แม็กเหนือวินเหนือพิกโก้
                 </span>
-                <span className="inline-flex shrink-0 items-center gap-1 px-2 py-0.5 rounded-full bg-status-lime-background text-status-lime-text text-caption-2-bold whitespace-nowrap">
+                <span className="hidden xs:inline-flex shrink-0 items-center gap-1 px-1.5 py-0.5 rounded-full bg-status-lime-background text-status-lime-text text-caption-2-bold whitespace-nowrap">
                   <StatusDot color="green" />
                   <span>24 ชม.</span>
                 </span>
               </div>
-              <p className="text-caption-1-medium text-text-secondary whitespace-nowrap">Arak Care Animal Hospital</p>
+              <p className="text-caption-2-regular sm:text-caption-1-medium text-text-secondary truncate hidden xs:block">
+                Arak Care Animal Hospital
+              </p>
             </div>
           </a>
 
@@ -71,7 +73,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             ))}
           </nav>
 
-          {/* Right Action Tools & Buttons */}
+          {/* Right Action Tools & Buttons (Desktop) */}
           <div className="hidden sm:flex items-center gap-2 shrink-0">
             {/* Theme Toggle (Light / Dark switch) */}
             <ThemeToggle appearance="segmented" size="small" />
@@ -129,17 +131,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             </Button>
           </div>
 
-          {/* Mobile Right Controls */}
-          <div className="flex sm:hidden items-center gap-2">
-            <ThemeToggle appearance="segmented" size="small" />
-            <Button
-              variant="ghost"
-              size="small"
-              iconOnly
-              leadingIcon={RiUserLine}
-              onClick={() => onOpenAuth('signin')}
-              aria-label="เข้าสู่ระบบ"
-            />
+          {/* Mobile Right Controls: Compact, No Overflow */}
+          <div className="flex sm:hidden items-center gap-1.5 shrink-0">
             <ButtonLink
               href="tel:028889999"
               variant="danger"
@@ -163,6 +156,12 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="lg:hidden border-t border-border-button-default bg-background-primary-default px-4 pt-3 pb-6 space-y-3 animate-fade-in shadow-lg">
+          {/* Mobile Theme Toggle Row */}
+          <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-background-secondary-default/50 border border-border-button-default">
+            <span className="text-caption-1-medium text-text-secondary">ธีมการแสดงผล</span>
+            <ThemeToggle appearance="segmented" size="small" />
+          </div>
+
           {currentUser && (
             <div className="flex items-center justify-between p-3 rounded-2xl bg-background-secondary-default border border-border-button-default">
               <div className="flex items-center gap-2.5">
