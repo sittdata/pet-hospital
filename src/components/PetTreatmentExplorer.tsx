@@ -62,10 +62,11 @@ export const PetTreatmentExplorer: React.FC<PetTreatmentExplorerProps> = ({ onSe
         </div>
 
         {/* Lucian #223 Horizontal Pet Category Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8" role="tablist" aria-label="หมวดหมู่ชนิดสัตว์เลี้ยง">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 pt-14 sm:pt-20 mb-8" role="tablist" aria-label="หมวดหมู่ชนิดสัตว์เลี้ยง">
           {petCategories.map((cat) => {
             const isSelected = selectedPet === cat.id;
             const catTreatmentsCount = treatmentsByPet.filter((t) => t.petType === cat.id).length;
+            const isCat = cat.id === 'cat';
 
             return (
               <button
@@ -75,14 +76,14 @@ export const PetTreatmentExplorer: React.FC<PetTreatmentExplorerProps> = ({ onSe
                 aria-selected={isSelected}
                 onClick={() => handlePetClick(cat.id)}
                 className={cx(
-                  'group relative flex flex-col justify-between text-start rounded-3xl p-4 sm:p-5 transition-all duration-200 button-press-motion cursor-pointer border',
+                  'group relative flex flex-col justify-between text-start rounded-3xl p-4 sm:p-5 transition-all duration-200 button-press-motion cursor-pointer border min-h-[220px] sm:min-h-[250px]',
                   isSelected
                     ? 'bg-background-primary-default border-accent-500 ring-2 ring-accent-500/20 shadow-md -translate-y-1'
                     : 'bg-background-primary-default border-border-button-default hover:border-accent-300 hover:shadow-sm hover:-translate-y-0.5'
                 )}
               >
-                {/* Top bar: Badge & Radio indicator */}
-                <div className="flex items-center justify-between w-full gap-2 relative z-20">
+                {/* Top bar: Badge & Radio indicator (behind the pet in z-index) */}
+                <div className="flex items-center justify-between w-full gap-2 relative z-10">
                   <Chip
                     color={isSelected ? 'blue' : 'neutral'}
                     variant="bold"
@@ -102,26 +103,42 @@ export const PetTreatmentExplorer: React.FC<PetTreatmentExplorerProps> = ({ onSe
                   </div>
                 </div>
 
-                {/* Pet Artwork Visual Container */}
-                <div className="relative my-3 h-28 sm:h-36 w-full rounded-2xl bg-background-secondary-default/70 flex items-center justify-center p-2 transition-colors group-hover:bg-accent-500/5">
-                  {/* Subtle depth shadow at the bottom */}
-                  <div className="absolute inset-x-6 bottom-1.5 h-4 bg-black/10 dark:bg-black/30 rounded-full blur-md pointer-events-none" />
+                {isCat ? (
+                  <>
+                    {/* Big typographic watermark behind pet */}
+                    <div className="absolute inset-x-0 top-12 bottom-12 flex items-center justify-center overflow-hidden pointer-events-none select-none z-0">
+                      <span className="text-5xl sm:text-6xl font-black uppercase tracking-widest text-text-placeholder/30 dark:text-text-placeholder/15">
+                        CAT
+                      </span>
+                    </div>
 
-                  <img
-                    src={petImageMap[cat.id]}
-                    alt={cat.name}
-                    className={cx(
-                      'transition-all duration-300 select-none pointer-events-none',
-                      cat.id === 'cat'
-                        ? 'h-36 sm:h-44 w-auto max-w-none -translate-y-4 sm:-translate-y-5 scale-125 sm:scale-135 group-hover:scale-140 sm:group-hover:scale-145 group-hover:-translate-y-6 drop-shadow-[0_14px_20px_rgba(0,0,0,0.22)] dark:drop-shadow-[0_14px_24px_rgba(0,0,0,0.6)] z-10'
-                        : 'h-full w-auto max-w-full object-contain drop-shadow-md group-hover:scale-105'
-                    )}
-                    loading="lazy"
-                  />
-                </div>
+                    {/* Cat pop-out: No inner box, half body popping out over top card edge */}
+                    <div className="relative w-full flex-1 flex items-end justify-center min-h-[130px] sm:min-h-[150px] my-1">
+                      {/* Soft contact shadow on card floor */}
+                      <div className="absolute bottom-1 w-28 sm:w-32 h-4 bg-black/20 dark:bg-black/40 rounded-full blur-md pointer-events-none z-10" />
+
+                      <img
+                        src={petImageMap.cat}
+                        alt={cat.name}
+                        className="absolute -top-20 sm:-top-24 left-1/2 -translate-x-[44%] h-52 sm:h-60 w-auto max-w-none object-contain drop-shadow-[0_20px_25px_rgba(0,0,0,0.25)] dark:drop-shadow-[0_20px_35px_rgba(0,0,0,0.7)] select-none pointer-events-none z-20 transition-transform duration-300 ease-out group-hover:scale-105 group-hover:-translate-y-2"
+                        loading="lazy"
+                      />
+                    </div>
+                  </>
+                ) : (
+                  /* Standard Pet Artwork Visual Container for other animals */
+                  <div className="relative my-3 h-28 sm:h-36 w-full rounded-2xl bg-background-secondary-default/70 flex items-center justify-center p-2 overflow-hidden transition-colors group-hover:bg-accent-500/5">
+                    <img
+                      src={petImageMap[cat.id]}
+                      alt={cat.name}
+                      className="h-full w-auto max-w-full object-contain drop-shadow-md group-hover:scale-105 transition-transform duration-300 select-none"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
 
                 {/* Bottom Details */}
-                <div className="space-y-0.5 w-full relative z-20">
+                <div className="space-y-0.5 w-full relative z-10">
                   <div className="flex items-center justify-between gap-1">
                     <h3
                       className={cx(
