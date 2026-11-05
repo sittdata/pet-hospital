@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { PetType, TreatmentItem } from '../types';
 import { petCategories, treatmentsByPet } from '../data/petTreatmentsData';
 import {
@@ -27,12 +27,30 @@ const petImageMap: Record<PetType, string> = {
 
 export const PetTreatmentExplorer: React.FC<PetTreatmentExplorerProps> = ({ onSelectBooking }) => {
   const [selectedPet, setSelectedPet] = useState<PetType | null>(null);
+  const detailsRef = useRef<HTMLDivElement>(null);
 
   const currentCategory = selectedPet ? petCategories.find((c) => c.id === selectedPet) : null;
   const filteredTreatments = selectedPet ? treatmentsByPet.filter((t) => t.petType === selectedPet) : [];
 
   const handlePetClick = (petId: PetType) => {
-    setSelectedPet((prev) => (prev === petId ? null : petId));
+    if (selectedPet === petId) {
+      setSelectedPet(null);
+    } else {
+      setSelectedPet(petId);
+      // Smoothly scroll down to pet details after state update
+      setTimeout(() => {
+        detailsRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      }, 60);
+    }
+  };
+
+  const handleCollapse = () => {
+    setSelectedPet(null);
+    const section = document.getElementById('pet-treatments');
+    section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const renderPetIcon = (type: PetType, className = 'size-5') => {
@@ -138,7 +156,7 @@ export const PetTreatmentExplorer: React.FC<PetTreatmentExplorerProps> = ({ onSe
 
         {/* Pet Selected - Details & Treatment Explorer */}
         {currentCategory && selectedPet && (
-          <div className="animate-fade-in space-y-6 pt-2">
+          <div ref={detailsRef} id="pet-details-section" className="animate-fade-in space-y-6 pt-2 scroll-mt-24">
             {/* BoardUI Breadcrumb for Pet Category Navigation */}
             <div className="px-1 flex items-center justify-between">
               <Breadcrumb>
@@ -151,8 +169,8 @@ export const PetTreatmentExplorer: React.FC<PetTreatmentExplorerProps> = ({ onSe
               <Button
                 variant="ghost"
                 size="small"
-                onClick={() => setSelectedPet(null)}
-                className="text-text-tertiary hover:text-text-primary text-caption-1-medium"
+                onClick={handleCollapse}
+                className="text-text-tertiary hover:text-text-primary text-caption-1-medium cursor-pointer"
               >
                 ย่อเก็บ
               </Button>
