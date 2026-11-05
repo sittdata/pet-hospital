@@ -18,11 +18,12 @@ interface PetTreatmentExplorerProps {
   onSelectBooking: (petType: PetType, serviceTitle: string) => void;
 }
 
+// ponytail: using curated high-res CDN pet photography; swap to locally hosted static assets if offline self-hosting required
 const petImageMap: Record<PetType, string> = {
-  cat: '/images/pets/cat.png',
-  dog: '/images/pets/dog.png',
-  exotic: '/images/pets/exotic.png',
-  small: '/images/pets/small.png',
+  cat: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=600',
+  dog: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=600',
+  exotic: 'https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?auto=format&fit=crop&q=80&w=600',
+  small: 'https://images.unsplash.com/photo-1548767797-d8c844163c4c?auto=format&fit=crop&q=80&w=600',
 };
 
 export const PetTreatmentExplorer: React.FC<PetTreatmentExplorerProps> = ({ onSelectBooking }) => {
@@ -125,7 +126,7 @@ export const PetTreatmentExplorer: React.FC<PetTreatmentExplorerProps> = ({ onSe
                   <img
                     src={petImageMap[cat.id]}
                     alt={cat.name}
-                    className="h-full w-auto max-w-full object-contain drop-shadow-md group-hover:scale-105 transition-transform duration-300 select-none"
+                    className="h-full w-full object-cover rounded-xl shadow-xs transition-transform duration-300 select-none group-hover:scale-105"
                     loading="lazy"
                   />
                 </div>
