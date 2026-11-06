@@ -1,9 +1,10 @@
-import { useState, lazy, Suspense } from 'react';
+﻿import { useState, lazy, Suspense } from 'react';
 import { PetType } from './types';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { PetTreatmentExplorer } from './components/PetTreatmentExplorer';
 import { Services } from './components/Services';
+import Doctors from './components/Doctors';
 import { CustomerChatPhoneMockup } from './components/CustomerChatPhoneMockup';
 import { TypewriterText } from './components/TypewriterText';
 import { FAQ } from './components/FAQ';
@@ -178,6 +179,9 @@ export function App() {
 
         {/* Medical Services Catalog */}
         <Services onOpenBooking={handleOpenBooking} />
+
+        {/* Specialist Veterinary Team */}
+        <Doctors onOpenBooking={handleOpenBooking} />
 
         {/* Interactive FAQ Section with BoardUI Accordion */}
         <FAQ />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
   RiHeartPulseFill,
   RiPhoneFill,
@@ -31,6 +31,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const navLinks = [
     { label: 'ตามชนิดสัตว์', href: '#pet-treatments' },
     { label: 'ศูนย์การแพทย์', href: '#services' },
+    { label: 'ทีมสัตวแพทย์', href: '#doctors' },
     { label: 'คำถามที่พบบ่อย', href: '#faq' },
     { label: 'ที่ตั้งและเวลา', href: '#location' },
   ];
