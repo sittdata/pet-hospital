@@ -16,6 +16,7 @@ import { ThemeToggle } from '@/components/application/theme/theme-toggle';
 interface NavbarProps {
   onOpenBooking: (prefillPetType?: string) => void;
   onOpenAuth: (mode?: 'signin' | 'signup') => void;
+  onOpenSlide?: () => void;
   currentUser?: { name: string; email: string } | null;
   onSignOut?: () => void;
 }
@@ -23,6 +24,7 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({
   onOpenBooking,
   onOpenAuth,
+  onOpenSlide,
   currentUser,
   onSignOut,
 }) => {
@@ -75,6 +77,18 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Right Action Tools & Buttons (Desktop) */}
           <div className="hidden sm:flex items-center gap-2 shrink-0">
+            {/* Presentation Slide Trigger */}
+            {onOpenSlide && (
+              <button
+                type="button"
+                onClick={onOpenSlide}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent-500/10 hover:bg-accent-500/20 text-accent-700 dark:text-accent-300 text-caption-1-semibold border border-accent-500/25 transition-all cursor-pointer whitespace-nowrap"
+                title="เปิดสไลด์อธิบาย Prompt & สถาปัตยกรรม UI"
+              >
+                <span>📊 สไลด์นำเสนอ</span>
+              </button>
+            )}
+
             {/* Theme Toggle (Light / Dark switch) */}
             <ThemeToggle appearance="segmented" size="small" />
 
@@ -192,6 +206,19 @@ export const Navbar: React.FC<NavbarProps> = ({
               {link.label}
             </a>
           ))}
+          {onOpenSlide && (
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onOpenSlide();
+              }}
+              className="w-full text-left px-3 py-2.5 rounded-xl text-body-medium text-accent-700 dark:text-accent-300 bg-accent-500/10 font-medium transition-colors flex items-center justify-between"
+            >
+              <span>📊 สไลด์นำเสนอ (Prompt Breakdown)</span>
+              <span className="text-caption-2-bold uppercase tracking-wider bg-accent-500/20 px-2 py-0.5 rounded-md">Slide</span>
+            </button>
+          )}
           <div className="pt-2 border-t border-border-button-default flex flex-col gap-2">
             {!currentUser && (
               <Button

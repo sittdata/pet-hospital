@@ -1,6 +1,7 @@
-import { useState, lazy, Suspense } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { PetType } from './types';
 import { Navbar } from './components/Navbar';
+import { PromptPresentationSlide } from './components/PromptPresentationSlide';
 import { Hero } from './components/Hero';
 import { PetTreatmentExplorer } from './components/PetTreatmentExplorer';
 import { Services } from './components/Services';
@@ -28,6 +29,7 @@ const AuthModal = lazy(() =>
 );
 
 export function App() {
+  const [slideOpen, setSlideOpen] = useState(() => window.location.hash === '#slide');
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [bookingPetType, setBookingPetType] = useState<PetType>('cat');
   const [bookingService, setBookingService] = useState<string>('');
@@ -37,6 +39,13 @@ export function App() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [currentUser, setCurrentUser] = useState<{ name: string; email: string } | null>(null);
+
+  // Hash listener for direct #slide link
+  useEffect(() => {
+    const handleHash = () => setSlideOpen(window.location.hash === '#slide');
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
+  }, []);
 
   const handleOpenAuth = (mode: 'signin' | 'signup' = 'signin') => {
     setAuthMode(mode);
@@ -104,6 +113,7 @@ export function App() {
       <Navbar
         onOpenBooking={() => handleOpenBooking()}
         onOpenAuth={handleOpenAuth}
+        onOpenSlide={() => setSlideOpen(true)}
         currentUser={currentUser}
         onSignOut={() => setCurrentUser(null)}
       />
@@ -244,6 +254,18 @@ export function App() {
           />
         )}
       </Suspense>
+
+      {/* Embedded Prompt Presentation Slide */}
+      {slideOpen && (
+        <PromptPresentationSlide
+          onClose={() => {
+            setSlideOpen(false);
+            if (window.location.hash === '#slide') {
+              history.pushState(null, '', window.location.pathname);
+            }
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide Presentation</title>
+  <!-- Google Fonts: Kanit & Prompt -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Kanit', 'Prompt', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Kanit', 'Prompt', sans-serif;
+      background: radial-gradient(circle at 50% 50%, #ffffff 0%, #edf2f7 100%);
+    }
+    .slide-canvas {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2.5rem 3.5rem;
+      position: relative;
+    }
+    .pin {
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 15px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+      border: 2.5px solid white;
+      z-index: 30;
+      animation: pulse-pin 2s infinite ease-in-out;
+    }
+    @keyframes pulse-pin {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Pure 16:9 Presentation Slide Canvas (No borders, No bars, Edge-to-Edge) -->
+  <div class="slide-canvas">
+    
+    <!-- Subtle Ambient Glows -->
+    <div class="absolute -top-32 -left-32 w-96 h-96 bg-teal-500/8 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-blue-500/8 rounded-full blur-3xl pointer-events-none"></div>
+
+    <!-- Main Grid: 3 Columns -->
+    <div class="grid grid-cols-12 gap-7 items-center relative z-10 w-full max-w-[1800px] my-auto">
+      
+      <!-- LEFT COLUMN: 3 Prompt Cards -->
+      <div class="col-span-3 space-y-4">
+        
+        <!-- Card 1: Headline -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-center gap-2.5 mb-2.5">
+            <span class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold shrink-0">1</span>
+            <h4 class="font-bold text-sm text-slate-900 tracking-tight">พาดหัวสร้างความอุ่นใจ (Copywriting)</h4>
+          </div>
+          <p class="text-slate-600 text-xs leading-relaxed bg-slate-50/90 p-3 rounded-xl border border-slate-100 font-normal">
+            <strong class="text-slate-800">Prompt:</strong> "ปรับโทนข้อความจากโบรชัวร์แข็งๆ ให้สร้างความอุ่นใจ เน้นเปิด 24 ชม. และย่อยบริการเหลือ 2 บรรทัด ไม่ใช้ศัพท์เทคนิคซับซ้อน"
+          </p>
+          <div class="mt-2 text-[11px] text-blue-700 font-semibold">
+            ↳ เน้นไฮไลต์สีฟ้า: <em>"พร้อมดูแลคุณทุกวินาที"</em>
+          </div>
+        </div>
+
+        <!-- Card 2: Dual Action Buttons -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-center gap-2.5 mb-2.5">
+            <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold shrink-0">2</span>
+            <h4 class="font-bold text-sm text-slate-900 tracking-tight">ปุ่มคู่คัดกรองผู้ใช้ (Dual-CTA)</h4>
+          </div>
+          <p class="text-slate-600 text-xs leading-relaxed bg-slate-50/90 p-3 rounded-xl border border-slate-100 font-normal">
+            <strong class="text-slate-800">Prompt:</strong> "ออกแบบปุ่มคู่แยก 2 กลุ่ม: คนวางแผนล่วงหน้าใช้ปุ่มน้ำเงิน <code class="text-blue-600 font-semibold">accent-500</code> และคนกังวลใจใช้ปุ่มเขียว LINE <code class="text-emerald-600 font-semibold">#06C755</code> ส่งรูปถามอาการทันที"
+          </p>
+          <div class="mt-2 text-[11px] text-emerald-700 font-semibold">
+            ↳ ตอบโจทย์ทั้งเคสเตรียมตัวล่วงหน้าและเคสรีบด่วน
+          </div>
+        </div>
+
+        <!-- Card 3: Clinical Feed -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-center gap-2.5 mb-2.5">
+            <span class="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs font-bold shrink-0">3</span>
+            <h4 class="font-bold text-sm text-slate-900 tracking-tight">ฟีดการแพทย์จริง (Live Trust Card)</h4>
+          </div>
+          <p class="text-slate-600 text-xs leading-relaxed bg-slate-50/90 p-3 rounded-xl border border-slate-100 font-normal">
+            <strong class="text-slate-800">Prompt:</strong> "เพิ่มการ์ด Bento ทรงมน <code class="text-slate-800 font-semibold">rounded-3xl</code> ซ้อนการ์ดย่อยด้านใน โชว์เคสกู้ชีพผ่าตัดกระเพาะบิด (GDV) สีแดง และรับรองมาตรฐานแมวสากล (ISFM) สีทอง"
+          </p>
+          <div class="mt-2 text-[11px] text-rose-700 font-semibold">
+            ↳ ใช้หลัก Show, Don't Tell เพื่อสร้างความน่าเชื่อถือ
+          </div>
+        </div>
+
+      </div>
+
+      <!-- CENTER COLUMN: Large UI Image with Pins -->
+      <div class="col-span-6 flex flex-col items-center justify-center px-1">
+        <div class="relative w-full rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-slate-900">
+          <img src="/hero-presentation.jpg" alt="Hero Section Preview" class="w-full object-cover">
+          
+          <!-- Pins Positioned Precisely on UI Features -->
+          <div class="pin bg-blue-600 text-white" style="top: 14%; left: 16%;">1</div>
+          <div class="pin bg-emerald-600 text-white" style="top: 43%; left: 18%;">2</div>
+          <div class="pin bg-rose-600 text-white" style="top: 68%; left: 24%;">3</div>
+          <div class="pin bg-purple-600 text-white" style="top: 32%; right: 28%;">4</div>
+          <div class="pin bg-teal-600 text-white" style="top: 72%; right: 28%;">5</div>
+        </div>
+
+        <!-- Bottom Legend Bar -->
+        <div class="mt-5 flex items-center justify-center gap-5 text-xs text-slate-600 font-medium bg-white/85 backdrop-blur-md px-6 py-2 rounded-full border border-slate-200/90 shadow-sm">
+          <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span> 1. ข้อความพาดหัว</span>
+          <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span> 2. ปุ่มคู่ Dual-CTA</span>
+          <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-rose-600"></span> 3. ฟีดเคสจริง</span>
+          <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-purple-600"></span> 4. 3D AI Card</span>
+          <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-teal-600"></span> 5. ขั้นตอนรักษา</span>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: 2 Prompt Cards -->
+      <div class="col-span-3 space-y-4">
+        
+        <!-- Card 4: 3D Pet Card Deck & AI Composer -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-center gap-2.5 mb-2.5">
+            <span class="w-6 h-6 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs font-bold shrink-0">4</span>
+            <h4 class="font-bold text-sm text-slate-900 tracking-tight">การ์ด 3D สลับรูป + AI Typewriter</h4>
+          </div>
+          <p class="text-slate-600 text-xs leading-relaxed bg-slate-50/90 p-3 rounded-xl border border-slate-100 font-normal">
+            <strong class="text-slate-800">Prompt:</strong> "ทำการ์ดรูปคุณหมอกอดสัตว์เลี้ยงซ้อนกัน 3 ชั้นแบบมีมิติ 3D สลับรูปหมา-แมวอัตโนมัติ และมีแถบแคปซูลแชตสีขาวลอยทับขอบล่าง ทำเอฟเฟกต์ Typewriter พิมพ์คำถามสด พร้อมปุ่มลูกศรสีน้ำเงินส่งตรวจ"
+          </p>
+          <div class="mt-2 text-[11px] text-purple-700 font-semibold">
+            ↳ Micro-Interactive ทำให้หน้าเว็บดูโมเดิร์น มีชีวิตชีวา
+          </div>
+        </div>
+
+        <!-- Card 5: Patient Workflow Task List -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-center gap-2.5 mb-2.5">
+            <span class="w-6 h-6 rounded-full bg-teal-600 text-white flex items-center justify-center text-xs font-bold shrink-0">5</span>
+            <h4 class="font-bold text-sm text-slate-900 tracking-tight">ขั้นตอนตรวจรักษาแบบสด (Live Task List)</h4>
+          </div>
+          <p class="text-slate-600 text-xs leading-relaxed bg-slate-50/90 p-3 rounded-xl border border-slate-100 font-normal">
+            <strong class="text-slate-800">Prompt:</strong> "สร้างขั้นตอน Timeline จำลองเคสน้องมีตังค์กลืนสิ่งแปลกปลอม แบ่ง 2 สเต็ป: รับเคสตรวจ SpO2/HR/เอกซเรย์ และ ส่องกล้องคีบสำเร็จไร้แผล 100% พร้อมป้ายบอกค่าน้ำหนักจริง และปุ่ม Run again ให้กดเล่นใหม่ได้"
+          </p>
+          <div class="mt-2 text-[11px] text-teal-700 font-semibold">
+            ↳ สร้างความโปร่งใส (Transparency) ในขั้นตอนการดูแล
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</body>
+</html>
