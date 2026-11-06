@@ -124,7 +124,7 @@ export const HeroPetCardDeck: React.FC<HeroPetCardDeckProps> = ({ onOpenBooking 
     >
       {/* 3D Rotating Stack Stage */}
       <div
-        className="relative w-full max-w-[540px] h-[310px] xs:h-[340px] sm:h-[410px] flex items-center justify-center cursor-pointer group"
+        className="relative w-full max-w-[540px] h-[310px] xs:h-[340px] sm:h-[410px] flex items-center justify-center cursor-pointer group mx-auto"
         style={{ perspective: '1200px' }}
       >
         {defaultCards.map((card, idx) => {

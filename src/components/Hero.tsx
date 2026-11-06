@@ -14,12 +14,18 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
   return (
-    <section className="relative overflow-hidden overflow-x-clip bg-background-primary-default pt-6 pb-12 sm:pt-8 sm:pb-16 lg:pt-12 lg:pb-20 border-b border-border-button-default transition-colors">
+    <section className="relative overflow-hidden overflow-x-clip bg-background-primary-default pt-4 pb-12 sm:pt-8 sm:pb-16 lg:pt-12 lg:pb-20 border-b border-border-button-default transition-colors">
       {/* Background High-End Subtle Geometry */}
       <div className="absolute top-0 right-0 -mr-24 -mt-24 size-96 rounded-full bg-accent-500/10 blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 -ml-24 -mb-24 size-96 rounded-full bg-status-blue-background/30 blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        
+        {/* Mobile/Responsive Only: 3D Pet Cards Deck Placed Above Headline */}
+        <div className="block lg:hidden w-full mb-4 animate-boardui-condense">
+          <HeroPetCardDeck onOpenBooking={onOpenBooking} />
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
           
           {/* Left Column: Clinical Core Presentation + Heatmap Chart Card */}
@@ -68,10 +74,12 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
             </div>
           </div>
 
-          {/* Right Column: 3D Pet Medical Passport Deck + Patient Workflow Live Task List */}
+          {/* Right Column: 3D Pet Medical Passport Deck (Desktop) + Patient Workflow Live Task List */}
           <div className="lg:col-span-6 space-y-4 animate-boardui-condense">
-            {/* Bento Card 1: 3D Fanned Pet Medical Passport Deck (FANCY Style) */}
-            <HeroPetCardDeck onOpenBooking={onOpenBooking} />
+            {/* Bento Card 1: 3D Fanned Pet Medical Passport Deck (Desktop only) */}
+            <div className="hidden lg:block">
+              <HeroPetCardDeck onOpenBooking={onOpenBooking} />
+            </div>
 
             {/* Patient Workflow Live Task List */}
             <HospitalTaskList />

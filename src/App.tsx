@@ -4,6 +4,8 @@ import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { PetTreatmentExplorer } from './components/PetTreatmentExplorer';
 import { Services } from './components/Services';
+import { CustomerChatPhoneMockup } from './components/CustomerChatPhoneMockup';
+import { TypewriterText } from './components/TypewriterText';
 import { FAQ } from './components/FAQ';
 import { LocationHours } from './components/LocationHours';
 import { Footer } from './components/Footer';
@@ -114,10 +116,60 @@ export function App() {
           handleOpenBooking();
         }} />
 
-        {/* BoardUI Official StatCards KPI Row (Variant Footer with Gradient Tiles) */}
-        <section className="py-10 bg-background-secondary-default/60 border-b border-border-button-default">
+        {/* 24/7 Consultation & Hospital KPI Stats Section */}
+        <section id="ai-triage" className="py-16 md:py-20 bg-background-secondary-default/50 border-b border-border-button-default">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <StatCards stats={hospitalStats} variant="footer" />
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+              {/* Left Column: Interactive Phone Mockup (Desktop only) */}
+              <div className="hidden lg:flex lg:col-span-5 justify-center">
+                <CustomerChatPhoneMockup onOpenBooking={(service) => handleOpenBooking(service)} />
+              </div>
+
+              {/* Right Column: Explanatory Content, Phone Mockup (Mobile), & 2x2 StatCards */}
+              <div className="lg:col-span-7 space-y-6">
+                <div className="space-y-2">
+                  <h2 className="text-title-1-medium text-text-primary tracking-tight">
+                    <TypewriterText words={['ปรึกษาอาการสัตว์เลี้ยงตลอด 24 ชม.']} />
+                    <br />
+                    <span className="text-accent-600">ดูแลโดยทีมสัตวแพทย์จริง มั่นใจกว่า 421,000+ เคส</span>
+                  </h2>
+                  <p className="text-body-regular text-text-secondary max-w-xl leading-relaxed">
+                    หมดกังวลเรื่องสัตว์เลี้ยงป่วยฉุกเฉิน ระบบช่วยบันทึกอาการเบื้องต้นใน 5 วินาที พร้อมส่งต่อสัตวแพทย์เวรตอบกลับจริง และเปิดคิวห้องตรวจด่วนรองรับทันทีตลอด 24 ชั่วโมง
+                  </p>
+                </div>
+
+                {/* Mobile/Responsive Only: Interactive Phone Mockup placed right below description */}
+                <div className="block lg:hidden my-6 flex justify-center">
+                  <CustomerChatPhoneMockup onOpenBooking={(service) => handleOpenBooking(service)} />
+                </div>
+
+                {/* 2x2 StatCards Grid (2 แถวบน 2 แถวล่าง) */}
+                <div className="pt-1">
+                  <StatCards stats={hospitalStats} variant="footer" columns={2} />
+                </div>
+
+                {/* Call-to-action buttons */}
+                <div className="flex flex-wrap items-center gap-3 pt-2">
+                  <Button
+                    variant="primary"
+                    size="medium"
+                    leadingIcon={RiCalendarEventLine}
+                    onClick={() => handleOpenBooking('บริการตรวจวินิจฉัยและรักษาอายุรกรรม')}
+                  >
+                    จองคิวนัดตรวจล่วงหน้า
+                  </Button>
+                  <ButtonLink
+                    href="tel:028889999"
+                    variant="danger"
+                    size="medium"
+                    leadingIcon={RiPhoneFill}
+                    className="shadow-lg shadow-status-rose-text/25"
+                  >
+                    สายด่วนฉุกเฉิน 24 ชม.
+                  </ButtonLink>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -126,8 +178,6 @@ export function App() {
 
         {/* Medical Services Catalog */}
         <Services onOpenBooking={handleOpenBooking} />
-
-
 
         {/* Interactive FAQ Section with BoardUI Accordion */}
         <FAQ />
