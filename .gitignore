@@ -13,6 +13,11 @@ dist-ssr
 *.local
 .vercel
 .claude
+.cursor
+.impeccable
+prompt.md
+scratch
+scripts
 
 # Editor directories and files
 .vscode/*
