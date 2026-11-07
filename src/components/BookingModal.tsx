@@ -241,7 +241,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             </div>
             <div>
               <h3 id="booking-modal-title" className="font-bold text-title-3-semibold text-text-primary leading-none">นัดหมายตรวจล่วงหน้า</h3>
-              <p className="text-caption-1-medium text-text-tertiary mt-0.5">แม็กเหนือวินเหนือพิกโก้ สัตวแพทย์</p>
+              <p className="text-caption-1-medium text-text-tertiary mt-0.5">VetPaws Hospital</p>
             </div>
           </div>
           <Button

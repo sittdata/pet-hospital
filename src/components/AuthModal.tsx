@@ -105,7 +105,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setSuccessToast(
       mode === 'signin'
         ? `เข้าสู่ระบบสำเร็จ ยินดีต้อนรับคุณ ${name}`
-        : `สร้างบัญชีสำเร็จ ยินดีต้อนรับเข้าสู่แม็กเหนือวินเหนือพิกโก้`
+        : `สร้างบัญชีสำเร็จ ยินดีต้อนรับเข้าสู่ VetPaws Hospital`
     );
 
     setTimeout(() => {
@@ -177,7 +177,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           title={
             <span id="auth-modal-title">
               {mode === 'signin'
-                ? 'ยินดีต้อนรับกลับสู่ แม็กเหนือวินเหนือพิกโก้'
+                ? 'ยินดีต้อนรับกลับสู่ VetPaws Hospital'
                 : 'สร้างบัญชีเจ้าของสัตว์เลี้ยง'}
             </span>
           }

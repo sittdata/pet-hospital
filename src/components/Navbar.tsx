@@ -37,7 +37,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   return (
-    <header className="sticky top-0 z-40 bg-background-primary-default/90 backdrop-blur-md border-b border-border-button-default transition-colors">
+    <header className="sticky top-0 z-40 bg-blue-900 text-white shadow-md border-b border-blue-950 transition-colors">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20 gap-2 sm:gap-4">
           {/* Logo & Brand */}
@@ -47,8 +47,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5 sm:gap-2">
-                <span className="font-bold text-headline-medium sm:text-title-3-semibold text-text-primary tracking-tight truncate max-w-[155px] xs:max-w-[210px] sm:max-w-none">
-                  แม็กเหนือวินเหนือพิกโก้
+                <span className="font-bold text-headline-medium sm:text-title-3-semibold text-white tracking-tight truncate max-w-[155px] xs:max-w-[210px] sm:max-w-none">
+                  VetPaws Hospital
                 </span>
                 <span className="hidden xs:inline-flex shrink-0 items-center gap-1 px-1.5 py-0.5 rounded-full bg-status-lime-background text-status-lime-text text-caption-2-bold whitespace-nowrap">
                   <StatusDot color="green" />
@@ -56,7 +56,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </span>
               </div>
               <p className="text-caption-2-regular sm:text-caption-1-medium text-text-secondary truncate hidden xs:block">
-                Arak Care Animal Hospital
+                VetPaws Animal Hospital
               </p>
             </div>
           </a>
@@ -67,7 +67,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <a
                 key={link.href}
                 href={link.href}
-                className="text-body-medium text-text-secondary hover:text-text-primary transition-colors whitespace-nowrap shrink-0"
+                className="text-body-medium text-slate-300 hover:text-white transition-colors whitespace-nowrap shrink-0"
               >
                 {link.label}
               </a>

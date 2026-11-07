@@ -22,8 +22,8 @@ export const Footer: React.FC = () => {
                 <RiHeartPulseFill className="size-6 text-white" />
               </div>
               <div>
-                <span className="font-bold text-title-3-semibold text-text-primary tracking-tight">โรงพยาบาลสัตว์แม็กเหนือวินเหนือพิกโก้</span>
-                <p className="text-caption-1-medium text-text-tertiary">Arak Care Animal Hospital (24 Hours)</p>
+                <span className="font-bold text-title-3-semibold text-text-primary tracking-tight">VetPaws Animal Hospital</span>
+                <p className="text-caption-1-medium text-text-tertiary">VetPaws Animal Hospital (24 Hours)</p>
               </div>
             </div>
 
@@ -65,7 +65,7 @@ export const Footer: React.FC = () => {
               </li>
               <li className="flex items-center gap-2.5">
                 <RiMailLine className="size-4 text-accent-500 shrink-0" />
-                <span>contact@arak-animal.com</span>
+                <span>contact@vetpaws-animal.com</span>
               </li>
             </ul>
 
@@ -78,7 +78,7 @@ export const Footer: React.FC = () => {
                 rel="noreferrer"
                 className="text-status-lime-text hover:text-status-lime-text"
               >
-                LINE Official: @arakcare
+                LINE Official: @vetpaws
               </ButtonLink>
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-background-primary-default text-text-primary border border-border-button-default text-caption-1-semibold">
                 <StatusDot color="green" />
@@ -100,7 +100,7 @@ export const Footer: React.FC = () => {
                   href="https://facebook.com"
                   target="_blank"
                   rel="noreferrer"
-                  aria-label="Facebook โรงพยาบาลสัตว์อารักษ์"
+                  aria-label="Facebook Vetpaws Hospital"
                 />
                 <SocialButton
                   brand="instagram"
@@ -110,7 +110,7 @@ export const Footer: React.FC = () => {
                   href="https://instagram.com"
                   target="_blank"
                   rel="noreferrer"
-                  aria-label="Instagram สัตว์เลี้ยงอารักษ์"
+                  aria-label="Instagram Vetpaws Hospital"
                 />
                 <SocialButton
                   brand="tiktok"
@@ -179,7 +179,7 @@ export const Footer: React.FC = () => {
 
         {/* Copyright */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-caption-1-medium text-text-tertiary gap-4">
-          <p>© 2026 โรงพยาบาลสัตว์แม็กเหนือวินเหนือพิกโก้. All rights reserved.</p>
+          <p>© 2026 VetPaws Hospital. All rights reserved.</p>
           <div className="flex gap-4">
             <a href="#" className="hover:text-text-primary">นโยบายความเป็นส่วนตัว</a>
             <a href="#" className="hover:text-text-primary">เงื่อนไขการใช้บริการ</a>
