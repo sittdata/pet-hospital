@@ -110,7 +110,7 @@
 * **วิธีการ (Methodology):**
   - พัฒนาคอมโพเนนต์ `PromptPresentationShowcase.tsx` และชุดข้อมูล `promptShowcaseData.ts`
   - สร้าง Interactive Callout Map จำลอง Browser Mockup ที่มีจุด Pin Hotspot ชี้โยงไปยังชิ้นส่วน UI จริง พร้อมกล่องคำพูดแสดง Prompt เดิมของผู้ใช้, การวิเคราะห์ของ AI, และผลลัพธ์ในซอร์สโค้ด
-  - มี 3 มุมมอง: ผังเชื่อมโยงกราฟิก (Interactive Map), โหมดสไลด์บรรยาย (Slide Deck พร้อม Speaker Notes), และตารางสรุปคำสั่ง (Cheat Sheet Table)
+  - มี 4 มุมมอง: ผังเชื่อมโยงกราฟิก (Interactive Map พร้อม Dynamic Spotlight & SVG Leader Lines), ภาพรวมพรีเซนต์ (All-in-One Presentation Poster Infographic เชื่อมโยงทุกจุดในหน้าเดียว), โหมดสไลด์บรรยาย (Slide Deck พร้อม Speaker Notes), และตารางสรุปคำสั่ง (Prompt Matrix Table)
   - รองรับโหมดพรีเซนต์เต็มจอ (Fullscreen Presentation Modal) กดเปิดได้จาก Navbar หรือปุ่มในหน้าเว็บ พร้อมคีย์บอร์ด Arrow Navigation
 * **สิ่งที่ AI จัดการให้:**
   1. **Module 1 (Navbar Dynamic Links & Color):** ถอดรหัสคำสั่ง "แล้วสีข้างบนที่เป็นสีน้ำเงินไปไหน", "แก้เป็นสีนี้", ปรับเมนู 6 ลิงก์เหลือ 4 ลิงก์หลังล็อกอิน, และปุ่มโปรไฟล์กระจกเข้ม

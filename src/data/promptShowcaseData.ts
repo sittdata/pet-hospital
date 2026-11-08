@@ -14,6 +14,10 @@ export interface PromptCallout {
     height?: string;
     label: string;
   };
+  anchorPos: {
+    x: number; // percentage 0-100 across the mockup
+    y: number; // percentage 0-100 down the mockup
+  };
   beforeState?: string;
   afterState?: string;
 }
@@ -59,11 +63,12 @@ export const promptShowcaseModules: ShowcaseModule[] = [
         category: 'Navbar & UI',
         highlightArea: {
           top: '8%',
-          left: '12%',
-          width: '76%',
-          height: '24%',
+          left: '4%',
+          width: '92%',
+          height: '42%',
           label: 'Navy Header Background'
         },
+        anchorPos: { x: 10, y: 20 },
         beforeState: 'bg-background-primary-default (สีพื้นหลังเทาขาว กลืนกับตัวเว็บ)',
         afterState: 'bg-blue-900 (สีกรมท่าความน่าเชื่อถือระดับสถาบันการแพทย์)'
       },
@@ -77,12 +82,13 @@ export const promptShowcaseModules: ShowcaseModule[] = [
         codeOutcome: 'className="bg-blue-100 hover:bg-blue-200 text-blue-600 border border-blue-200/80"',
         category: 'Navbar & UI',
         highlightArea: {
-          top: '18%',
-          left: '74%',
-          width: '20%',
-          height: '20%',
+          top: '12%',
+          left: '68%',
+          width: '26%',
+          height: '32%',
           label: 'Pastel Blue Login CTA'
         },
+        anchorPos: { x: 80, y: 22 },
         beforeState: 'ปุ่มสีขาวล้วนหรือปุ่มโปร่งใสที่ตัดกับพื้นหลังไม่ลงตัว',
         afterState: 'bg-blue-100 text-blue-600 ตามรูปภาพต้นแบบที่ส่งมา'
       },
@@ -96,12 +102,13 @@ export const promptShowcaseModules: ShowcaseModule[] = [
         codeOutcome: 'const desktopNavLinks = currentUser ? fullNavLinks.slice(0, 4) : fullNavLinks;',
         category: 'Navbar & UI',
         highlightArea: {
-          top: '18%',
-          left: '32%',
-          width: '38%',
-          height: '20%',
+          top: '12%',
+          left: '24%',
+          width: '42%',
+          height: '32%',
           label: 'Dynamic Links Switcher'
         },
+        anchorPos: { x: 48, y: 22 },
         beforeState: 'แสดง 6 ลิงก์คงที่ ทำให้พอล็อกอินแล้วปุ่มดันกันจนตกขอบจอ',
         afterState: 'ก่อนล็อกอิน 6 เมนู (เต็มตา) ➔ หลังล็อกอิน 4 เมนู (ให้พื้นที่สมุดวัคซีน)'
       },
@@ -115,12 +122,13 @@ export const promptShowcaseModules: ShowcaseModule[] = [
         codeOutcome: 'bg-white/10 hover:bg-white/20 text-slate-200 border border-white/15 rounded-lg',
         category: 'Navbar & UI',
         highlightArea: {
-          top: '64%',
-          left: '78%',
-          width: '18%',
-          height: '24%',
+          top: '58%',
+          left: '68%',
+          width: '28%',
+          height: '34%',
           label: 'Glass Icon Actions'
         },
+        anchorPos: { x: 88, y: 74 },
         beforeState: 'ปุ่ม Ghost ไร้พื้นหลัง กลืนกับสีน้ำเงินจนสังเกตไม่ออก',
         afterState: 'ปุ่มกระจกใส bg-white/10 คอนทราสต์ชัดเจน สัมผัสง่ายบนมือถือ'
       }
@@ -152,12 +160,13 @@ export const promptShowcaseModules: ShowcaseModule[] = [
         codeOutcome: 'กำหนด Schema ใน servicesData.ts พร้อมฟิลด์ imageUrl กำกับทุกบริการ',
         category: 'AI Generation',
         highlightArea: {
-          top: '5%',
-          left: '5%',
-          width: '90%',
-          height: '18%',
+          top: '2%',
+          left: '2%',
+          width: '96%',
+          height: '14%',
           label: 'Clinical Research & Architecture'
         },
+        anchorPos: { x: 30, y: 7 },
         beforeState: 'มีการ์ดบริการแต่ไม่มีรูปถ่ายสถานพยาบาลที่สื่อถึงอุปกรณ์จริง',
         afterState: 'มี 6 แผนกการแพทย์ครบวงจรตามแบบแผนโรงพยาบาลสัตว์ชั้นนำ'
       },
@@ -171,12 +180,13 @@ export const promptShowcaseModules: ShowcaseModule[] = [
         codeOutcome: 'git branch backup-before-image-enhancement (แยก snapshot ข้อมูลก่อนแก้ไข)',
         category: 'AI Generation',
         highlightArea: {
-          top: '28%',
-          left: '5%',
-          width: '42%',
-          height: '30%',
+          top: '86%',
+          left: '2%',
+          width: '96%',
+          height: '12%',
           label: 'Git Safety Backup Branch'
         },
+        anchorPos: { x: 50, y: 92 },
         beforeState: 'แก้ไขโค้ดทับ branch หลักโดยไม่มีจุด rollback',
         afterState: 'Branch สำรองปลอดภัย ย้อนกลับได้ด้วยคำสั่งเดียว 100%'
       },
@@ -190,12 +200,13 @@ export const promptShowcaseModules: ShowcaseModule[] = [
         codeOutcome: '6 ไฟล์แยก: veterinary_icu_ward.jpg, vet_operating_theater.jpg, cat_friendly_exam_suite.jpg ฯลฯ',
         category: 'AI Generation',
         highlightArea: {
-          top: '28%',
-          left: '53%',
-          width: '42%',
-          height: '30%',
-          label: 'Unique Asset Mapping'
+          top: '18%',
+          left: '2%',
+          width: '96%',
+          height: '66%',
+          label: 'Unique Asset Mapping (6 Non-repeating clinical rooms)'
         },
+        anchorPos: { x: 50, y: 46 },
         beforeState: 'ภาพสัตว์เลี้ยงทั่วไปหรือภาพคลินิกที่ใช้ซ้ำกันหลายการ์ด',
         afterState: 'ภาพอุปกรณ์เฉพาะทาง 6 แผนก ไม่ซ้ำกันเลยแม้แต่ภาพเดียว'
       },
@@ -209,12 +220,13 @@ export const promptShowcaseModules: ShowcaseModule[] = [
         codeOutcome: 'ภาพความละเอียดสูง 6 รูปใน public/images/ บีบอัดแบบ Web-optimized',
         category: 'AI Generation',
         highlightArea: {
-          top: '62%',
-          left: '5%',
-          width: '90%',
-          height: '34%',
-          label: 'AI Medical Room Synthesis'
+          top: '20%',
+          left: '34%',
+          width: '32%',
+          height: '32%',
+          label: 'AI Positive Pressure Surgery Room'
         },
+        anchorPos: { x: 50, y: 32 },
         beforeState: 'ภาพลูกสุนัข/ลูกแมวแบบสุ่ม ไม่สะท้อนศักยภาพของโรงพยาบาล',
         afterState: 'ภาพห้องตรวจ ICU, ห้องผ่าตัด, CT Scan, คลินิกสัตว์พิเศษ เสมือนจริง'
       }
@@ -245,12 +257,13 @@ export const promptShowcaseModules: ShowcaseModule[] = [
         codeOutcome: 'deriveVaccineStatus() แยก completed / upcoming / overdue + onConsultVaccine callback',
         category: 'Health Passport',
         highlightArea: {
-          top: '25%',
-          left: '10%',
-          width: '80%',
-          height: '40%',
-          label: 'Organized Vaccine Pipeline'
+          top: '40%',
+          left: '4%',
+          width: '92%',
+          height: '56%',
+          label: 'Organized Vaccine Pipeline & Action Cards'
         },
+        anchorPos: { x: 50, y: 68 },
         beforeState: 'รายการวัคซีนเรียงต่อกันเป็นแนวยาว อ่านยาก ไม่มีป้ายบอกสถานะเร่งด่วน',
         afterState: 'แยกสถานะสีเขียว/ส้ม/แดง พร้อมปุ่มกดปรึกษาสัตวแพทย์เวร 24 ชม. ได้ทันที'
       },
@@ -264,12 +277,13 @@ export const promptShowcaseModules: ShowcaseModule[] = [
         codeOutcome: '{currentUser ? <Button onClick={onOpenPassport}>สมุดวัคซีน</Button> : null}',
         category: 'Health Passport',
         highlightArea: {
-          top: '10%',
-          left: '60%',
-          width: '30%',
-          height: '25%',
+          top: '6%',
+          left: '52%',
+          width: '44%',
+          height: '30%',
           label: 'Protected Auth Boundary'
         },
+        anchorPos: { x: 86, y: 22 },
         beforeState: 'ใครเข้าเว็บมาก็เปิดดูและแก้ไขประวัติวัคซีนของสัตว์เลี้ยงได้ทันที',
         afterState: 'ระบบปิดกั้นอย่างสมบูรณ์ ต้องยืนยันตัวตนก่อนจึงจะเปิดดูประวัติได้'
       }
@@ -300,12 +314,13 @@ export const promptShowcaseModules: ShowcaseModule[] = [
         codeOutcome: 'Commit 9ef3654: "fix(core): resolve critical security, memory leaks, and logic bugs"',
         category: 'Autonomous Boost',
         highlightArea: {
-          top: '5%',
-          left: '5%',
-          width: '90%',
-          height: '20%',
+          top: '4%',
+          left: '4%',
+          width: '92%',
+          height: '16%',
           label: 'Autonomous Prompt Execution'
         },
+        anchorPos: { x: 92, y: 12 },
         beforeState: 'มีจุดเสี่ยงแฝงอยู่ในโค้ดที่อาจทำให้เกิด Data Breach หรือหน้าเว็บหน่วง',
         afterState: 'กวาดล้าง 4 จุดวิกฤตเสร็จสิ้นในรอบเดียว พร้อม Unit Safety'
       },
@@ -319,12 +334,13 @@ export const promptShowcaseModules: ShowcaseModule[] = [
         codeOutcome: 'phone.replace(/(\\d{3})\\d{3,4}(\\d{3,4})/, "$1-***-$2")',
         category: 'Autonomous Boost',
         highlightArea: {
-          top: '30%',
-          left: '5%',
-          width: '42%',
-          height: '30%',
+          top: '24%',
+          left: '4%',
+          width: '92%',
+          height: '22%',
           label: 'PII Data Sanitization'
         },
+        anchorPos: { x: 90, y: 34 },
         beforeState: 'แสดงเบอร์โทรศัพท์จริง 10 หลักครบถ้วนในทุกหน้าต่าง',
         afterState: 'Masking หมายเลข 4 หลักกลาง ปกป้องความเป็นส่วนตัว 100%'
       },
@@ -338,12 +354,13 @@ export const promptShowcaseModules: ShowcaseModule[] = [
         codeOutcome: 'return () => { if (typingTimerRef.current) clearInterval(typingTimerRef.current); };',
         category: 'Autonomous Boost',
         highlightArea: {
-          top: '30%',
-          left: '53%',
-          width: '42%',
-          height: '30%',
+          top: '48%',
+          left: '4%',
+          width: '92%',
+          height: '22%',
           label: 'Timer Cleanup & GC'
         },
+        anchorPos: { x: 90, y: 58 },
         beforeState: 'เปิดหน้าเว็บทิ้งไว้นานๆ ตัวนับเวลายังคงรันในเบื้องหลังและกิน RAM ต่อเนื่อง',
         afterState: 'ทำลาย Timer ทันทีเมื่อ Unmount เบราว์เซอร์ลื่นไหลตลอดเวลา'
       },
@@ -357,12 +374,13 @@ export const promptShowcaseModules: ShowcaseModule[] = [
         codeOutcome: 'tsc -b && vite build ➔ Built in 1.48s (0 errors)',
         category: 'Autonomous Boost',
         highlightArea: {
-          top: '65%',
-          left: '5%',
-          width: '90%',
-          height: '28%',
+          top: '72%',
+          left: '4%',
+          width: '92%',
+          height: '24%',
           label: 'Zero-Error Production Build'
         },
+        anchorPos: { x: 90, y: 84 },
         beforeState: 'มี Warning เรื่อง Type mismatch ระหว่าง PetProfile กับ BookingModal',
         afterState: 'คอมไพล์ผ่านสมบูรณ์แบบ 100% พร้อมขึ้นสู่ Production บน Vercel'
       }
