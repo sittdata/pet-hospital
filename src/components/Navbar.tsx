@@ -9,6 +9,7 @@ import {
   RiLogoutBoxRLine,
   RiShieldCheckLine,
   RiLockPasswordLine,
+  RiSparkling2Fill,
 } from '@remixicon/react';
 import { Button, ButtonLink } from '@/components/base/buttons/button';
 import { StatusDot } from '@/components/base/badges/status-dot';
@@ -20,6 +21,7 @@ interface NavbarProps {
   onOpenAuth: (mode?: 'signin' | 'signup') => void;
   onOpenPassport?: () => void;
   onOpenChangePassword?: () => void;
+  onOpenPromptShowcase?: () => void;
   currentUser?: { name: string; email: string } | null;
   onSignOut?: () => void;
 }
@@ -29,6 +31,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenAuth,
   onOpenPassport,
   onOpenChangePassword,
+  onOpenPromptShowcase,
   currentUser,
   onSignOut,
 }) => {
@@ -87,6 +90,25 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Right Action Tools & Buttons (Desktop) */}
           <div className="hidden sm:flex items-center gap-2 shrink-0">
+            {/* AI Prompt Showcase Presentation Button */}
+            <Button
+              variant="secondary"
+              size="small"
+              leadingIcon={RiSparkling2Fill}
+              onClick={
+                onOpenPromptShowcase ||
+                (() => {
+                  const el = document.getElementById('prompt-showcase');
+                  el?.scrollIntoView({ behavior: 'smooth' });
+                })
+              }
+              className="whitespace-nowrap shrink-0 bg-blue-800/80 hover:bg-blue-700 text-blue-100 hover:text-white border-blue-700/80 transition-colors shadow-xs"
+              title="ดูแผนผังการสั่งงานด้วย Prompt และกระบวนการพัฒนาด้วย AI"
+            >
+              <span className="hidden xl:inline">✨ AI Prompt Showcase</span>
+              <span className="xl:hidden">✨ Prompt Map</span>
+            </Button>
+
             {/* Theme Toggle (Light / Dark switch) */}
             <ThemeToggle appearance="segmented" size="small" />
 
@@ -268,6 +290,28 @@ export const Navbar: React.FC<NavbarProps> = ({
               {link.label}
             </a>
           ))}
+          {/* Mobile AI Prompt Showcase Link */}
+          <button
+            type="button"
+            onClick={() => {
+              setMobileMenuOpen(false);
+              if (onOpenPromptShowcase) {
+                onOpenPromptShowcase();
+              } else {
+                const el = document.getElementById('prompt-showcase');
+                el?.scrollIntoView({ behavior: 'smooth' });
+              }
+            }}
+            className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-body-medium font-semibold text-accent-600 bg-accent-50 dark:bg-accent-950/40 border border-accent-200/50 hover:bg-accent-100 transition-colors cursor-pointer text-left"
+          >
+            <span className="flex items-center gap-2">
+              <RiSparkling2Fill className="size-4 text-accent-500" />
+              <span>✨ แผนผัง AI Prompt Showcase</span>
+            </span>
+            <span className="text-caption-2-bold px-1.5 py-0.5 rounded-md bg-accent-600 text-white text-[10px]">
+              กราฟิก
+            </span>
+          </button>
           <div className="pt-2 border-t border-border-button-default flex flex-col gap-2">
             {currentUser ? (
               <Button

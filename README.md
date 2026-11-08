@@ -85,10 +85,16 @@ pet-hospital/
 │   │   ├── HospitalTaskList.tsx # แถบกระบวนการตรวจรักษาแบบ Live
 │   │   ├── BookingModal.tsx     # ระบบฟอร์มนัดหมาย 3 ขั้นตอน พร้อม BoardUI DatePicker
 │   │   ├── AuthModal.tsx        # โมดัลเข้าสู่ระบบ / ลงทะเบียน
+│   │   ├── PetHealthPassportModal.tsx # สมุดวัคซีนดิจิทัลและประวัติสุขภาพสัตว์เลี้ยง
+│   │   ├── PromptPresentationShowcase.tsx # แผนผังนำเสนอกราฟิกเชื่อมโยงคำสั่ง Prompt & UI Breakdown
 │   │   ├── Services.tsx         # แผนกเฉพาะทางและการบริการ
 │   │   ├── LocationHours.tsx    # แผนที่ สาขา และเวลาทำการ 24 ชม.
 │   │   ├── FAQ.tsx              # คำถามที่พบบ่อย (Accordion)
 │   │   └── Footer.tsx           # ข้อมูลติดต่อ ทะเบียนสถานพยาบาล
+│   ├── data/
+│   │   ├── promptShowcaseData.ts # ข้อมูลชุดคำสั่ง Prompt, Pins และ Speaker Notes
+│   │   ├── servicesData.ts      # ข้อมูลบริการทางการแพทย์และภาพคลินิก
+│   │   └── petPassportData.ts   # ข้อมูลและ Mock Database สมุดวัคซีน
 │   ├── styles/                  # ระบบ BoardUI Styling
 │   │   ├── theme.css            # Semantic Tokens (Colors, Dark/Light Mode)
 │   │   ├── typography.css       # ขนาดและน้ำหนักตัวอักษร Composite

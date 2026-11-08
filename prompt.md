@@ -104,8 +104,25 @@
 
 ---
 
+### 🔹 ขั้นตอนที่ 8: กราฟิกนำเสนอหน้าเว็บพร้อมผังชี้โยง Prompt (Interactive Graphic Showcase & UI Breakdown)
+* **Prompt ที่ใช้:**
+  > `มึงทำ graphic ลงเว็บ แบบพรีเซ้น อธิบาย หน่อยแบบแคปหน้าเว็บมา แล้วก็อธิบายโยงไปว่า ส่วนนี้กูพอร์มไปว่าไร /boost /goal`
+* **วิธีการ (Methodology):**
+  - พัฒนาคอมโพเนนต์ `PromptPresentationShowcase.tsx` และชุดข้อมูล `promptShowcaseData.ts`
+  - สร้าง Interactive Callout Map จำลอง Browser Mockup ที่มีจุด Pin Hotspot ชี้โยงไปยังชิ้นส่วน UI จริง พร้อมกล่องคำพูดแสดง Prompt เดิมของผู้ใช้, การวิเคราะห์ของ AI, และผลลัพธ์ในซอร์สโค้ด
+  - มี 3 มุมมอง: ผังเชื่อมโยงกราฟิก (Interactive Map), โหมดสไลด์บรรยาย (Slide Deck พร้อม Speaker Notes), และตารางสรุปคำสั่ง (Cheat Sheet Table)
+  - รองรับโหมดพรีเซนต์เต็มจอ (Fullscreen Presentation Modal) กดเปิดได้จาก Navbar หรือปุ่มในหน้าเว็บ พร้อมคีย์บอร์ด Arrow Navigation
+* **สิ่งที่ AI จัดการให้:**
+  1. **Module 1 (Navbar Dynamic Links & Color):** ถอดรหัสคำสั่ง "แล้วสีข้างบนที่เป็นสีน้ำเงินไปไหน", "แก้เป็นสีนี้", ปรับเมนู 6 ลิงก์เหลือ 4 ลิงก์หลังล็อกอิน, และปุ่มโปรไฟล์กระจกเข้ม
+  2. **Module 2 (Medical Facilities AI Images):** ถอดรหัสคำสั่งรีเสิร์ชโรงพยาบาลจริง, กฎห้ามใช้ภาพซ้ำ, การสร้าง Git Branch สำรอง `backup-before-image-enhancement`, และการเจนเนอเรตภาพห้องผ่าตัด/ICU/CT Scan เสมือนจริง
+  3. **Module 3 (Pet Health Passport & Vaccine Tracker):** ถอดรหัสคำสั่ง "จัดเรียงให้มันดีๆหน่อย" และ "อันนนี้มันขึ้นตอนยังไม่ล็อคอิน อะ มันไม่ควรขึ้นปรับหน่อย" ดักสิทธิ์การแพทย์
+  4. **Module 4 (Autonomous Bug Fixing):** ถอดรหัสคำสั่ง `/boost แก้จุดวิกฤตที่ต้องแก้ทันที /goal` แก้ PII Masking, Gender Type, Memory Leak และ TypeScript Strict 100%
+
+---
+
 ## 🎤 สรุปประเด็นพูดนำเสนออาจารย์ (3-5 นาที Key Takeaways)
 1. **ไม่ใช่แค่ Generative AI แต่เป็น Agentic Development:** อธิบายว่าเราใช้ AI ในฐานะคู่คิด (Pair Programmer) ที่เชื่อมต่อ Tools (MCP, Impeccable Linter, BoardUI Design Engine)
 2. **Domain-Driven Design (เข้าใจธุรกิจโรงพยาบาลสัตว์):** ชี้ให้อาจารย์ดูว่า มีระบบ Triage ดักสัตว์ป่วยฉุกเฉิน, มีการแบ่งหมวดหมู่โรคตามสายพันธุ์จริง (GDV, FLUTD, GI Stasis) ซึ่งเกิดจากการ Prompt ให้ AI ลงลึกถึง Use Case จริง
 3. **Enterprise UI Standard:** หน้าเว็บไม่ได้เขียน CSS มั่ว แต่ควบคุมด้วย Design Tokens ทั้งหมด เปลี่ยนธีมได้โดยที่สีไม่เพี้ยน
 4. **ความสมบูรณ์ระดับ Production:** มีทั้งระบบคัดกรอง, ฟอร์มจองแบบ Interactive, โค้ดผ่าน TypeScript Check 100% และ Deploy ใช้งานได้จริงบน Vercel
+5. **Interactive Graphic Showcase บนหน้าเว็บจริง:** มีหน้าต่างและสไลด์นำเสนอแสดงหลักฐานคำสั่งจริง พร้อมเส้นชี้โยง Callout ให้เห็นพัฒนาการของเว็บในแต่ละรอบอย่างโปร่งใส ตรวจสอบได้ทุกบรรทัด
