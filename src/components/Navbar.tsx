@@ -88,7 +88,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               size="small"
               leadingIcon={RiShieldCheckLine}
               onClick={onOpenPassport}
-              className="whitespace-nowrap shrink-0 border-accent-500/40 hover:border-accent-400 text-slate-100 hover:text-white"
+              className="whitespace-nowrap shrink-0 border-accent-500/40 hover:border-accent-400"
               title="สมุดวัคซีนและประวัติสุขภาพสัตว์เลี้ยงดิจิทัล"
             >
               สมุดวัคซีน
