@@ -231,7 +231,7 @@ export function App() {
             size="medium"
             leadingIcon={liveChatOpen ? RiCloseLine : RiChatSmile2Fill}
             onClick={() => setLiveChatOpen((prev) => !prev)}
-            className="shadow-lg bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-700"
+            className={liveChatOpen ? "shadow-lg" : "shadow-lg bg-[#06C755] hover:bg-[#05b34c] text-white border-[#06C755] shadow-[#06C755]/25"}
             title="แชทปรึกษาอาการสัตว์เลี้ยง 24 ชั่วโมง"
           >
             <span className="hidden sm:inline">แชทปรึกษา 24 ชม.</span>
