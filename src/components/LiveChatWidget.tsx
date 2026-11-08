@@ -275,51 +275,12 @@ export const LiveChatWidget: React.FC<LiveChatWidgetProps> = ({
       transition={{ duration: 0.35, ease: EASE_SPRING }}
       role="dialog"
       aria-label="ห้องสนทนาและประเมินอาการสัตว์เลี้ยงตลอด 24 ชม."
-      className="fixed inset-x-2 bottom-2 sm:inset-auto sm:bottom-20 sm:right-6 w-auto sm:w-[410px] h-[600px] sm:h-[640px] max-h-[90vh] bg-background-primary-default border border-border-button-default rounded-3xl shadow-2xl z-50 flex flex-col overflow-hidden ring-1 ring-border-button-default"
+      className="fixed inset-x-2 bottom-2 sm:inset-auto sm:bottom-20 sm:right-6 w-auto sm:w-[410px] h-[580px] sm:h-[620px] max-h-[88vh] bg-background-primary-default border border-border-button-default rounded-3xl shadow-2xl z-50 flex flex-col overflow-hidden ring-1 ring-border-button-default"
     >
-      {/* =====================================================================
-          Top Status Bar & Dynamic Island (Identical to Phone Mockup)
-          ===================================================================== */}
-      <div className="relative h-[38px] w-full shrink-0 bg-background-primary-default px-5 pt-1.5 flex items-center justify-between text-text-primary z-40 select-none">
-        {/* Left: Time "9:41" */}
-        <div className="w-12">
-          <span className="text-[13px] font-semibold tracking-tight text-text-primary">
-            9:41
-          </span>
-        </div>
-
-        {/* Center: Dynamic Island Pill */}
-        <div className="absolute left-1/2 top-1.5 -translate-x-1/2 w-[98px] h-[24px] bg-black rounded-full ring-1 ring-black/10 shadow-xs flex items-center justify-between px-2.5 pointer-events-none">
-          <div className="size-2 rounded-full bg-neutral-950 ring-1 ring-neutral-800 flex items-center justify-center">
-            <div className="size-0.5 rounded-full bg-blue-950/60" />
-          </div>
-          <div className="size-1.5 rounded-full bg-neutral-950" />
-        </div>
-
-        {/* Right: Cellular, Wi-Fi, and Battery */}
-        <div className="flex items-center gap-1.5 w-12 justify-end text-text-primary">
-          <svg className="w-3.5 h-2.5 fill-current text-text-primary shrink-0" viewBox="0 0 17 12">
-            <rect x="0" y="8.5" width="2.8" height="3.5" rx="0.5" />
-            <rect x="4.5" y="6" width="2.8" height="6" rx="0.5" />
-            <rect x="9" y="3" width="2.8" height="9" rx="0.5" />
-            <rect x="13.5" y="0" width="2.8" height="12" rx="0.5" />
-          </svg>
-          <svg className="w-3.5 h-2.5 fill-current text-text-primary shrink-0" viewBox="0 0 16 12">
-            <path d="M8 9.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-4.24-2.83a6 6 0 018.48 0 .8.8 0 001.13-1.13 7.6 7.6 0 00-10.74 0 .8.8 0 001.13 1.13zm-2.83-2.83a10 10 0 0114.14 0 .8.8 0 101.13-1.13 11.6 11.6 0 00-16.4 0 .8.8 0 001.13 1.13z" />
-          </svg>
-          <div className="flex items-center shrink-0">
-            <div className="w-[17px] h-[9px] rounded-[3px] border border-text-primary p-[1px] flex items-center">
-              <div className="h-full w-full bg-text-primary rounded-[1px]" />
-            </div>
-            <div className="w-[1px] h-[3px] bg-text-primary rounded-r-xs -ms-px" />
-          </div>
-        </div>
-      </div>
-
       {/* =====================================================================
           Chat Navigation Header (Identical to Phone Mockup Header)
           ===================================================================== */}
-      <div className="px-3 py-2 border-b border-border-button-default bg-background-primary-default/95 backdrop-blur-md flex items-center justify-between z-20 shrink-0">
+      <div className="px-3.5 py-2.5 border-b border-border-button-default bg-background-primary-default/95 backdrop-blur-md flex items-center justify-between z-20 shrink-0">
         <div className="flex items-center gap-2 min-w-0">
           <div className="relative shrink-0">
             <img
@@ -668,11 +629,6 @@ export const LiveChatWidget: React.FC<LiveChatWidgetProps> = ({
           </button>
         </div>
       </form>
-
-      {/* iPhone Home Indicator Bar */}
-      <div className="py-1 bg-background-primary-default flex justify-center shrink-0">
-        <div className="w-20 h-1 rounded-full bg-neutral-400 dark:bg-neutral-600" />
-      </div>
     </motion.div>
   );
 };
