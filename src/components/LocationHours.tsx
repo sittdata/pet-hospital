@@ -96,7 +96,7 @@ export const LocationHours: React.FC = () => {
             {/* Real Hospital Facade & 24/7 Emergency Bay Photo */}
             <div className="rounded-3xl overflow-hidden border border-border-button-default shadow-xs relative bg-background-tertiary-default h-52 group">
               <img
-                src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&auto=format&fit=crop&q=80"
+                src="/images/vetpaws_hospital_exterior.jpg"
                 alt="อาคารโรงพยาบาลสัตว์ VetPaws และจุดจอดเทียบรถฉุกเฉิน 24 ชั่วโมง"
                 loading="lazy"
                 className="size-full object-cover group-hover:scale-105 transition-transform duration-500"

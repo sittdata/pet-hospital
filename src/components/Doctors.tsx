@@ -38,7 +38,7 @@ const DEPARTMENTS_DATA: Department[] = [
     doctors: [
       {
         id: 'doc-1',
-        avatarUrl: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=500&auto=format&fit=crop&q=80',
+        avatarUrl: '/images/vets/vet_official_female_1.jpg',
         name: 'สพ.ญ. วรินทร์ธร สุขเกษม',
         degree: 'วท.บ., สพ.บ. (เกียรตินิยม), วุฒิบัตรอายุรศาสตร์โรคหัวใจ',
         specialty: 'อายุรศาสตร์โรคหัวใจและหลอดเลือดสัตว์เลี้ยง',
@@ -46,7 +46,7 @@ const DEPARTMENTS_DATA: Department[] = [
       },
       {
         id: 'doc-2',
-        avatarUrl: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=500&auto=format&fit=crop&q=80',
+        avatarUrl: '/images/vets/vet_male_cat.jpg',
         name: 'น.สพ. ปิยะวัฒน์ เจริญผล',
         degree: 'สพ.บ., ป.บัณฑิตคลินิกสัตว์เลี้ยงบำบัดวิกฤต',
         specialty: 'ภาวะหัวใจล้มเหลวเฉียบพลันและระบบไหลเวียนโลหิต',
@@ -62,7 +62,7 @@ const DEPARTMENTS_DATA: Department[] = [
     doctors: [
       {
         id: 'doc-3',
-        avatarUrl: 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=500&auto=format&fit=crop&q=80',
+        avatarUrl: '/images/vets/vet_official_male_1.jpg',
         name: 'น.สพ. ดร. ณัฐพล วัฒนศิริ',
         degree: 'สพ.บ., ปร.ด. ศัลยศาสตร์ทางสัตวแพทย์',
         specialty: 'ศัลยกรรมกระดูกและข้อต่อขั้นสูง (Orthopedics)',
@@ -70,7 +70,7 @@ const DEPARTMENTS_DATA: Department[] = [
       },
       {
         id: 'doc-4',
-        avatarUrl: 'https://images.unsplash.com/photo-1594824813637-8e68e4c76b1b?w=500&auto=format&fit=crop&q=80',
+        avatarUrl: '/images/vets/vet_golden_hd.jpg',
         name: 'สพ.ญ. กานต์พิชชา พงษ์ศิริ',
         degree: 'สพ.บ., วุฒิบัตรศัลยกรรมเนื้อเยื่ออ่อน',
         specialty: 'ศัลยกรรมเนื้อเยื่ออ่อนและการผ่าตัดส่องกล้องแผลเล็ก',
@@ -118,7 +118,7 @@ const DEPARTMENTS_DATA: Department[] = [
     doctors: [
       {
         id: 'doc-7',
-        avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500&auto=format&fit=crop&q=80',
+        avatarUrl: '/images/vets/vet_cat_hd.jpg',
         name: 'สพ.ญ. มัลลิกา ศิริทรัพย์',
         degree: 'สพ.บ. (เกียรตินิยมอันดับหนึ่ง), ISFM Cat Friendly Veterinarian',
         specialty: 'อายุรศาสตร์โรคแมวและต่อมไร้ท่อ',
@@ -142,7 +142,7 @@ const DEPARTMENTS_DATA: Department[] = [
     doctors: [
       {
         id: 'doc-9',
-        avatarUrl: 'https://images.unsplash.com/photo-1536064479547-7ee40b74b807?w=500&auto=format&fit=crop&q=80',
+        avatarUrl: '/images/vets/vet_corgi_hd.jpg',
         name: 'น.สพ. ชินดนัย กิตติคุณ',
         degree: 'สพ.บ., Cert. Emergency & Critical Care',
         specialty: 'เวชศาสตร์ฉุกเฉินและการกู้ชีพขั้นสูง',
@@ -150,7 +150,7 @@ const DEPARTMENTS_DATA: Department[] = [
       },
       {
         id: 'doc-10',
-        avatarUrl: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=500&auto=format&fit=crop&q=80',
+        avatarUrl: '/images/vets/vet_female_cat.jpg',
         name: 'สพ.ญ. ลลิตา บุญประเสริฐ',
         degree: 'สพ.บ., สัตวแพทย์ประจำแผนกวิกฤต',
         specialty: 'การจัดการความเจ็บปวดและการดูแลผู้ป่วยวิกฤต (ICU)',

@@ -15,7 +15,7 @@ export const servicesData: HospitalService[] = [
       'ตรวจแล็บด่วน ทราบผลเลือดและก๊าซในเลือดได้ภายใน 15 นาที'
     ],
     isEmergency: true,
-    imageUrl: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?w=600&auto=format&fit=crop&q=80'
+    imageUrl: '/images/veterinary_icu_ward.jpg'
   },
   {
     id: 'surgery-theater',
@@ -31,7 +31,7 @@ export const servicesData: HospitalService[] = [
       'ระบบควบคุมความอบอุ่นของร่างกายระหว่างและหลังผ่าตัด ป้องกันภาวะช็อก'
     ],
     isEmergency: false,
-    imageUrl: 'https://images.unsplash.com/photo-1551076805-e1869033e561?w=600&auto=format&fit=crop&q=80'
+    imageUrl: '/images/vet_operating_theater.jpg'
   },
   {
     id: 'diagnostic-imaging',
@@ -46,7 +46,7 @@ export const servicesData: HospitalService[] = [
       'เก็บไฟล์ภาพเอกซเรย์ระบบ Cloud ส่งต่อให้เจ้าของผ่าน LINE ได้ทันที'
     ],
     isEmergency: false,
-    imageUrl: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=600&auto=format&fit=crop&q=80'
+    imageUrl: '/images/vet_diagnostic_imaging_center.jpg'
   },
   {
     id: 'cat-friendly',
@@ -62,7 +62,7 @@ export const servicesData: HospitalService[] = [
       'ทีมสัตวแพทย์และเจ้าหน้าที่จับบังคับแมวด้วยความนุ่มนวลสูงสุด'
     ],
     isEmergency: false,
-    imageUrl: 'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=600&auto=format&fit=crop&q=80'
+    imageUrl: '/images/cat_friendly_exam_suite.jpg'
   },
   {
     id: 'exotic-center',
