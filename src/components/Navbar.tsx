@@ -125,7 +125,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     onClick={onOpenChangePassword}
                     title="เปลี่ยนรหัสผ่าน"
                     aria-label="เปลี่ยนรหัสผ่าน"
-                    className="text-slate-200 hover:text-white hover:bg-blue-800"
+                    className="bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white border border-white/15 transition-colors rounded-lg"
                   />
                   <Button
                     variant="ghost"
@@ -135,7 +135,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     onClick={onSignOut}
                     title="ออกจากระบบ"
                     aria-label="ออกจากระบบ"
-                    className="text-slate-200 hover:text-white hover:bg-blue-800"
+                    className="bg-white/10 hover:bg-rose-500/25 text-slate-200 hover:text-rose-300 border border-white/15 hover:border-rose-400/30 transition-colors rounded-lg"
                   />
                 </div>
               </div>
