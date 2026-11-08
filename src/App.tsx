@@ -15,6 +15,8 @@ import { Button, ButtonLink } from '@/components/base/buttons/button';
 import {
   RiPhoneFill,
   RiCalendarEventLine,
+  RiChatSmile2Fill,
+  RiCloseLine,
   RiHeartFill,
   RiScissors2Fill,
   RiStethoscopeFill,
@@ -34,6 +36,9 @@ const PetHealthPassportModal = lazy(() =>
 const ChangePasswordModal = lazy(() =>
   import('./components/ChangePasswordModal').then((m) => ({ default: m.ChangePasswordModal }))
 );
+const LiveChatWidget = lazy(() =>
+  import('./components/LiveChatWidget').then((m) => ({ default: m.LiveChatWidget }))
+);
 
 export function App() {
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
@@ -46,6 +51,9 @@ export function App() {
 
   // Change Password State
   const [changePasswordModalOpen, setChangePasswordModalOpen] = useState(false);
+
+  // 24/7 Live Triage Chat Widget State
+  const [liveChatOpen, setLiveChatOpen] = useState(false);
 
   // BoardUI Auth State
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -214,9 +222,25 @@ export function App() {
       {/* Floating 24/7 Hotline & Quick Booking Bar */}
       {!bookingModalOpen && !authModalOpen && !passportModalOpen && (
         <aside
-          aria-label="Quick Emergency and Booking Actions"
+          aria-label="Quick Emergency, Booking and Live Chat Actions"
           className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-3 sm:right-4 z-40 flex items-center gap-1.5 sm:gap-2 p-1.5 rounded-full bg-background-primary-default/90 backdrop-blur-md border border-border-button-default shadow-xl sm:p-0 sm:bg-transparent sm:backdrop-blur-none sm:border-0 sm:shadow-none transition-all"
         >
+          {/* Live Chat 24/7 Trigger Button */}
+          <Button
+            variant={liveChatOpen ? "secondary" : "primary"}
+            size="medium"
+            leadingIcon={liveChatOpen ? RiCloseLine : RiChatSmile2Fill}
+            onClick={() => setLiveChatOpen((prev) => !prev)}
+            className="shadow-lg bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-700"
+            title="แชทปรึกษาอาการสัตว์เลี้ยง 24 ชั่วโมง"
+          >
+            <span className="hidden sm:inline">แชทปรึกษา 24 ชม.</span>
+            <span className="relative flex size-2 shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-300 opacity-75"></span>
+              <span className="relative inline-flex rounded-full size-2 bg-emerald-400"></span>
+            </span>
+          </Button>
+
           <ButtonLink
             href="tel:028889999"
             variant="danger"
@@ -229,11 +253,11 @@ export function App() {
           </ButtonLink>
 
           <Button
-            variant="primary"
+            variant="secondary"
             size="medium"
             leadingIcon={RiCalendarEventLine}
             onClick={() => handleOpenBooking()}
-            className="shadow-lg shadow-accent-500/25"
+            className="shadow-lg"
             title="จองนัดหมายตรวจ"
           >
             <span className="hidden sm:inline">นัดหมาย</span>
@@ -293,6 +317,17 @@ export function App() {
             isOpen={changePasswordModalOpen}
             onClose={() => setChangePasswordModalOpen(false)}
             currentUser={currentUser}
+          />
+        )}
+      </Suspense>
+
+      {/* 24/7 Live Interactive Triage Chat Widget (Code Splitting with Suspense) */}
+      <Suspense fallback={null}>
+        {liveChatOpen && (
+          <LiveChatWidget
+            isOpen={liveChatOpen}
+            onClose={() => setLiveChatOpen(false)}
+            onOpenBooking={(service, doctor) => handleOpenBooking(service, doctor)}
           />
         )}
       </Suspense>
