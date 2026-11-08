@@ -224,7 +224,7 @@ export default function Doctors({ onOpenBooking }: DoctorsProps = {}) {
             className={cx(
               'space-y-16 transition-all duration-500 ease-in-out',
               activeTab === 'all' && !isExpanded
-                ? 'max-h-[640px] sm:max-h-[680px] overflow-hidden'
+                ? 'max-h-[500px] sm:max-h-[530px] overflow-hidden'
                 : 'max-h-none'
             )}
           >
@@ -308,7 +308,7 @@ export default function Doctors({ onOpenBooking }: DoctorsProps = {}) {
 
           {/* Aceternity UI style multi-layer progressive backdrop blur & frosted glass Show More button */}
           {activeTab === 'all' && !isExpanded && (
-            <div className="absolute inset-x-0 bottom-0 h-72 pointer-events-none flex items-end justify-center pb-8 z-10 overflow-hidden">
+            <div className="absolute inset-x-0 bottom-0 h-64 pointer-events-none flex items-end justify-center pb-10 sm:pb-12 z-10 overflow-hidden">
               {/* Progressive Blur Layer 1 (Subtle top feather) */}
               <div
                 aria-hidden="true"
