@@ -1,6 +1,6 @@
 ﻿import React, { useState } from 'react';
 import {
-  RiHeartPulseFill,
+  
   RiPhoneFill,
   RiCalendarEventLine,
   RiMenuLine,
@@ -43,10 +43,14 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-18 sm:h-22 gap-2 sm:gap-4">
             {/* Logo & Brand */}
-            <a href="#" className="flex items-center gap-2 sm:gap-2.5 min-w-0 group">
-              <div className="size-9 sm:size-11 rounded-xl sm:rounded-2xl bg-gradient-to-b from-accent-500 to-accent-600 flex items-center justify-center text-white shadow-xs group-hover:opacity-95 transition-opacity shrink-0">
-                <RiHeartPulseFill className="size-5 sm:size-6 text-white" />
-              </div>
+<a href="#" className="flex items-center gap-2 sm:gap-2.5 min-w-0 group">
+  <div className="flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+    <img 
+      src="/logo.png" 
+      alt="VetPaws Logo" 
+      className="h-9 sm:h-11 w-auto object-contain" 
+    />
+  </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5 sm:gap-2">
                   <span className="font-bold text-headline-medium sm:text-title-3-semibold text-white tracking-tight truncate max-w-[155px] xs:max-w-[210px] sm:max-w-none">
