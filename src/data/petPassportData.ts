@@ -16,15 +16,22 @@ export const INITIAL_PET_PASSPORTS: PetPassport[] = [
       {
         id: 'vac-1',
         name: 'วัคซีนรวมไข้หัด-หวัดแมว (FVRCP Core Vaccine)',
-        dateAdministered: '2026-03-15',
-        dueDate: '2027-03-15',
-        status: 'completed',
+        dueDate: '2026-11-28',
+        status: 'upcoming',
         veterinarian: 'สพ.ญ. ดร. นลิน พิพิธกุล',
-        lotNumber: 'FVRCP-26B09',
-        notes: 'ฉีดเข็มกระตุ้นประจำปีเรียบร้อย สภาพร่างกายแข็งแรงดี ไม่มีไข้',
+        notes: 'เข็มกระตุ้นประจำปี (Annual Booster) เพื่อคงระดับภูมิคุ้มกันต่อเนื่อง',
       },
     ],
     treatments: [
+      {
+        id: 'treat-v1',
+        date: '2025-11-15',
+        diagnosis: 'ฉีดวัคซีนป้องกันโรคพิษสุนัขบ้า (Rabies Vaccine)',
+        veterinarian: 'น.สพ. ปิยะวัฒน์ เจริญสุข',
+        clinicDepartment: 'ศูนย์อายุรกรรมและคลินิกแมวปลอดความเครียด',
+        treatment: 'ฉีดเข้าใต้ผิวหนัง 1 โดส ไม่พบอาการแพ้หลังดูอาการ 15 นาที',
+        notes: 'ได้รับวัคซีนเรียบร้อย สุขภาพแข็งแรงดี นัดกระตุ้นอีกครั้งปีถัดไป',
+      },
       {
         id: 'treat-1',
         date: '2026-01-20',
@@ -45,79 +52,9 @@ export const INITIAL_PET_PASSPORTS: PetPassport[] = [
       },
     ],
   },
-  {
-    id: 'pet-2',
-    name: 'น้องเฉาก๊วย (Chao-Kuay)',
-    petType: 'dog',
-    breed: 'โกลเด้น รีทรีฟเวอร์ (Golden Retriever)',
-    gender: 'male',
-    age: '3 ปี 8 เดือน',
-    weight: '31.5 kg',
-    microchipNo: '900182003819284',
-    ownerName: 'คุณศิษฐิวัชร์',
-    avatarUrl: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=200&auto=format&fit=crop&q=80',
-    vaccines: [
-      {
-        id: 'vac-d1',
-        name: 'วัคซีนรวม 5 โรคในสุนัข (DHPPi+L Core 5-in-1)',
-        dateAdministered: '2026-02-10',
-        dueDate: '2027-02-10',
-        status: 'completed',
-        veterinarian: 'น.สพ. ภาณุพงศ์ ศักดิ์เจริญ',
-        lotNumber: 'DHPP-99401',
-        notes: 'ฉีดวัคซีนรวมป้องกันไข้หัด ตับอักเสบ ลำไส้อักเสบ พาร์โว และเลปโตสไปโรซิส',
-      },
-    ],
-    treatments: [
-      {
-        id: 'treat-d1',
-        date: '2025-11-28',
-        diagnosis: 'ข้อสะโพกอักเสบเล็กน้อยจากการวิ่งเล่น (Mild Hip Dysplasia Screen)',
-        veterinarian: 'น.สพ. ภาณุพงศ์ ศักดิ์เจริญ',
-        clinicDepartment: 'ศูนย์ศัลยกรรมและผ่าตัดกระดูก/ข้อ',
-        treatment: 'X-Ray ดิจิทัลกระดูกเชิงกราน, กายภาพบำบัดด้วยเลเซอร์ Class IV',
-        notes: 'งดวิ่งกระโดดบนพื้นลื่น 2 สัปดาห์ เสริม Glucosamine & Chondroitin',
-      },
-    ],
-  },
-  {
-    id: 'pet-3',
-    name: 'น้องชิกโก้ (Chiko)',
-    petType: 'bird',
-    breed: 'นกแก้วซันคอนัวร์ (Sun Conure)',
-    gender: 'male',
-    age: '1 ปี 2 เดือน',
-    weight: '125 g',
-    microchipNo: 'LEG-RING-TH8829',
-    ownerName: 'คุณศิษฐิวัชร์',
-    avatarUrl: 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=200&auto=format&fit=crop&q=80',
-    vaccines: [
-      {
-        id: 'vac-b1',
-        name: 'ตรวจสุขภาพและหยอดยาถ่ายพยาธิภายนอก/ภายใน',
-        dateAdministered: '2026-01-05',
-        dueDate: '2027-01-05',
-        status: 'completed',
-        veterinarian: 'สพ.ญ. อริศรา ธรรมรัตน์ (Exotic Specialist)',
-        lotNumber: 'EXO-AV-01',
-        notes: 'ขนนกสวยสมบูรณ์ จงอยปากแข็งแรง มูลปกติ',
-      },
-    ],
-    treatments: [
-      {
-        id: 'treat-b1',
-        date: '2025-12-05',
-        diagnosis: 'ตรวจคัดกรองโรคปากและขนนก (PBFD & APV Screening)',
-        veterinarian: 'สพ.ญ. อริศรา ธรรมรัตน์',
-        clinicDepartment: 'ศูนย์สัตว์พิเศษ Exotic Pets 24 ชม.',
-        treatment: 'เก็บตัวอย่างเลือดส่ง PCR Test',
-        notes: 'ผลตรวจเป็นลบ (Negative) ทั้ง 2 โรค สุขภาพแข็งแรงดีเยี่ยม',
-      },
-    ],
-  },
 ];
 
-const LOCAL_STORAGE_KEY = 'vetpaws_pet_passports_v2';
+const LOCAL_STORAGE_KEY = 'vetpaws_pet_passports_v3';
 
 export function getStoredPassports(): PetPassport[] {
   if (typeof window === 'undefined') return INITIAL_PET_PASSPORTS;
