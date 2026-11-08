@@ -142,7 +142,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby="auth-modal-title"
-        className="relative w-full max-w-[440px] animate-boardui-modal"
+        className="relative w-full max-w-[400px] animate-boardui-modal mx-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Floating Close Button */}
@@ -195,13 +195,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               ? 'เข้าสู่ระบบเพื่อดูประวัติสุขภาพ นัดหมาย และผลการรักษาน้อง'
               : 'สมัครสมาชิกเพื่อบันทึกประวัติวัคซีนและรับการดูแล 24 ชม.'
           }
-          className="shadow-2xl border-border-button-default"
+          className="w-full max-w-full shadow-2xl border-border-button-default"
           headingLevel={2}
         />
 
         {/* Presentation Demo Account Helper Card */}
         {mode === 'signin' && (
-          <div className="mt-3 p-3.5 rounded-2xl bg-background-primary-default border border-border-button-default shadow-lg flex items-center justify-between gap-3 animate-fade-in">
+          <div className="mt-2.5 p-3 rounded-2xl bg-background-primary-default dark:bg-background-secondary-default border border-border-button-default shadow-lg flex items-center justify-between gap-3 animate-fade-in w-full">
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5">
                 <RiSparklingFill className="size-3.5 text-accent-500 shrink-0" />
