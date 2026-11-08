@@ -139,7 +139,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 size="small"
                 leadingIcon={RiUserLine}
                 onClick={() => onOpenAuth('signin')}
-                className="whitespace-nowrap shrink-0 text-white hover:bg-blue-800 hover:text-white"
+                className="whitespace-nowrap shrink-0 bg-white/10 hover:bg-white/20 text-white border border-white/25 transition-colors"
               >
                 เข้าสู่ระบบ
               </Button>
