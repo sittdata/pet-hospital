@@ -11,6 +11,7 @@ import { TypewriterText } from './components/TypewriterText';
 import { FAQ } from './components/FAQ';
 import { LocationHours } from './components/LocationHours';
 import { Footer } from './components/Footer';
+import { PromptPresentationShowcase } from './components/PromptPresentationShowcase';
 import { Button, ButtonLink } from '@/components/base/buttons/button';
 import {
   RiPhoneFill,
@@ -48,6 +49,9 @@ export function App() {
 
   // Digital Pet Health Passport State
   const [passportModalOpen, setPassportModalOpen] = useState(false);
+
+  // AI Prompt Presentation Showcase Modal State
+  const [showcaseModalOpen, setShowcaseModalOpen] = useState(false);
 
   // Change Password State
   const [changePasswordModalOpen, setChangePasswordModalOpen] = useState(false);
@@ -136,6 +140,7 @@ export function App() {
         onOpenAuth={handleOpenAuth}
         onOpenPassport={() => setPassportModalOpen(true)}
         onOpenChangePassword={() => setChangePasswordModalOpen(true)}
+        onOpenPromptShowcase={() => setShowcaseModalOpen(true)}
         currentUser={currentUser}
         onSignOut={() => setCurrentUser(null)}
       />
@@ -213,6 +218,9 @@ export function App() {
         {/* Aceternity UI Style Testimonials Marquee Grid */}
         <TestimonialsMarqueeGrid />
 
+        {/* AI Agentic Development & Prompt Journey Interactive Showcase */}
+        <PromptPresentationShowcase />
+
         {/* Interactive FAQ Section with BoardUI Accordion */}
         <FAQ />
 
@@ -224,7 +232,7 @@ export function App() {
       <Footer />
 
       {/* Floating 24/7 Hotline & Quick Booking Bar */}
-      {!bookingModalOpen && !authModalOpen && !passportModalOpen && (
+      {!bookingModalOpen && !authModalOpen && !passportModalOpen && !showcaseModalOpen && (
         <aside
           aria-label="Quick Emergency, Booking and Live Chat Actions"
           className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-3 sm:right-4 z-40 flex items-center gap-1.5 sm:gap-2 p-1.5 rounded-full bg-background-primary-default/90 backdrop-blur-md border border-border-button-default shadow-xl sm:p-0 sm:bg-transparent sm:backdrop-blur-none sm:border-0 sm:shadow-none transition-all"
@@ -347,6 +355,14 @@ export function App() {
           />
         )}
       </Suspense>
+
+      {/* AI Agentic Development & Prompt Presentation Fullscreen Modal */}
+      {showcaseModalOpen && (
+        <PromptPresentationShowcase
+          isOpenInModal={true}
+          onCloseModal={() => setShowcaseModalOpen(false)}
+        />
+      )}
     </div>
   );
 }
