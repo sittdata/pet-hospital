@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   RiStarFill,
-  RiHeart3Fill,
   RiShieldCheckFill,
 } from '@remixicon/react';
 import {
@@ -102,12 +101,6 @@ export const TestimonialsMarqueeGrid: React.FC = () => {
       `}</style>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 text-center">
-        {/* Eyebrow Pill */}
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border-button-default bg-background-secondary-default text-text-secondary text-caption-1-semibold mb-3">
-          <RiHeart3Fill className="size-3.5 text-accent-500" />
-          <span>Patient Stories & Reviews</span>
-        </div>
-
         {/* Section Heading */}
         <h2 className="text-title-1-semibold sm:text-large-title-bold text-text-primary tracking-tight">
           ความประทับใจจากครอบครัวสัตว์เลี้ยง
