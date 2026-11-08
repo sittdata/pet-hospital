@@ -327,7 +327,7 @@ export function App() {
           <LiveChatWidget
             isOpen={liveChatOpen}
             onClose={() => setLiveChatOpen(false)}
-            onOpenBooking={(service, doctor) => handleOpenBooking(service, doctor)}
+            onOpenBooking={(service?: string, doctor?: string) => handleOpenBooking(service, doctor)}
           />
         )}
       </Suspense>
