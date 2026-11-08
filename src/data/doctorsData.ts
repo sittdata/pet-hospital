@@ -15,7 +15,7 @@ export const doctorsData: DoctorProfile[] = [
     experienceYears: 16,
     availableDays: ['จันทร์', 'อังคาร', 'พฤหัสบดี', 'เสาร์'],
     bio: 'มีความเชี่ยวชาญระดับสูงในการผ่าตัดแก้ไขกระดูกหักซับซ้อน สะบ้าเคลื่อน และผ่าตัดหมอนรองกระดูกสันหลังทับเส้นประสาท ด้วยประสบการณ์การผ่าตัดกว่า 2,000 เคส',
-    avatarUrl: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=400'
+    avatarUrl: 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&q=80&w=400'
   },
   {
     id: 'dr-pimporn',
@@ -47,7 +47,7 @@ export const doctorsData: DoctorProfile[] = [
     experienceYears: 10,
     availableDays: ['อังคาร', 'พุธ', 'ศุกร์', 'อาทิตย์'],
     bio: 'ชำนาญการรักษาโรคระบบทางเดินอาหารในกระต่าย (GI Stasis) งานทันตกรรมสัตว์ฟันแทะ และการผ่าตัดจุลศัลยกรรมในสัตว์เลี้ยงขนาดเล็กมาก',
-    avatarUrl: 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&q=80&w=400'
+    avatarUrl: 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80&w=400'
   },
   {
     id: 'dr-sarisa',
@@ -62,7 +62,7 @@ export const doctorsData: DoctorProfile[] = [
     experienceYears: 9,
     availableDays: ['จันทร์', 'พุธ', 'เสาร์', 'อาทิตย์'],
     bio: 'มีความชำนาญเฉพาะทางในการตรวจคัดกรองโรคลิ้นหัวใจเสื่อมในสุนัขสูงวัยและโรคกล้ามเนื้อหัวใจหนาตัวในแมว พร้อมการปรับสูตรยาเฉพาะรายบุคคล',
-    avatarUrl: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=400'
+    avatarUrl: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&q=80&w=400'
   },
   {
     id: 'dr-anucha',
@@ -77,6 +77,6 @@ export const doctorsData: DoctorProfile[] = [
     experienceYears: 11,
     availableDays: ['ทุกวัน (เข้าเวรประจำศูนย์ฉุกเฉิน 24 ชม.)'],
     bio: 'พร้อมประจำการเพื่อรับมือกับเคสฉุกเฉินขั้นวิกฤต เช่น สัตว์เลี้ยงโดนรถชน ภาวะกระเพาะบิดหมุน (GDV) ได้รับสารพิษ และภาวะหยุดหายใจตลอด 24 ชั่วโมง',
-    avatarUrl: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?auto=format&fit=crop&q=80&w=400'
+    avatarUrl: 'https://images.unsplash.com/photo-1629909615184-74f495363b67?auto=format&fit=crop&q=80&w=400'
   }
 ];

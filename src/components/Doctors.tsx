@@ -142,7 +142,7 @@ const DEPARTMENTS_DATA: Department[] = [
     doctors: [
       {
         id: 'doc-9',
-        avatarUrl: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=500&auto=format&fit=crop&q=80',
+        avatarUrl: 'https://images.unsplash.com/photo-1536064479547-7ee40b74b807?w=500&auto=format&fit=crop&q=80',
         name: 'น.สพ. ชินดนัย กิตติคุณ',
         degree: 'สพ.บ., Cert. Emergency & Critical Care',
         specialty: 'เวชศาสตร์ฉุกเฉินและการกู้ชีพขั้นสูง',

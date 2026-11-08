@@ -62,7 +62,7 @@ export const servicesData: HospitalService[] = [
       'ทีมสัตวแพทย์และเจ้าหน้าที่จับบังคับแมวด้วยความนุ่มนวลสูงสุด'
     ],
     isEmergency: false,
-    imageUrl: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600&auto=format&fit=crop&q=80'
+    imageUrl: 'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=600&auto=format&fit=crop&q=80'
   },
   {
     id: 'exotic-center',
@@ -77,7 +77,7 @@ export const servicesData: HospitalService[] = [
       'ตรวจโรคติดเชื้อและพยาธิวิทยาทางเดินอาหารสัตว์ปีก'
     ],
     isEmergency: false,
-    imageUrl: 'https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=600&auto=format&fit=crop&q=80'
+    imageUrl: 'https://images.unsplash.com/photo-1574063413132-355dbfd83e25?w=600&auto=format&fit=crop&q=80'
   },
   {
     id: 'wellness-vaccine',
