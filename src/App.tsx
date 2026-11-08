@@ -1,4 +1,4 @@
-﻿import { useState, lazy, Suspense } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { PetType } from './types';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
@@ -27,12 +27,18 @@ const BookingModal = lazy(() =>
 const AuthModal = lazy(() =>
   import('./components/AuthModal').then((m) => ({ default: m.AuthModal }))
 );
+const PetHealthPassportModal = lazy(() =>
+  import('./components/PetHealthPassportModal').then((m) => ({ default: m.PetHealthPassportModal }))
+);
 
 export function App() {
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [bookingPetType, setBookingPetType] = useState<PetType>('cat');
   const [bookingService, setBookingService] = useState<string>('');
   const [bookingDoctor, setBookingDoctor] = useState<string>('');
+
+  // Digital Pet Health Passport State
+  const [passportModalOpen, setPassportModalOpen] = useState(false);
 
   // BoardUI Auth State
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -101,10 +107,11 @@ export function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background-full text-text-primary selection:bg-accent-500/20 selection:text-accent-700 relative transition-colors overflow-x-hidden">
-      {/* Main Sticky Navbar with ThemeToggle & Auth */}
+      {/* Main Sticky Navbar with ThemeToggle, Auth & Pet Health Passport */}
       <Navbar
         onOpenBooking={() => handleOpenBooking()}
         onOpenAuth={handleOpenAuth}
+        onOpenPassport={() => setPassportModalOpen(true)}
         currentUser={currentUser}
         onSignOut={() => setCurrentUser(null)}
       />
@@ -194,7 +201,7 @@ export function App() {
       <Footer />
 
       {/* Floating 24/7 Hotline & Quick Booking Bar */}
-      {!bookingModalOpen && !authModalOpen && (
+      {!bookingModalOpen && !authModalOpen && !passportModalOpen && (
         <aside
           aria-label="Quick Emergency and Booking Actions"
           className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-3 sm:right-4 z-40 flex items-center gap-1.5 sm:gap-2 p-1.5 rounded-full bg-background-primary-default/90 backdrop-blur-md border border-border-button-default shadow-xl sm:p-0 sm:bg-transparent sm:backdrop-blur-none sm:border-0 sm:shadow-none transition-all"
@@ -222,6 +229,22 @@ export function App() {
           </Button>
         </aside>
       )}
+
+      {/* Digital Pet Health Passport & Vaccine Tracker (Code Splitting with Suspense) */}
+      <Suspense fallback={null}>
+        {passportModalOpen && (
+          <PetHealthPassportModal
+            isOpen={passportModalOpen}
+            onClose={() => setPassportModalOpen(false)}
+            onBookAppointment={(serviceName, petType) => {
+              if (petType === 'cat' || petType === 'dog' || petType === 'exotic') {
+                setBookingPetType(petType as PetType);
+              }
+              handleOpenBooking(serviceName || 'ตรวจสุขภาพทั่วไปและฉีดวัคซีน');
+            }}
+          />
+        )}
+      </Suspense>
 
       {/* Interactive Booking Modal (Code Splitting with Suspense) */}
       <Suspense fallback={null}>

@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   RiHeartPulseFill,
   RiPhoneFill,
@@ -7,6 +7,7 @@ import {
   RiCloseLine,
   RiUserLine,
   RiLogoutBoxRLine,
+  RiShieldCheckLine,
 } from '@remixicon/react';
 import { Button, ButtonLink } from '@/components/base/buttons/button';
 import { StatusDot } from '@/components/base/badges/status-dot';
@@ -16,6 +17,7 @@ import { ThemeToggle } from '@/components/application/theme/theme-toggle';
 interface NavbarProps {
   onOpenBooking: (prefillPetType?: string) => void;
   onOpenAuth: (mode?: 'signin' | 'signup') => void;
+  onOpenPassport?: () => void;
   currentUser?: { name: string; email: string } | null;
   onSignOut?: () => void;
 }
@@ -23,6 +25,7 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({
   onOpenBooking,
   onOpenAuth,
+  onOpenPassport,
   currentUser,
   onSignOut,
 }) => {
@@ -79,13 +82,32 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Theme Toggle (Light / Dark switch) */}
             <ThemeToggle appearance="segmented" size="small" />
 
+            {/* Pet Health Passport & Vaccine Tracker CTA */}
+            <Button
+              variant="secondary"
+              size="small"
+              leadingIcon={RiShieldCheckLine}
+              onClick={onOpenPassport}
+              className="whitespace-nowrap shrink-0 border-accent-500/40 hover:border-accent-400 text-slate-100 hover:text-white"
+              title="สมุดวัคซีนและประวัติสุขภาพสัตว์เลี้ยงดิจิทัล"
+            >
+              สมุดวัคซีน
+            </Button>
+
             {/* Auth Sign-in / User Profile */}
             {currentUser ? (
               <div className="flex items-center gap-2 px-2.5 py-1 rounded-xl bg-background-secondary-default border border-border-button-default shrink-0">
-                <Avatar initials={currentUser.name.slice(0, 2).toUpperCase()} size="sm" />
-                <span className="text-caption-1-semibold text-text-primary hidden md:inline truncate max-w-28 whitespace-nowrap">
-                  {currentUser.name}
-                </span>
+                <button
+                  type="button"
+                  onClick={onOpenPassport}
+                  className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer text-left"
+                  title="คลิกเพื่อเปิดสมุดสุขภาพสัตว์เลี้ยง"
+                >
+                  <Avatar initials={currentUser.name.slice(0, 2).toUpperCase()} size="sm" />
+                  <span className="text-caption-1-semibold text-text-primary hidden md:inline truncate max-w-28 whitespace-nowrap">
+                    {currentUser.name}
+                  </span>
+                </button>
                 <Button
                   variant="ghost"
                   size="xs"
@@ -134,6 +156,15 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Mobile Right Controls: Compact, No Overflow */}
           <div className="flex sm:hidden items-center gap-1.5 shrink-0">
+            <Button
+              variant="secondary"
+              size="small"
+              iconOnly
+              leadingIcon={RiShieldCheckLine}
+              onClick={onOpenPassport}
+              aria-label="สมุดวัคซีนดิจิทัล"
+              title="สมุดวัคซีนดิจิทัล"
+            />
             <ButtonLink
               href="tel:028889999"
               variant="danger"
@@ -166,13 +197,20 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {currentUser && (
             <div className="flex items-center justify-between p-3 rounded-2xl bg-background-secondary-default border border-border-button-default">
-              <div className="flex items-center gap-2.5">
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onOpenPassport?.();
+                }}
+                className="flex items-center gap-2.5 text-left cursor-pointer"
+              >
                 <Avatar initials={currentUser.name.slice(0, 2).toUpperCase()} size="sm" />
                 <div>
                   <div className="text-caption-1-semibold text-text-primary font-bold">{currentUser.name}</div>
                   <div className="text-caption-2-medium text-text-secondary">{currentUser.email}</div>
                 </div>
-              </div>
+              </button>
               <Button
                 variant="ghost"
                 size="small"
@@ -194,6 +232,18 @@ export const Navbar: React.FC<NavbarProps> = ({
             </a>
           ))}
           <div className="pt-2 border-t border-border-button-default flex flex-col gap-2">
+            <Button
+              variant="secondary"
+              size="medium"
+              leadingIcon={RiShieldCheckLine}
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onOpenPassport?.();
+              }}
+              className="w-full justify-center"
+            >
+              สมุดวัคซีน & ประวัติสุขภาพสัตว์เลี้ยง
+            </Button>
             {!currentUser && (
               <Button
                 variant="secondary"
