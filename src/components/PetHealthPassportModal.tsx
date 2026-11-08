@@ -5,7 +5,6 @@ import {
   RiCalendarEventLine,
   RiShieldCheckLine,
   RiAddLine,
-  RiRestartLine,
   RiStethoscopeLine,
   RiMedicineBottleLine,
   RiFileTextLine,
@@ -15,7 +14,6 @@ import { PetPassport, VaccineRecord, VaccineStatus } from '../types/petPassport'
 import {
   getStoredPassports,
   saveStoredPassports,
-  resetStoredPassports,
 } from '../data/petPassportData';
 import { Button } from '@/components/base/buttons/button';
 import { Avatar } from '@/components/base/avatar/avatar';
@@ -136,12 +134,6 @@ export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({
   const petVaccines: VaccineRecord[] = activePet?.vaccines ?? [];
   const petTreatments = activePet?.treatments ?? [];
 
-  const handleResetDemo = () => {
-    const defaultData = resetStoredPassports();
-    setPassports(defaultData);
-    setShowAddVaccine(false);
-  };
-
   const handleAddVaccineSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!activePet || !vacName.trim()) return;
@@ -238,13 +230,10 @@ export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({
                   <Avatar initials={activePet.name.slice(0, 2)} size="lg" />
                 )}
                 <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-title-3-semibold text-text-primary">{activePet.name}</h3>
-                    <span className="px-2 py-0.5 rounded-full bg-accent-500/10 text-accent-700 dark:text-accent-300 text-caption-2-bold border border-accent-500/20">
-                      เพศเมีย ♀
-                    </span>
-                  </div>
-                  <p className="text-body-medium text-text-secondary">{activePet.breed}</p>
+                  <h3 className="text-title-3-semibold text-text-primary">{activePet.name}</h3>
+                  <p className="text-body-medium text-text-secondary">
+                    {activePet.breed} • เพศเมีย
+                  </p>
                   <p className="text-caption-2-regular text-text-tertiary">
                     ไมโครชิป: {activePet.microchipNo} • เจ้าของ: {activePet.ownerName}
                   </p>
@@ -535,17 +524,7 @@ export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({
         </div>
 
         {/* Modal Footer */}
-        <div className="px-5 sm:px-7 py-3.5 border-t border-border-button-default bg-background-secondary-default/50 flex items-center justify-between gap-3 flex-wrap">
-          <button
-            type="button"
-            onClick={handleResetDemo}
-            className="flex items-center gap-1.5 text-caption-2-medium text-text-tertiary hover:text-text-primary transition-colors cursor-pointer"
-            title="รีเซ็ตข้อมูลตัวอย่างกลับเป็นค่าเริ่มต้น"
-          >
-            <RiRestartLine className="size-3.5" />
-            <span>รีเซ็ตข้อมูลตัวอย่าง (Demo Reset)</span>
-          </button>
-
+        <div className="px-5 sm:px-7 py-3.5 border-t border-border-button-default bg-background-secondary-default/50 flex items-center justify-end">
           <Button variant="secondary" size="small" onClick={onClose}>
             ปิดหน้าต่าง
           </Button>

@@ -11,7 +11,7 @@ export const INITIAL_PET_PASSPORTS: PetPassport[] = [
     weight: '4.2 kg',
     microchipNo: '900182001928371',
     ownerName: 'คุณศิษฐิวัชร์',
-    avatarUrl: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=200&auto=format&fit=crop&q=80',
+    avatarUrl: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=300&auto=format&fit=crop&q=80',
     vaccines: [
       {
         id: 'vac-1',
@@ -54,7 +54,7 @@ export const INITIAL_PET_PASSPORTS: PetPassport[] = [
   },
 ];
 
-const LOCAL_STORAGE_KEY = 'vetpaws_pet_passports_v3';
+const LOCAL_STORAGE_KEY = 'vetpaws_pet_passports_v4';
 
 export function getStoredPassports(): PetPassport[] {
   if (typeof window === 'undefined') return INITIAL_PET_PASSPORTS;
