@@ -100,7 +100,7 @@ export function App() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-background-full text-text-primary selection:bg-accent-500/20 selection:text-accent-700 relative transition-colors overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-background-full text-text-primary selection:bg-accent-500/20 selection:text-accent-700 transition-colors">
       {/* Main Sticky Navbar with ThemeToggle & Auth */}
       <Navbar
         onOpenBooking={() => handleOpenBooking()}
