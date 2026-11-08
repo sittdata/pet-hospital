@@ -17,7 +17,19 @@ import {
   RiUserHeartLine,
   RiRefreshLine,
   RiCloseLine,
+  RiMedicineBottleLine,
 } from '@remixicon/react';
+import { getStoredPassports } from '../data/petPassportData';
+import type { PetPassport } from '../types/petPassport';
+
+export interface VaccineConsultData {
+  petName: string;
+  breed: string;
+  vaccineName: string;
+  dueDate?: string;
+  veterinarian?: string;
+  status: string;
+}
 
 export interface ChatMessage {
   id: string;
@@ -35,6 +47,8 @@ export interface ChatMessage {
     firstAidInstructions: string[];
     recommendedService: string;
   };
+  isVaccineCard?: boolean;
+  vaccineData?: VaccineConsultData;
 }
 
 interface LiveChatWidgetProps {
@@ -43,6 +57,8 @@ interface LiveChatWidgetProps {
   onOpenBooking?: (serviceName?: string, doctorName?: string) => void;
   isLoggedIn?: boolean;
   onRequireAuth?: () => void;
+  initialVaccineContext?: VaccineConsultData | null;
+  onClearInitialVaccineContext?: () => void;
 }
 
 const SUGGESTIONS = [
@@ -60,11 +76,15 @@ export const LiveChatWidget: React.FC<LiveChatWidgetProps> = ({
   onOpenBooking,
   isLoggedIn = false,
   onRequireAuth,
+  initialVaccineContext,
+  onClearInitialVaccineContext,
 }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [typingLabel, setTypingLabel] = useState('พญ. สุภัทรา (สัตวแพทย์เวร) กำลังพิมพ์ตอบกลับ...');
+  const [showVaccinePicker, setShowVaccinePicker] = useState(false);
+  const [passports, setPassports] = useState<PetPassport[]>([]);
   const chatScrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -125,8 +145,24 @@ export const LiveChatWidget: React.FC<LiveChatWidgetProps> = ({
     setMessages([]);
     setInputValue('');
     setSelectedImage(null);
+    setShowVaccinePicker(false);
     setIsTyping(false);
   };
+
+  // Sync pet passports on open
+  useEffect(() => {
+    if (isOpen) {
+      setPassports(getStoredPassports());
+    }
+  }, [isOpen]);
+
+  // Handle incoming vaccine context from Pet Health Passport Modal
+  useEffect(() => {
+    if (isOpen && initialVaccineContext) {
+      handleSendVaccineConsultation(initialVaccineContext);
+      onClearInitialVaccineContext?.();
+    }
+  }, [isOpen, initialVaccineContext]);
 
   const analyzeTriage = (query: string) => {
     const lower = query.toLowerCase();
@@ -221,6 +257,49 @@ export const LiveChatWidget: React.FC<LiveChatWidgetProps> = ({
       doctorReply:
         'สวัสดีค่ะคุณเจ้าของ หมอสุภัทรานะคะ ยินดีให้คำปรึกษาและดูแลน้องค่ะ สามารถกดนัดหมายเวลาที่สะดวกด้านล่าง หรือสอบถามข้อมูลเพิ่มเติมได้เลยนะคะ',
     };
+  };
+
+  const handleSendVaccineConsultation = (vacData: VaccineConsultData) => {
+    if (!isLoggedIn) {
+      onRequireAuth?.();
+      return;
+    }
+
+    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    const userMsg: ChatMessage = {
+      id: `user-vac-${Date.now()}`,
+      sender: 'user',
+      text: `ขอปรึกษาเรื่องตารางวัคซีนจากสมุดสุขภาพ: ${vacData.vaccineName} ของ ${vacData.petName}`,
+      timestamp: timeStr,
+      isVaccineCard: true,
+      vaccineData: vacData,
+    };
+
+    setMessages((prev) => [...prev, userMsg]);
+    setIsTyping(true);
+    setTypingLabel('สัตวแพทย์เวรกำลังตรวจสอบประวัติตารางวัคซีน...');
+    setShowVaccinePicker(false);
+
+    const t = window.setTimeout(() => {
+      const doctorMsg: ChatMessage = {
+        id: `doctor-vac-${Date.now()}`,
+        sender: 'doctor',
+        senderName: vacData.veterinarian || 'พญ. สุภัทรา (สัตวแพทย์เวร)',
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        text: `สวัสดีค่ะคุณเจ้าของ หมอตรวจเช็กประวัติตารางวัคซีนของ ${vacData.petName} ให้แล้วนะคะ สำหรับรายการ "${vacData.vaccineName}" ที่มีกำหนดนัด ${vacData.dueDate ? new Date(vacData.dueDate).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }) : 'เร็วๆ นี้'}:
+
+• การเตรียมตัวก่อนฉีด: สังเกตน้องต้องไม่มีไข้ ไม่ซึม กินอาหารและขับถ่ายปกติ และไม่อยู่ระหว่างรับประทานยาปฏิชีวนะ
+• ข้อควรระวัง: งดอาบน้ำ 48 ชม. ทั้งก่อนและหลังฉีดวัคซีน เพื่อป้องกันภาวะภูมิคุ้มกันตกชั่วคราว
+• คำแนะนำ: หากสะดวกวันนัด สามารถกดปุ่มจองคิวตรวจล่วงหน้าเพื่อเตรียมวัคซีนและลดเวลาการรอน้องเครียดได้เลยนะคะ`,
+        isVaccineCard: true,
+        vaccineData: vacData,
+      };
+      setMessages((prev) => [...prev, doctorMsg]);
+      setIsTyping(false);
+    }, 1300);
+
+    timeoutsRef.current.push(t);
   };
 
   const handleSendMessage = (textToSend?: string) => {
@@ -405,6 +484,25 @@ export const LiveChatWidget: React.FC<LiveChatWidgetProps> = ({
               </div>
 
               <div className="flex flex-col items-center gap-1.5 pt-1 w-full max-w-[290px]">
+                {/* Vaccine Schedule Quick Consult Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!isLoggedIn) {
+                      onRequireAuth?.();
+                      return;
+                    }
+                    setShowVaccinePicker((prev) => !prev);
+                  }}
+                  className="w-full flex items-center justify-between rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3.5 py-1.5 text-[11px] shadow-2xs transition-all hover:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 font-medium cursor-pointer"
+                >
+                  <div className="flex items-center gap-1.5">
+                    <RiMedicineBottleLine className="size-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                    <span>ปรึกษาตารางวัคซีนจากสมุดสุขภาพ</span>
+                  </div>
+                  <span className="text-[9.5px] bg-emerald-500/20 px-2 py-0.5 rounded-full font-semibold">ดึงตาราง</span>
+                </button>
+
                 {SUGGESTIONS.map((suggestion, index) => (
                   <button
                     key={suggestion}
@@ -455,6 +553,26 @@ export const LiveChatWidget: React.FC<LiveChatWidgetProps> = ({
                             />
                           </div>
                         )}
+                        {msg.isVaccineCard && msg.vaccineData && (
+                          <div className="p-2.5 rounded-xl bg-white/10 border border-white/20 text-start space-y-1 shadow-2xs">
+                            <div className="flex items-center gap-1.5 text-[10.5px] font-semibold text-white/95">
+                              <RiMedicineBottleLine className="size-3.5 shrink-0 text-amber-300" />
+                              <span>อ้างอิงข้อมูลตารางสมุดวัคซีน</span>
+                            </div>
+                            <div className="text-[12px] font-bold text-white">
+                              {msg.vaccineData.vaccineName}
+                            </div>
+                            <div className="text-[10px] text-white/80 space-y-0.5 pt-0.5">
+                              <div>• สัตว์เลี้ยง: {msg.vaccineData.petName} ({msg.vaccineData.breed})</div>
+                              {msg.vaccineData.dueDate && (
+                                <div>• กำหนดฉีด: {msg.vaccineData.dueDate}</div>
+                              )}
+                              {msg.vaccineData.veterinarian && (
+                                <div>• สัตวแพทย์ประจำตัว: {msg.vaccineData.veterinarian}</div>
+                              )}
+                            </div>
+                          </div>
+                        )}
                         {msg.text && <div>{msg.text}</div>}
                       </div>
                     ) : msg.sender === 'doctor' ? (
@@ -470,8 +588,23 @@ export const LiveChatWidget: React.FC<LiveChatWidgetProps> = ({
                             {msg.senderName}
                           </span>
                         </div>
-                        <div className="bg-emerald-500/10 border border-emerald-500/25 text-text-primary px-3 py-2 rounded-2xl rounded-tl-xs text-caption-1-regular leading-relaxed text-[12px]">
-                          {msg.text}
+                        <div className="bg-emerald-500/10 border border-emerald-500/25 text-text-primary px-3 py-2 rounded-2xl rounded-tl-xs text-caption-1-regular leading-relaxed text-[12px] space-y-2">
+                          <div className="whitespace-pre-line">{msg.text}</div>
+                          {msg.isVaccineCard && (
+                            <div className="pt-1 border-t border-emerald-500/20 flex items-center justify-end">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  onClose();
+                                  onOpenBooking?.('ตรวจสุขภาพทั่วไปและฉีดวัคซีน', msg.senderName);
+                                }}
+                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-button-primary text-white text-[11px] font-medium hover:opacity-90 transition-opacity cursor-pointer shadow-xs"
+                              >
+                                <RiCalendarCheckLine className="size-3.5" />
+                                <span>จองคิวฉีดวัคซีนนี้ล่วงหน้า</span>
+                              </button>
+                            </div>
+                          )}
                         </div>
                       </div>
                     ) : (
@@ -646,6 +779,72 @@ export const LiveChatWidget: React.FC<LiveChatWidgetProps> = ({
           onChange={handleImageChange}
         />
 
+        {/* Pet Vaccine Schedule Selector Drawer */}
+        {showVaccinePicker && (
+          <div className="mb-2 p-2.5 rounded-2xl bg-background-secondary-default border border-border-button-default animate-fade-in space-y-2">
+            <div className="flex items-center justify-between pb-1 border-b border-border-button-default">
+              <div className="flex items-center gap-1.5 text-[11px] font-semibold text-text-primary">
+                <RiMedicineBottleLine className="size-3.5 text-emerald-500 shrink-0" />
+                <span>เลือกรายการจากตารางสมุดวัคซีนเพื่อปรึกษา</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowVaccinePicker(false)}
+                className="text-text-tertiary hover:text-text-primary text-[10px] cursor-pointer px-1 py-0.5"
+              >
+                ปิด
+              </button>
+            </div>
+
+            <div className="max-h-36 overflow-y-auto space-y-1.5 pr-0.5">
+              {passports.flatMap((pet) =>
+                pet.vaccines.map((vac) => ({ pet, vac }))
+              ).length === 0 ? (
+                <p className="text-[11px] text-text-tertiary text-center py-2">
+                  ไม่พบรายการวัคซีนในสมุดสุขภาพสัตว์เลี้ยง
+                </p>
+              ) : (
+                passports.flatMap((pet) =>
+                  pet.vaccines.map((vac) => (
+                    <button
+                      key={`${pet.id}-${vac.id}`}
+                      type="button"
+                      onClick={() =>
+                        handleSendVaccineConsultation({
+                          petName: pet.name,
+                          breed: pet.breed,
+                          vaccineName: vac.name,
+                          dueDate: vac.dueDate,
+                          veterinarian: vac.veterinarian,
+                          status: vac.status,
+                        })
+                      }
+                      className="w-full text-start p-2 rounded-xl bg-background-primary-default border border-border-button-default hover:border-emerald-500 hover:bg-emerald-500/5 transition-colors cursor-pointer group flex items-center justify-between gap-2"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="text-[11.5px] font-semibold text-text-primary group-hover:text-emerald-600 dark:group-hover:text-emerald-400 truncate">
+                          {vac.name}
+                        </div>
+                        <div className="text-[10px] text-text-tertiary flex items-center gap-2 flex-wrap">
+                          <span>{pet.name}</span>
+                          {vac.dueDate && (
+                            <span className="font-medium text-text-secondary">
+                              นัด: {vac.dueDate}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium shrink-0">
+                        ส่งปรึกษา
+                      </span>
+                    </button>
+                  ))
+                )
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Selected Image Thumbnail Preview with Remove Button */}
         {selectedImage && (
           <div className="mb-2 flex items-center gap-2 p-1.5 rounded-2xl bg-background-secondary-default border border-border-button-default animate-fade-in">
@@ -676,6 +875,26 @@ export const LiveChatWidget: React.FC<LiveChatWidgetProps> = ({
         )}
 
         <div className="flex h-[40px] w-full items-center gap-1.5 rounded-full p-1 bg-background-secondary-default border border-border-button-default">
+          <button
+            type="button"
+            onClick={() => {
+              if (!isLoggedIn) {
+                onRequireAuth?.();
+                return;
+              }
+              setShowVaccinePicker((prev) => !prev);
+            }}
+            title="ดึงข้อมูลจากตารางสมุดวัคซีนสัตว์เลี้ยง"
+            className={cx(
+              "flex size-7 shrink-0 items-center justify-center rounded-full transition-colors cursor-pointer",
+              showVaccinePicker
+                ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+                : "text-foreground-icon-secondary hover:text-foreground-icon-primary hover:bg-background-tertiary-default"
+            )}
+          >
+            <RiMedicineBottleLine className="size-3.5" />
+          </button>
+
           <button
             type="button"
             onClick={() => {

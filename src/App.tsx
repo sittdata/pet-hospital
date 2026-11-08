@@ -54,6 +54,14 @@ export function App() {
 
   // 24/7 Live Triage Chat Widget State
   const [liveChatOpen, setLiveChatOpen] = useState(false);
+  const [vaccineChatContext, setVaccineChatContext] = useState<{
+    petName: string;
+    breed: string;
+    vaccineName: string;
+    dueDate?: string;
+    veterinarian?: string;
+    status: string;
+  } | null>(null);
 
   // BoardUI Auth State
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -273,6 +281,18 @@ export function App() {
               }
               handleOpenBooking(serviceName || 'ตรวจสุขภาพทั่วไปและฉีดวัคซีน');
             }}
+            onConsultVaccine={(vac, pet) => {
+              setPassportModalOpen(false);
+              setVaccineChatContext({
+                petName: pet.name,
+                breed: pet.breed,
+                vaccineName: vac.name,
+                dueDate: vac.dueDate,
+                veterinarian: vac.veterinarian,
+                status: vac.status,
+              });
+              setLiveChatOpen(true);
+            }}
           />
         )}
       </Suspense>
@@ -326,6 +346,8 @@ export function App() {
             onOpenBooking={(service?: string, doctor?: string) => handleOpenBooking(service, doctor)}
             isLoggedIn={!!currentUser}
             onRequireAuth={() => handleOpenAuth('signin')}
+            initialVaccineContext={vaccineChatContext}
+            onClearInitialVaccineContext={() => setVaccineChatContext(null)}
           />
         )}
       </Suspense>

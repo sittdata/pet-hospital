@@ -9,6 +9,7 @@ import {
   RiMedicineBottleLine,
   RiFileTextLine,
   RiInformationLine,
+  RiChatSmile2Fill,
 } from '@remixicon/react';
 import { PetPassport, VaccineRecord, VaccineStatus } from '../types/petPassport';
 import {
@@ -24,6 +25,7 @@ interface PetHealthPassportModalProps {
   onClose: () => void;
   onBookAppointment: (serviceName?: string, petType?: string) => void;
   initialPetId?: string;
+  onConsultVaccine?: (vaccine: VaccineRecord, pet: PetPassport) => void;
 }
 
 export function deriveVaccineStatus(vac: VaccineRecord): VaccineStatus {
@@ -43,6 +45,7 @@ export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({
   isOpen,
   onClose,
   onBookAppointment,
+  onConsultVaccine,
 }) => {
   const [passports, setPassports] = useState<PetPassport[]>([]);
   const [activeTab, setActiveTab] = useState<'vaccines' | 'treatments'>('vaccines');
@@ -444,7 +447,21 @@ export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({
                         )}
                       </div>
 
-                      <div className="shrink-0">
+                      <div className="shrink-0 flex items-center gap-2 flex-wrap">
+                        {onConsultVaccine && activePet && (
+                          <Button
+                            variant="secondary"
+                            size="small"
+                            leadingIcon={RiChatSmile2Fill}
+                            onClick={() => {
+                              onClose();
+                              onConsultVaccine(vac, activePet);
+                            }}
+                            title="เปิดแชทปรึกษาสัตวแพทย์เวรเรื่องวัคซีนนี้"
+                          >
+                            ปรึกษาหมอในแชท
+                          </Button>
+                        )}
                         <Button
                           variant="primary"
                           size="small"
