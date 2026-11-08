@@ -32,19 +32,17 @@ interface PetHealthPassportModalProps {
 }
 
 export function deriveVaccineStatus(vac: VaccineRecord): VaccineStatus {
+  if (vac.dateAdministered) {
+    return 'completed';
+  }
   if (vac.dueDate) {
     const todayStr = new Date().toISOString().split('T')[0];
     if (vac.dueDate < todayStr) {
       return 'overdue';
     }
-    if (!vac.dateAdministered) {
-      return 'upcoming';
-    }
+    return 'upcoming';
   }
-  if (vac.dateAdministered) {
-    return 'completed';
-  }
-  return vac.status || 'upcoming';
+  return vac.status || 'completed';
 }
 
 export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({

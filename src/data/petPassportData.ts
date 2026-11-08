@@ -16,42 +16,12 @@ export const INITIAL_PET_PASSPORTS: PetPassport[] = [
       {
         id: 'vac-1',
         name: 'วัคซีนรวมไข้หัด-หวัดแมว (FVRCP Core Vaccine)',
-        dateAdministered: '2025-10-15',
-        dueDate: '2026-10-15',
-        status: 'upcoming',
-        veterinarian: 'สพ.ญ. ดร. นลิน พิพิธกุล',
-        lotNumber: 'FVRCP-25B09',
-        notes: 'ฉีดเข็มกระตุ้นประจำปี สภาพร่างกายแข็งแรงดี ไม่มีไข้',
-      },
-      {
-        id: 'vac-2',
-        name: 'วัคซีนป้องกันโรคพิษสุนัขบ้า (Rabies Vaccine)',
-        dateAdministered: '2025-11-02',
-        dueDate: '2026-11-02',
+        dateAdministered: '2026-03-15',
+        dueDate: '2027-03-15',
         status: 'completed',
-        veterinarian: 'น.สพ. ปิยะวัฒน์ เจริญสุข',
-        lotNumber: 'RAB-TH982',
-        notes: 'ฉีดเข้าใต้ผิวหนัง ไม่พบอาการแพ้หลังดูอาการ 15 นาที',
-      },
-      {
-        id: 'vac-3',
-        name: 'วัคซีนลิวคีเมียในแมว (FeLV Vaccine)',
-        dateAdministered: '2024-08-10',
-        dueDate: '2025-08-10',
-        status: 'overdue',
-        veterinarian: 'สพ.ญ. ธนพร เกียรติไพบูลย์',
-        lotNumber: 'FELV-841A',
-        notes: 'เกินกำหนดฉีดกระตุ้น แนะนำตรวจเลือดและรับการฉีดโดยเร็ว',
-      },
-      {
-        id: 'vac-4',
-        name: 'หยอดยาป้องกันพยาธิหนอนหัวใจและเห็บหมัด (Revolution Plus)',
-        dateAdministered: '2026-03-01',
-        dueDate: '2026-04-01',
-        status: 'upcoming',
-        veterinarian: 'น.สพ. อัครเดช เมธากุล',
-        lotNumber: 'REV-2026-01',
-        notes: 'หยอดประจำเดือน ป้องกันไรหูและหมัด',
+        veterinarian: 'สพ.ญ. ดร. นลิน พิพิธกุล',
+        lotNumber: 'FVRCP-26B09',
+        notes: 'ฉีดเข็มกระตุ้นประจำปีเรียบร้อย สภาพร่างกายแข็งแรงดี ไม่มีไข้',
       },
     ],
     treatments: [
@@ -90,32 +60,12 @@ export const INITIAL_PET_PASSPORTS: PetPassport[] = [
       {
         id: 'vac-d1',
         name: 'วัคซีนรวม 5 โรคในสุนัข (DHPPi+L Core 5-in-1)',
-        dateAdministered: '2025-09-10',
-        dueDate: '2026-09-10',
+        dateAdministered: '2026-02-10',
+        dueDate: '2027-02-10',
         status: 'completed',
         veterinarian: 'น.สพ. ภาณุพงศ์ ศักดิ์เจริญ',
         lotNumber: 'DHPP-99401',
         notes: 'ฉีดวัคซีนรวมป้องกันไข้หัด ตับอักเสบ ลำไส้อักเสบ พาร์โว และเลปโตสไปโรซิส',
-      },
-      {
-        id: 'vac-d2',
-        name: 'วัคซีนโรคพิษสุนัขบ้าประจำปี (Rabies Booster)',
-        dateAdministered: '2025-09-10',
-        dueDate: '2026-09-10',
-        status: 'completed',
-        veterinarian: 'น.สพ. ภาณุพงศ์ ศักดิ์เจริญ',
-        lotNumber: 'RAB-DG331',
-        notes: 'ร่างกายสมบูรณ์ดี กล้ามเนื้อแน่น',
-      },
-      {
-        id: 'vac-d3',
-        name: 'ยากินป้องกันเห็บหมัดและพยาธิหนอนหัวใจ (NexGard Spectra)',
-        dateAdministered: '2026-02-15',
-        dueDate: '2026-03-15',
-        status: 'overdue',
-        veterinarian: 'สพ.ญ. รัตนาพร มงคลชัย',
-        lotNumber: 'NXG-30KG',
-        notes: 'ถึงกำหนดรับประทานเม็ดถัดไป แนะนำรับยาต่อเนื่อง',
       },
     ],
     treatments: [
@@ -145,8 +95,8 @@ export const INITIAL_PET_PASSPORTS: PetPassport[] = [
       {
         id: 'vac-b1',
         name: 'ตรวจสุขภาพและหยอดยาถ่ายพยาธิภายนอก/ภายใน',
-        dateAdministered: '2025-12-05',
-        dueDate: '2026-06-05',
+        dateAdministered: '2026-01-05',
+        dueDate: '2027-01-05',
         status: 'completed',
         veterinarian: 'สพ.ญ. อริศรา ธรรมรัตน์ (Exotic Specialist)',
         lotNumber: 'EXO-AV-01',
@@ -167,7 +117,7 @@ export const INITIAL_PET_PASSPORTS: PetPassport[] = [
   },
 ];
 
-const LOCAL_STORAGE_KEY = 'vetpaws_pet_passports_v1';
+const LOCAL_STORAGE_KEY = 'vetpaws_pet_passports_v2';
 
 export function getStoredPassports(): PetPassport[] {
   if (typeof window === 'undefined') return INITIAL_PET_PASSPORTS;
