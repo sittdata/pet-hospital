@@ -8,6 +8,7 @@ import {
   RiUserLine,
   RiLogoutBoxRLine,
   RiShieldCheckLine,
+  RiLockPasswordLine,
 } from '@remixicon/react';
 import { Button, ButtonLink } from '@/components/base/buttons/button';
 import { StatusDot } from '@/components/base/badges/status-dot';
@@ -18,6 +19,7 @@ interface NavbarProps {
   onOpenBooking: (prefillPetType?: string) => void;
   onOpenAuth: (mode?: 'signin' | 'signup') => void;
   onOpenPassport?: () => void;
+  onOpenChangePassword?: () => void;
   currentUser?: { name: string; email: string } | null;
   onSignOut?: () => void;
 }
@@ -26,6 +28,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenBooking,
   onOpenAuth,
   onOpenPassport,
+  onOpenChangePassword,
   currentUser,
   onSignOut,
 }) => {
@@ -109,6 +112,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                       {currentUser.name}
                     </span>
                   </button>
+                  <Button
+                    variant="ghost"
+                    size="xs"
+                    iconOnly
+                    leadingIcon={RiLockPasswordLine}
+                    onClick={onOpenChangePassword}
+                    title="เปลี่ยนรหัสผ่าน"
+                    aria-label="เปลี่ยนรหัสผ่าน"
+                  />
                   <Button
                     variant="ghost"
                     size="xs"
@@ -215,13 +227,27 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <div className="text-caption-2-medium text-text-secondary">{currentUser.email}</div>
                 </div>
               </button>
-              <Button
-                variant="ghost"
-                size="small"
-                onClick={onSignOut}
-              >
-                ออกจากระบบ
-              </Button>
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="xs"
+                  iconOnly
+                  leadingIcon={RiLockPasswordLine}
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    onOpenChangePassword?.();
+                  }}
+                  title="เปลี่ยนรหัสผ่าน"
+                  aria-label="เปลี่ยนรหัสผ่าน"
+                />
+                <Button
+                  variant="ghost"
+                  size="small"
+                  onClick={onSignOut}
+                >
+                  ออกจากระบบ
+                </Button>
+              </div>
             </div>
           )}
 

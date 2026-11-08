@@ -30,6 +30,9 @@ const AuthModal = lazy(() =>
 const PetHealthPassportModal = lazy(() =>
   import('./components/PetHealthPassportModal').then((m) => ({ default: m.PetHealthPassportModal }))
 );
+const ChangePasswordModal = lazy(() =>
+  import('./components/ChangePasswordModal').then((m) => ({ default: m.ChangePasswordModal }))
+);
 
 export function App() {
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
@@ -39,6 +42,9 @@ export function App() {
 
   // Digital Pet Health Passport State
   const [passportModalOpen, setPassportModalOpen] = useState(false);
+
+  // Change Password State
+  const [changePasswordModalOpen, setChangePasswordModalOpen] = useState(false);
 
   // BoardUI Auth State
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -112,6 +118,7 @@ export function App() {
         onOpenBooking={() => handleOpenBooking()}
         onOpenAuth={handleOpenAuth}
         onOpenPassport={() => setPassportModalOpen(true)}
+        onOpenChangePassword={() => setChangePasswordModalOpen(true)}
         currentUser={currentUser}
         onSignOut={() => setCurrentUser(null)}
       />
@@ -271,6 +278,17 @@ export function App() {
               setCurrentUser(user);
               setPassportModalOpen(true);
             }}
+          />
+        )}
+      </Suspense>
+
+      {/* Change Password Modal for Authenticated Users (Code Splitting with Suspense) */}
+      <Suspense fallback={null}>
+        {changePasswordModalOpen && (
+          <ChangePasswordModal
+            isOpen={changePasswordModalOpen}
+            onClose={() => setChangePasswordModalOpen(false)}
+            currentUser={currentUser}
           />
         )}
       </Suspense>
