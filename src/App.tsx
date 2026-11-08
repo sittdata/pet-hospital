@@ -267,7 +267,10 @@ export function App() {
             isOpen={authModalOpen}
             onClose={() => setAuthModalOpen(false)}
             initialMode={authMode}
-            onSuccess={(user) => setCurrentUser(user)}
+            onSuccess={(user) => {
+              setCurrentUser(user);
+              setPassportModalOpen(true);
+            }}
           />
         )}
       </Suspense>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { RiCloseLine, RiHeartPulseFill } from '@remixicon/react';
+import { RiCloseLine, RiHeartPulseFill, RiSparklingFill } from '@remixicon/react';
 import { AuthCard, type AuthMode } from '@/components/application/auth/auth-card';
 import { Button } from '@/components/base/buttons/button';
 
@@ -37,7 +37,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
 
-    // Auto-focus first interactive element inside modal
     const focusTimer = setTimeout(() => {
       const focusable = modalRef.current?.querySelectorAll<HTMLElement>(
         'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
@@ -98,8 +97,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   if (!isOpen) return null;
 
   const handleSubmit = (formData: FormData) => {
-    const email = (formData.get('email') as string) || 'petowner@example.com';
-    const name = email.split('@')[0];
+    const email = (formData.get('email') as string) || 'demo@vetpaws.com';
+    const isDemo = email.toLowerCase() === 'demo@vetpaws.com' || email.includes('sitthi');
+    const name = isDemo ? 'คุณศิษฐิวัชร์' : email.split('@')[0];
     const user = { name, email };
 
     setSuccessToast(
@@ -111,16 +111,25 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setTimeout(() => {
       onSuccess?.(user);
       onClose();
-    }, 900);
+    }, 700);
   };
 
   const handleProvider = (provider: string) => {
-    const user = { name: `${provider}_user`, email: `${provider}@example.com` };
+    const user = { name: 'คุณศิษฐิวัชร์', email: `${provider}@vetpaws.com` };
     setSuccessToast(`เชื่อมต่อผ่าน ${provider} สำเร็จ`);
     setTimeout(() => {
       onSuccess?.(user);
       onClose();
-    }, 900);
+    }, 700);
+  };
+
+  const handleQuickDemoLogin = () => {
+    const user = { name: 'คุณศิษฐิวัชร์ (เจ้าของน้องโมจิ)', email: 'demo@vetpaws.com' };
+    setSuccessToast('เข้าสู่ระบบสำเร็จ ยินดีต้อนรับคุณศิษฐิวัชร์');
+    setTimeout(() => {
+      onSuccess?.(user);
+      onClose();
+    }, 600);
   };
 
   return (
@@ -156,7 +165,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 ✓
               </div>
               <h4 className="text-title-3-semibold text-text-primary">{successToast}</h4>
-              <p className="text-caption-1-medium text-text-secondary">กำลังนำคุณเข้าสู่ระบบสมาชิก...</p>
+              <p className="text-caption-1-medium text-text-secondary">กำลังเปิดสมุดวัคซีนสัตว์เลี้ยง...</p>
             </div>
           </div>
         )}
@@ -189,6 +198,29 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           className="shadow-2xl border-border-button-default"
           headingLevel={2}
         />
+
+        {/* Presentation Demo Account Helper Card */}
+        {mode === 'signin' && (
+          <div className="mt-3 p-3.5 rounded-2xl bg-background-primary-default border border-border-button-default shadow-lg flex items-center justify-between gap-3 animate-fade-in">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1.5">
+                <RiSparklingFill className="size-3.5 text-accent-500 shrink-0" />
+                <span className="text-caption-1-semibold text-text-primary truncate">บัญชีทดสอบสำหรับนำเสนอ</span>
+              </div>
+              <p className="text-caption-2-regular text-text-secondary truncate mt-0.5">
+                demo@vetpaws.com • รหัสผ่าน: demo1234
+              </p>
+            </div>
+            <Button
+              variant="primary"
+              size="small"
+              onClick={handleQuickDemoLogin}
+              className="shrink-0"
+            >
+              ล็อกอินด่วน
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

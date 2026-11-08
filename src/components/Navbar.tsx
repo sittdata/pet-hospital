@@ -82,41 +82,43 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Theme Toggle (Light / Dark switch) */}
             <ThemeToggle appearance="segmented" size="small" />
 
-            {/* Pet Health Passport & Vaccine Tracker CTA */}
-            <Button
-              variant="secondary"
-              size="small"
-              leadingIcon={RiShieldCheckLine}
-              onClick={onOpenPassport}
-              className="whitespace-nowrap shrink-0 border-accent-500/40 hover:border-accent-400"
-              title="สมุดวัคซีนและประวัติสุขภาพสัตว์เลี้ยงดิจิทัล"
-            >
-              สมุดวัคซีน
-            </Button>
-
-            {/* Auth Sign-in / User Profile */}
+            {/* Auth Sign-in / User Profile with Protected Pet Passport */}
             {currentUser ? (
-              <div className="flex items-center gap-2 px-2.5 py-1 rounded-xl bg-background-secondary-default border border-border-button-default shrink-0">
-                <button
-                  type="button"
-                  onClick={onOpenPassport}
-                  className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer text-left"
-                  title="คลิกเพื่อเปิดสมุดสุขภาพสัตว์เลี้ยง"
-                >
-                  <Avatar initials={currentUser.name.slice(0, 2).toUpperCase()} size="sm" />
-                  <span className="text-caption-1-semibold text-text-primary hidden md:inline truncate max-w-28 whitespace-nowrap">
-                    {currentUser.name}
-                  </span>
-                </button>
+              <div className="flex items-center gap-2 shrink-0">
+                {/* Pet Health Passport CTA (Visible only when logged in) */}
                 <Button
-                  variant="ghost"
-                  size="xs"
-                  iconOnly
-                  leadingIcon={RiLogoutBoxRLine}
-                  onClick={onSignOut}
-                  title="ออกจากระบบ"
-                  aria-label="ออกจากระบบ"
-                />
+                  variant="secondary"
+                  size="small"
+                  leadingIcon={RiShieldCheckLine}
+                  onClick={onOpenPassport}
+                  className="whitespace-nowrap shrink-0 border-accent-500/40 hover:border-accent-400"
+                  title="สมุดวัคซีนและประวัติสุขภาพสัตว์เลี้ยงดิจิทัล"
+                >
+                  สมุดวัคซีน
+                </Button>
+
+                <div className="flex items-center gap-2 px-2.5 py-1 rounded-xl bg-background-secondary-default border border-border-button-default shrink-0">
+                  <button
+                    type="button"
+                    onClick={onOpenPassport}
+                    className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer text-left"
+                    title="คลิกเพื่อเปิดสมุดสุขภาพสัตว์เลี้ยง"
+                  >
+                    <Avatar initials={currentUser.name.slice(0, 2).toUpperCase()} size="sm" />
+                    <span className="text-caption-1-semibold text-text-primary hidden md:inline truncate max-w-28 whitespace-nowrap">
+                      {currentUser.name}
+                    </span>
+                  </button>
+                  <Button
+                    variant="ghost"
+                    size="xs"
+                    iconOnly
+                    leadingIcon={RiLogoutBoxRLine}
+                    onClick={onSignOut}
+                    title="ออกจากระบบ"
+                    aria-label="ออกจากระบบ"
+                  />
+                </div>
               </div>
             ) : (
               <Button
@@ -156,15 +158,17 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Mobile Right Controls: Compact, No Overflow */}
           <div className="flex sm:hidden items-center gap-1.5 shrink-0">
-            <Button
-              variant="secondary"
-              size="small"
-              iconOnly
-              leadingIcon={RiShieldCheckLine}
-              onClick={onOpenPassport}
-              aria-label="สมุดวัคซีนดิจิทัล"
-              title="สมุดวัคซีนดิจิทัล"
-            />
+            {currentUser && (
+              <Button
+                variant="secondary"
+                size="small"
+                iconOnly
+                leadingIcon={RiShieldCheckLine}
+                onClick={onOpenPassport}
+                aria-label="สมุดวัคซีนดิจิทัล"
+                title="สมุดวัคซีนดิจิทัล"
+              />
+            )}
             <ButtonLink
               href="tel:028889999"
               variant="danger"
@@ -232,19 +236,20 @@ export const Navbar: React.FC<NavbarProps> = ({
             </a>
           ))}
           <div className="pt-2 border-t border-border-button-default flex flex-col gap-2">
-            <Button
-              variant="secondary"
-              size="medium"
-              leadingIcon={RiShieldCheckLine}
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onOpenPassport?.();
-              }}
-              className="w-full justify-center"
-            >
-              สมุดวัคซีน & ประวัติสุขภาพสัตว์เลี้ยง
-            </Button>
-            {!currentUser && (
+            {currentUser ? (
+              <Button
+                variant="secondary"
+                size="medium"
+                leadingIcon={RiShieldCheckLine}
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onOpenPassport?.();
+                }}
+                className="w-full justify-center"
+              >
+                สมุดวัคซีน & ประวัติสุขภาพสัตว์เลี้ยง
+              </Button>
+            ) : (
               <Button
                 variant="secondary"
                 size="medium"
