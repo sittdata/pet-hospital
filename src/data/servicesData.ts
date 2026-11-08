@@ -77,7 +77,7 @@ export const servicesData: HospitalService[] = [
       'ตรวจโรคติดเชื้อและพยาธิวิทยาทางเดินอาหารสัตว์ปีก'
     ],
     isEmergency: false,
-    imageUrl: 'https://images.unsplash.com/photo-1574063413132-355dbfd83e25?w=600&auto=format&fit=crop&q=80'
+    imageUrl: '/images/exotic_pet_clinic_treatment_room.jpg'
   },
   {
     id: 'wellness-vaccine',
@@ -92,6 +92,6 @@ export const servicesData: HospitalService[] = [
       'บริการใบรับรองแพทย์ตรวจสุขภาพเพื่อขึ้นเครื่องบินและออกนอกประเทศ'
     ],
     isEmergency: false,
-    imageUrl: 'https://images.unsplash.com/photo-1587764379873-97837921fd44?w=600&auto=format&fit=crop&q=80'
+    imageUrl: '/images/veterinary_wellness_vaccination_room.jpg'
   }
 ];
