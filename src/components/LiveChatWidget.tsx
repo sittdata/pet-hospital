@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cx } from '@/utils/cx';
 import { Button, ButtonLink } from '@/components/base/buttons/button';
@@ -91,9 +91,27 @@ export const LiveChatWidget: React.FC<LiveChatWidgetProps> = ({
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const timeoutsRef = useRef<number[]>([]);
 
+  const widgetRef = useRef<HTMLDivElement>(null);
+  const previousActiveElement = useRef<HTMLElement | null>(null);
+
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  });
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (!file.type.startsWith('image/')) {
+        alert('กรุณาเลือกไฟล์รูปภาพเท่านั้น');
+        e.target.value = '';
+        return;
+      }
+      if (file.size > 3 * 1024 * 1024) {
+        alert('ขนาดไฟล์รูปภาพต้องไม่เกิน 3MB');
+        e.target.value = '';
+        return;
+      }
       const reader = new FileReader();
       reader.onload = () => {
         setSelectedImage(reader.result as string);
@@ -122,23 +140,63 @@ export const LiveChatWidget: React.FC<LiveChatWidgetProps> = ({
   }, [messages, isTyping]);
 
   useEffect(() => {
+    let focusTimer: number | undefined;
     if (isOpen) {
-      setTimeout(() => inputRef.current?.focus(), 200);
+      previousActiveElement.current = document.activeElement as HTMLElement | null;
+      focusTimer = window.setTimeout(() => inputRef.current?.focus(), 200);
     } else {
       clearAllTimeouts();
+      previousActiveElement.current?.focus();
     }
+    return () => {
+      if (focusTimer) window.clearTimeout(focusTimer);
+      clearAllTimeouts();
+      previousActiveElement.current?.focus();
+    };
   }, [isOpen]);
 
-  // Handle Escape key
+  // Focus trap and keyboard handling
   useEffect(() => {
+    if (!isOpen) return;
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
+      if (e.key === 'Escape') {
+        onCloseRef.current();
+        return;
+      }
+      if (e.key === 'Tab' && widgetRef.current) {
+        const focusables = Array.from(
+          widgetRef.current.querySelectorAll<HTMLElement>(
+            'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          )
+        ).filter((el) => el.offsetParent !== null || el.offsetWidth > 0 || el.offsetHeight > 0);
+
+        if (focusables.length === 0) {
+          e.preventDefault();
+          return;
+        }
+
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+
+        if (!widgetRef.current.contains(document.activeElement)) {
+          e.preventDefault();
+          first.focus();
+        } else if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
       }
     };
+
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen]);
 
   const resetChat = () => {
     clearAllTimeouts();
@@ -156,13 +214,6 @@ export const LiveChatWidget: React.FC<LiveChatWidgetProps> = ({
     }
   }, [isOpen]);
 
-  // Handle incoming vaccine context from Pet Health Passport Modal
-  useEffect(() => {
-    if (isOpen && initialVaccineContext) {
-      handleSendVaccineConsultation(initialVaccineContext);
-      onClearInitialVaccineContext?.();
-    }
-  }, [isOpen, initialVaccineContext]);
 
   const analyzeTriage = (query: string) => {
     const lower = query.toLowerCase();
@@ -259,7 +310,7 @@ export const LiveChatWidget: React.FC<LiveChatWidgetProps> = ({
     };
   };
 
-  const handleSendVaccineConsultation = (vacData: VaccineConsultData) => {
+  const handleSendVaccineConsultation = useCallback((vacData: VaccineConsultData) => {
     if (!isLoggedIn) {
       onRequireAuth?.();
       return;
@@ -300,7 +351,15 @@ export const LiveChatWidget: React.FC<LiveChatWidgetProps> = ({
     }, 1300);
 
     timeoutsRef.current.push(t);
-  };
+  }, [isLoggedIn, onRequireAuth]);
+
+  // Handle incoming vaccine context from Pet Health Passport Modal
+  useEffect(() => {
+    if (isOpen && initialVaccineContext) {
+      handleSendVaccineConsultation(initialVaccineContext);
+      onClearInitialVaccineContext?.();
+    }
+  }, [isOpen, initialVaccineContext, handleSendVaccineConsultation, onClearInitialVaccineContext]);
 
   const handleSendMessage = (textToSend?: string) => {
     const text = (textToSend || inputValue).trim();
@@ -377,6 +436,7 @@ export const LiveChatWidget: React.FC<LiveChatWidgetProps> = ({
 
   return (
     <motion.div
+      ref={widgetRef}
       initial={{ opacity: 0, y: 30, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 30, scale: 0.96 }}
@@ -458,6 +518,8 @@ export const LiveChatWidget: React.FC<LiveChatWidgetProps> = ({
           ===================================================================== */}
       <div
         ref={chatScrollRef}
+        role="log"
+        aria-live="polite"
         className="flex-1 overflow-y-auto px-3 py-2.5 space-y-2.5 text-caption-1-regular scroll-smooth flex flex-col bg-background-full"
       >
         <AnimatePresence mode="wait">

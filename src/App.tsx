@@ -152,29 +152,25 @@ export function App() {
         <section id="ai-triage" className="py-16 md:py-20 bg-background-secondary-default/50 border-b border-border-button-default">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-              {/* Left Column: Interactive Phone Mockup (Desktop only) */}
-              <div className="hidden lg:flex lg:col-span-5 justify-center">
+              {/* Explanatory Content (Mobile: 1st, Desktop: Right Column Top) */}
+              <div className="space-y-2 lg:col-start-6 lg:col-span-7 lg:row-start-1">
+                <h2 className="text-title-1-medium text-text-primary tracking-tight">
+                  <TypewriterText words={['ปรึกษาอาการสัตว์เลี้ยงตลอด 24 ชม.']} />
+                  <br />
+                  <span className="text-accent-600">ดูแลโดยทีมสัตวแพทย์จริง มั่นใจกว่า 421,000+ เคส</span>
+                </h2>
+                <p className="text-body-regular text-text-secondary max-w-xl leading-relaxed">
+                  หมดกังวลเรื่องสัตว์เลี้ยงป่วยฉุกเฉิน ระบบช่วยบันทึกอาการเบื้องต้นใน 5 วินาที พร้อมส่งต่อสัตวแพทย์เวรตอบกลับจริง และเปิดคิวห้องตรวจด่วนรองรับทันทีตลอด 24 ชั่วโมง
+                </p>
+              </div>
+
+              {/* Single Interactive Phone Mockup (Mobile: 2nd, Desktop: Left Column spanning rows) */}
+              <div className="flex justify-center my-4 lg:my-0 lg:col-start-1 lg:col-span-5 lg:row-start-1 lg:row-span-2">
                 <CustomerChatPhoneMockup onOpenBooking={(service) => handleOpenBooking(service)} />
               </div>
 
-              {/* Right Column: Explanatory Content, Phone Mockup (Mobile), & 2x2 StatCards */}
-              <div className="lg:col-span-7 space-y-6">
-                <div className="space-y-2">
-                  <h2 className="text-title-1-medium text-text-primary tracking-tight">
-                    <TypewriterText words={['ปรึกษาอาการสัตว์เลี้ยงตลอด 24 ชม.']} />
-                    <br />
-                    <span className="text-accent-600">ดูแลโดยทีมสัตวแพทย์จริง มั่นใจกว่า 421,000+ เคส</span>
-                  </h2>
-                  <p className="text-body-regular text-text-secondary max-w-xl leading-relaxed">
-                    หมดกังวลเรื่องสัตว์เลี้ยงป่วยฉุกเฉิน ระบบช่วยบันทึกอาการเบื้องต้นใน 5 วินาที พร้อมส่งต่อสัตวแพทย์เวรตอบกลับจริง และเปิดคิวห้องตรวจด่วนรองรับทันทีตลอด 24 ชั่วโมง
-                  </p>
-                </div>
-
-                {/* Mobile/Responsive Only: Interactive Phone Mockup placed right below description */}
-                <div className="block lg:hidden my-6 flex justify-center">
-                  <CustomerChatPhoneMockup onOpenBooking={(service) => handleOpenBooking(service)} />
-                </div>
-
+              {/* 2x2 StatCards & CTA (Mobile: 3rd, Desktop: Right Column Bottom) */}
+              <div className="space-y-6 lg:col-start-6 lg:col-span-7 lg:row-start-2">
                 {/* 2x2 StatCards Grid (2 แถวบน 2 แถวล่าง) */}
                 <div className="pt-1">
                   <StatCards stats={hospitalStats} variant="footer" columns={2} />

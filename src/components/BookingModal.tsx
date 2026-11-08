@@ -65,7 +65,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [bookingRefCode, setBookingRefCode] = useState<string>('');
-  const [dismissedEmergencyWarning, setDismissedEmergencyWarning] = useState<boolean>(false);
+  const [dismissedEmergencyKey, setDismissedEmergencyKey] = useState<string | null>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
   const [formData, setFormData] = useState<AppointmentFormData>(() => ({
@@ -85,12 +85,17 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  });
+
   const handleResetAndClose = useCallback(() => {
     setIsSuccess(false);
-    setDismissedEmergencyWarning(false);
+    setDismissedEmergencyKey(null);
     setStep(1);
-    onClose();
-  }, [onClose]);
+    onCloseRef.current();
+  }, []);
 
   const previousActiveElement = useRef<HTMLElement | null>(null);
 
@@ -164,8 +169,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
   // Real-time Emergency Keyword Detection
   const combinedText = `${formData.serviceCategory} ${formData.symptomsDescription}`.toLowerCase();
-  const detectedEmergency = EMERGENCY_KEYWORDS.some((kw) => combinedText.includes(kw));
-  const showEmergencyIntercept = (detectedEmergency || formData.isEmergencyCase) && !dismissedEmergencyWarning;
+  const matchedKeywords = EMERGENCY_KEYWORDS.filter((kw) => combinedText.includes(kw)).sort().join(',');
+  const currentEmergencyKey = [formData.isEmergencyCase ? 'manual-emergency' : '', matchedKeywords].filter(Boolean).join(':');
+  const hasEmergency = Boolean(currentEmergencyKey);
+  const showEmergencyIntercept = hasEmergency && dismissedEmergencyKey !== currentEmergencyKey;
 
   const validateStep = (currentStep: number): boolean => {
     const errs: Record<string, string> = {};
@@ -201,16 +208,47 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
     setIsSubmitting(true);
     setTimeout(() => {
-      const refCode = `ARAK-${Math.floor(1000 + Math.random() * 9000)}`;
+      const refCode = `VETPAWS-${Math.floor(1000 + Math.random() * 9000)}`;
       setBookingRefCode(refCode);
 
-      // Safe save to localStorage
+      // Safe save to localStorage with sanitized customer PII
       try {
-        const raw = localStorage.getItem('arak_appointments');
+        const raw = localStorage.getItem('vetpaws_appointments');
         const parsed = raw ? JSON.parse(raw) : [];
         const existing = Array.isArray(parsed) ? parsed : [];
-        existing.push({ ...formData, refCode, createdAt: new Date().toISOString() });
-        localStorage.setItem('arak_appointments', JSON.stringify(existing));
+
+        const maskPhone = (phone: string) => {
+          const digits = phone.replace(/\D/g, '');
+          if (digits.length >= 9) {
+            return digits.slice(0, 3) + '****' + digits.slice(-3);
+          }
+          return '***';
+        };
+
+        const maskName = (name: string) => {
+          const parts = name.trim().split(/\s+/);
+          return parts.map((p) => (p.length > 1 ? p.charAt(0) + '***' : '***')).join(' ');
+        };
+
+        const sanitizedAppointment = {
+          refCode,
+          petType: formData.petType,
+          petName: formData.petName,
+          petBreed: formData.petBreed,
+          petAge: formData.petAge,
+          serviceCategory: formData.serviceCategory,
+          preferredDate: formData.preferredDate,
+          preferredTimeSlot: formData.preferredTimeSlot,
+          isEmergencyCase: formData.isEmergencyCase,
+          symptomsDescription: formData.symptomsDescription,
+          ownerName: maskName(formData.ownerName),
+          ownerPhone: maskPhone(formData.ownerPhone),
+          ownerLineId: formData.ownerLineId ? '***' : '',
+          createdAt: new Date().toISOString(),
+        };
+
+        existing.push(sanitizedAppointment);
+        localStorage.setItem('vetpaws_appointments', JSON.stringify(existing));
       } catch (err) {
         console.error('Storage error', err);
       }
@@ -312,7 +350,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 type="button"
                 variant="ghost"
                 size="small"
-                onClick={() => setDismissedEmergencyWarning(true)}
+                onClick={() => setDismissedEmergencyKey(currentEmergencyKey)}
               >
                 ดำเนินการกรอกแบบฟอร์มนัดหมายต่อ →
               </Button>

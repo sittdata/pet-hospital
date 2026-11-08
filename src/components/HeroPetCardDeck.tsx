@@ -75,37 +75,43 @@ export const HeroPetCardDeck: React.FC<HeroPetCardDeckProps> = ({ onOpenBooking 
   useEffect(() => {
     const fullText = defaultCards[activeIndex].prompt;
 
-    const interval = setInterval(() => {
-      setCharCount((prev) => {
-        if (prev < fullText.length) {
-          return prev + 1;
-        } else {
-          clearInterval(interval);
-          pauseTimerRef.current = setTimeout(() => {
-            if (!isHoveredRef.current) {
-              setActiveIndex((i) => (i + 1) % defaultCards.length);
-              setCharCount(0);
-            } else {
-              checkIntervalRef.current = setInterval(() => {
-                if (!isHoveredRef.current) {
-                  if (checkIntervalRef.current) clearInterval(checkIntervalRef.current);
-                  setActiveIndex((i) => (i + 1) % defaultCards.length);
-                  setCharCount(0);
-                }
-              }, 600);
+    if (charCount < fullText.length) {
+      const typeTimer = setTimeout(() => {
+        setCharCount((prev) => prev + 1);
+      }, 38);
+      return () => clearTimeout(typeTimer);
+    }
+
+    // Once finished typing prompt, pause before next card
+    pauseTimerRef.current = setTimeout(() => {
+      if (!isHoveredRef.current) {
+        setActiveIndex((i) => (i + 1) % defaultCards.length);
+        setCharCount(0);
+      } else {
+        checkIntervalRef.current = setInterval(() => {
+          if (!isHoveredRef.current) {
+            if (checkIntervalRef.current) {
+              clearInterval(checkIntervalRef.current);
+              checkIntervalRef.current = null;
             }
-          }, 3200);
-          return prev;
-        }
-      });
-    }, 38);
+            setActiveIndex((i) => (i + 1) % defaultCards.length);
+            setCharCount(0);
+          }
+        }, 600);
+      }
+    }, 3200);
 
     return () => {
-      clearInterval(interval);
-      if (pauseTimerRef.current) clearTimeout(pauseTimerRef.current);
-      if (checkIntervalRef.current) clearInterval(checkIntervalRef.current);
+      if (pauseTimerRef.current) {
+        clearTimeout(pauseTimerRef.current);
+        pauseTimerRef.current = null;
+      }
+      if (checkIntervalRef.current) {
+        clearInterval(checkIntervalRef.current);
+        checkIntervalRef.current = null;
+      }
     };
-  }, [activeIndex]);
+  }, [activeIndex, charCount]);
 
   const handleCardClick = (targetIndex: number) => {
     setActiveIndex(targetIndex);

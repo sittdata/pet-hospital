@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   RiCloseLine,
   RiCheckLine,
@@ -33,7 +33,11 @@ export function deriveVaccineStatus(vac: VaccineRecord): VaccineStatus {
     return 'completed';
   }
   if (vac.dueDate) {
-    const todayStr = new Date().toISOString().split('T')[0];
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const todayStr = `${year}-${month}-${day}`;
     if (vac.dueDate < todayStr) {
       return 'overdue';
     }
@@ -60,13 +64,33 @@ export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({
   const modalRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<HTMLElement | null>(null);
 
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  });
+
+  const resetForm = useCallback(() => {
+    setVacName('');
+    setVacDueDate('');
+    setVacNotes('');
+    setVacVet('สพ.ญ. ดร. นลิน พิพิธกุล');
+    setShowAddVaccine(false);
+  }, []);
+
+  const handleClose = useCallback(() => {
+    resetForm();
+    onCloseRef.current();
+  }, [resetForm]);
+
   // Load passports on mount / open
   useEffect(() => {
     if (isOpen) {
       const data = getStoredPassports();
       setPassports(data);
+    } else {
+      resetForm();
     }
-  }, [isOpen]);
+  }, [isOpen, resetForm]);
 
   // Focus trap, initial focus, body scroll lock & Escape key handling
   useEffect(() => {
@@ -87,7 +111,7 @@ export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        onClose();
+        handleClose();
         return;
       }
       if (e.key === 'Tab') {
@@ -131,7 +155,7 @@ export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({
         previousActiveElement.current.focus();
       }
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, handleClose]);
 
   const activePet = passports[0];
   const petVaccines: VaccineRecord[] = activePet?.vaccines ?? [];
@@ -162,10 +186,7 @@ export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({
 
     setPassports(updatedPassports);
     saveStoredPassports(updatedPassports);
-    setVacName('');
-    setVacDueDate('');
-    setVacNotes('');
-    setShowAddVaccine(false);
+    resetForm();
   };
 
   if (!isOpen) return null;
@@ -173,7 +194,7 @@ export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({
   return (
     <div
       onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
+        if (e.target === e.currentTarget) handleClose();
       }}
       className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/60 backdrop-blur-xs transition-opacity overflow-y-auto"
       role="dialog"
@@ -209,7 +230,7 @@ export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({
             </div>
           </div>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="p-2 rounded-xl text-text-tertiary hover:text-text-primary hover:bg-background-secondary-default transition-colors cursor-pointer"
             aria-label="ปิดหน้าต่างสมุดสุขภาพ"
           >
@@ -235,7 +256,7 @@ export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({
                 <div>
                   <h3 className="text-title-3-semibold text-text-primary">{activePet.name}</h3>
                   <p className="text-body-medium text-text-secondary">
-                    {activePet.breed} • เพศเมีย
+                    {activePet.breed} • {activePet.gender === 'male' ? 'เพศผู้' : 'เพศเมีย'}
                   </p>
                   <p className="text-caption-2-regular text-text-tertiary">
                     ไมโครชิป: {activePet.microchipNo} • เจ้าของ: {activePet.ownerName}
@@ -317,7 +338,7 @@ export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({
                 </h4>
                 <button
                   type="button"
-                  onClick={() => setShowAddVaccine(false)}
+                  onClick={resetForm}
                   className="text-text-tertiary hover:text-text-primary cursor-pointer"
                 >
                   <RiCloseLine className="size-5" />
@@ -380,7 +401,7 @@ export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({
                   type="button"
                   variant="ghost"
                   size="small"
-                  onClick={() => setShowAddVaccine(false)}
+                  onClick={resetForm}
                 >
                   ยกเลิก
                 </Button>
@@ -453,7 +474,7 @@ export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({
                               size="small"
                               leadingIcon={RiChatSmile2Fill}
                               onClick={() => {
-                                onClose();
+                                handleClose();
                                 onConsultVaccine(vac, activePet);
                               }}
                               title="เปิดแชทปรึกษาสัตวแพทย์เวรเรื่องวัคซีนนี้"
@@ -466,7 +487,7 @@ export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({
                             size="small"
                             leadingIcon={RiCalendarEventLine}
                             onClick={() => {
-                              onClose();
+                              handleClose();
                               onBookAppointment('ตรวจสุขภาพทั่วไปและฉีดวัคซีน', activePet?.petType);
                             }}
                           >
@@ -549,7 +570,7 @@ export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({
 
         {/* Modal Footer */}
         <div className="px-5 sm:px-7 py-3.5 border-t border-border-button-default bg-background-secondary-default/50 flex items-center justify-end">
-          <Button variant="secondary" size="small" onClick={onClose}>
+          <Button variant="secondary" size="small" onClick={handleClose}>
             ปิดหน้าต่าง
           </Button>
         </div>
