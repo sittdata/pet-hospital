@@ -35,12 +35,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
-    { label: 'ตามชนิดสัตว์', href: '#pet-treatments' },
+    { label: 'ชนิดสัตว์', href: '#pet-treatments' },
     { label: 'ศูนย์การแพทย์', href: '#services' },
-    { label: 'ทีมสัตวแพทย์', href: '#doctors' },
+    { label: 'สัตวแพทย์', href: '#doctors' },
     { label: 'รีวิว', href: '#testimonials' },
-    { label: 'คำถามที่พบบ่อย', href: '#faq' },
-    { label: 'ที่ตั้งและเวลา', href: '#location' },
   ];
 
   return (
@@ -48,13 +46,13 @@ export const Navbar: React.FC<NavbarProps> = ({
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20 gap-2 sm:gap-4">
           {/* Logo & Brand */}
-          <a href="#" className="flex items-center gap-2 sm:gap-2.5 min-w-0 group">
+          <a href="#" className="flex items-center gap-2 sm:gap-2.5 shrink-0 group">
             <div className="size-9 sm:size-11 rounded-xl sm:rounded-2xl bg-gradient-to-b from-accent-500 to-accent-600 flex items-center justify-center text-white shadow-xs group-hover:opacity-95 transition-opacity shrink-0">
               <RiHeartPulseFill className="size-5 sm:size-6 text-white" />
             </div>
-            <div className="min-w-0 flex-1">
+            <div className="shrink-0">
               <div className="flex items-center gap-1.5 sm:gap-2">
-                <span className="font-bold text-headline-medium sm:text-title-3-semibold text-white tracking-tight truncate max-w-[155px] xs:max-w-[210px] sm:max-w-none">
+                <span className="font-bold text-headline-medium sm:text-title-3-semibold text-white tracking-tight whitespace-nowrap">
                   VetPaws Hospital
                 </span>
                 <span className="hidden xs:inline-flex shrink-0 items-center gap-1 px-1.5 py-0.5 rounded-full bg-status-lime-background text-status-lime-text text-caption-2-bold whitespace-nowrap">
@@ -62,7 +60,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <span>24 ชม.</span>
                 </span>
               </div>
-              <p className="text-caption-2-regular sm:text-caption-1-medium text-text-secondary truncate hidden xs:block">
+              <p className="text-caption-2-regular sm:text-caption-1-medium text-text-secondary whitespace-nowrap hidden xs:block">
                 VetPaws Animal Hospital
               </p>
             </div>
