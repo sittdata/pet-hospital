@@ -6,8 +6,12 @@ import {
   RiScissors2Line, 
   RiPsychotherapyLine, 
   RiStethoscopeLine,
-  RiCalendarCheckLine
+  RiCalendarCheckLine,
+  RiArrowDownSLine,
+  RiArrowUpSLine
 } from '@remixicon/react';
+import { Button } from '@/components/base/buttons/button';
+import { cx } from '@/utils/cx';
 
 interface Doctor {
   id: string;
@@ -87,7 +91,7 @@ const DEPARTMENTS_DATA: Department[] = [
   },
   {
     id: 'exotic',
-    name: 'ศูนย์สัตว์พิเศษ (Exotic Pets)',
+    name: 'ศูนย์สัตว์เลี้ยงพิเศษ',
     icon: RiPsychotherapyLine,
     description: 'เชี่ยวชาญการดูแลกระต่าย กระรอก นก ชูก้าไกลเดอร์ สัตว์เลื้อยคลาน และสัตว์ฟันแทะ',
     doctors: [
@@ -152,6 +156,14 @@ export interface DoctorsProps {
 
 export default function Doctors({ onOpenBooking }: DoctorsProps = {}) {
   const [activeTab, setActiveTab] = useState<string>('all');
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
+
+  const handleTabChange = (tabId: string) => {
+    setActiveTab(tabId);
+    if (tabId !== 'all') {
+      setIsExpanded(true);
+    }
+  };
 
   const filteredDepartments = activeTab === 'all' 
     ? DEPARTMENTS_DATA 
@@ -178,7 +190,7 @@ export default function Doctors({ onOpenBooking }: DoctorsProps = {}) {
         <div className="flex flex-wrap items-center justify-center gap-2 mb-14">
           <button
             type="button"
-            onClick={() => setActiveTab('all')}
+            onClick={() => handleTabChange('all')}
             className={`px-4 py-2 rounded-full text-body-medium transition-colors ${
               activeTab === 'all'
                 ? 'bg-accent-600 text-white shadow-sm'
@@ -193,7 +205,7 @@ export default function Doctors({ onOpenBooking }: DoctorsProps = {}) {
               <button
                 type="button"
                 key={dept.id}
-                onClick={() => setActiveTab(dept.id)}
+                onClick={() => handleTabChange(dept.id)}
                 className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-body-medium transition-colors ${
                   activeTab === dept.id
                     ? 'bg-accent-600 text-white shadow-sm'
@@ -208,8 +220,16 @@ export default function Doctors({ onOpenBooking }: DoctorsProps = {}) {
         </div>
 
         {/* รายชื่อศูนย์และแพทย์ */}
-        <div className="space-y-16">
-          {filteredDepartments.map((dept) => {
+        <div className="relative">
+          <div
+            className={cx(
+              'space-y-16 transition-all duration-500 ease-in-out',
+              activeTab === 'all' && !isExpanded
+                ? 'max-h-[640px] sm:max-h-[680px] overflow-hidden'
+                : 'max-h-none'
+            )}
+          >
+            {filteredDepartments.map((dept) => {
             const DeptIcon = dept.icon;
             return (
               <div key={dept.id} className="space-y-6">
@@ -285,6 +305,40 @@ export default function Doctors({ onOpenBooking }: DoctorsProps = {}) {
               </div>
             );
           })}
+          </div>
+
+          {/* Aceternity UI style progressive surface fade overlay & Show More button */}
+          {activeTab === 'all' && !isExpanded && (
+            <div className="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-background-full via-background-full/90 to-transparent pointer-events-none flex items-end justify-center pb-6 z-10">
+              <Button
+                variant="secondary"
+                size="medium"
+                trailingIcon={RiArrowDownSLine}
+                onClick={() => setIsExpanded(true)}
+                className="pointer-events-auto rounded-full shadow-lg border-border-button-default bg-background-primary-default hover:bg-background-secondary-default text-text-primary px-6 hover:shadow-xl transition-all"
+              >
+                แสดงทีมแพทย์และศูนย์บริการทั้งหมด ({DEPARTMENTS_DATA.length} ศูนย์)
+              </Button>
+            </div>
+          )}
+
+          {/* Show less button when expanded */}
+          {activeTab === 'all' && isExpanded && (
+            <div className="flex justify-center pt-10">
+              <Button
+                variant="ghost"
+                size="medium"
+                trailingIcon={RiArrowUpSLine}
+                onClick={() => {
+                  setIsExpanded(false);
+                  document.getElementById('doctors')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="text-text-secondary hover:text-text-primary rounded-full"
+              >
+                ย่อแสดงเฉพาะส่วน
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </section>
