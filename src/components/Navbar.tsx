@@ -34,12 +34,18 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const navLinks = [
+  const fullNavLinks = [
     { label: 'ชนิดสัตว์', href: '#pet-treatments' },
     { label: 'ศูนย์การแพทย์', href: '#services' },
     { label: 'สัตวแพทย์', href: '#doctors' },
     { label: 'รีวิว', href: '#testimonials' },
+    { label: 'คำถามที่พบบ่อย', href: '#faq' },
+    { label: 'ที่ตั้งและเวลา', href: '#location' },
   ];
+
+  // Before login: show all 6 links to keep header well-balanced.
+  // After login: remove 2 links (keep 4) to give space for user profile & vaccine passport button.
+  const desktopNavLinks = currentUser ? fullNavLinks.slice(0, 4) : fullNavLinks;
 
   return (
     <header className="sticky top-0 z-40 bg-blue-900 text-white shadow-md border-b border-blue-950 transition-colors">
@@ -67,8 +73,8 @@ export const Navbar: React.FC<NavbarProps> = ({
           </a>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-5 xl:gap-7 shrink-0">
-            {navLinks.map((link) => (
+          <nav className="hidden lg:flex items-center gap-3.5 xl:gap-6 shrink-0">
+            {desktopNavLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
@@ -252,7 +258,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           )}
 
-          {navLinks.map((link) => (
+          {fullNavLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
