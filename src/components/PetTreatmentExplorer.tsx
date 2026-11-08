@@ -161,7 +161,7 @@ export const PetTreatmentExplorer: React.FC<PetTreatmentExplorerProps> = ({ onSe
             {/* BoardUI Breadcrumb for Pet Category Navigation */}
             <div className="px-1 flex items-center justify-between">
               <Breadcrumb>
-                <BreadcrumbItem href="#">แม็กเหนือวินเหนือพิกโก้</BreadcrumbItem>
+                <BreadcrumbItem href="#">VetPaws Hospital</BreadcrumbItem>
                 <BreadcrumbItem href="#pet-treatments">แผนกบริบาลเฉพาะสัตว์</BreadcrumbItem>
                 <BreadcrumbItem current>
                   {currentCategory.name} ({currentCategory.enName})
