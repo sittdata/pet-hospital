@@ -25,6 +25,7 @@ export interface ChatMessage {
   senderName?: string;
   timestamp: string;
   text: string;
+  imageUrl?: string;
   isTriageCard?: boolean;
   triageData?: {
     alertTitle: string;
@@ -62,7 +63,21 @@ export const LiveChatWidget: React.FC<LiveChatWidgetProps> = ({
   const [typingLabel, setTypingLabel] = useState('พญ. สุภัทรา (สัตวแพทย์เวร) กำลังพิมพ์ตอบกลับ...');
   const chatScrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const timeoutsRef = useRef<number[]>([]);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setSelectedImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+    e.target.value = '';
+  };
 
   const clearAllTimeouts = () => {
     timeoutsRef.current.forEach((t) => window.clearTimeout(t));
@@ -105,6 +120,7 @@ export const LiveChatWidget: React.FC<LiveChatWidgetProps> = ({
     clearAllTimeouts();
     setMessages([]);
     setInputValue('');
+    setSelectedImage(null);
     setIsTyping(false);
   };
 
@@ -205,22 +221,25 @@ export const LiveChatWidget: React.FC<LiveChatWidgetProps> = ({
 
   const handleSendMessage = (textToSend?: string) => {
     const text = (textToSend || inputValue).trim();
-    if (!text) return;
+    const imageToSend = selectedImage;
+    if (!text && !imageToSend) return;
 
     const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-    // 1. Add User Message
+    // 1. Add User Message with optional image
     const userMsg: ChatMessage = {
       id: `user-${Date.now()}`,
       sender: 'user',
-      text,
+      text: text || 'ส่งรูปถ่ายอาการสัตว์เลี้ยง',
+      imageUrl: imageToSend || undefined,
       timestamp: timeStr,
     };
 
     setMessages((prev) => [...prev, userMsg]);
     setInputValue('');
+    setSelectedImage(null);
     setIsTyping(true);
-    setTypingLabel('ระบบ AI กำลังประเมิน...');
+    setTypingLabel('ระบบ AI กำลังประเมินภาพและอาการ...');
 
     const triage = analyzeTriage(text);
 
@@ -416,8 +435,17 @@ export const LiveChatWidget: React.FC<LiveChatWidgetProps> = ({
                   >
                     {msg.sender === 'user' ? (
                       /* User Message Bubble */
-                      <div className="bg-button-primary text-white px-3 py-2 rounded-2xl rounded-tr-xs shadow-xs text-caption-1-regular leading-relaxed text-[12px]">
-                        {msg.text}
+                      <div className="bg-button-primary text-white px-3 py-2 rounded-2xl rounded-tr-xs shadow-xs text-caption-1-regular leading-relaxed text-[12px] space-y-1.5">
+                        {msg.imageUrl && (
+                          <div className="rounded-xl overflow-hidden border border-white/25 max-h-48 shadow-2xs">
+                            <img
+                              src={msg.imageUrl}
+                              alt="รูปถ่ายอาการสัตว์เลี้ยง"
+                              className="w-full max-h-48 object-cover"
+                            />
+                          </div>
+                        )}
+                        {msg.text && <div>{msg.text}</div>}
                       </div>
                     ) : msg.sender === 'doctor' ? (
                       /* Doctor Real Response Bubble */
@@ -590,7 +618,7 @@ export const LiveChatWidget: React.FC<LiveChatWidgetProps> = ({
       </div>
 
       {/* =====================================================================
-          Chat Composer (Identical to Phone Mockup with Attachment & Send Icon)
+          Chat Composer (Identical to Phone Mockup with Working Image Attachment)
           ===================================================================== */}
       <form
         onSubmit={(e) => {
@@ -599,26 +627,69 @@ export const LiveChatWidget: React.FC<LiveChatWidgetProps> = ({
         }}
         className="p-2.5 bg-background-primary-default border-t border-border-button-default shrink-0"
       >
-        <div className="flex h-[40px] w-full items-center gap-1.5 rounded-full p-1 bg-background-secondary-default border border-border-button-default">
-          <div className="flex size-7 shrink-0 items-center justify-center rounded-full text-foreground-icon-secondary">
-            <RiAttachment2 className="size-3.5" />
+        {/* Hidden Native File Input */}
+        <input
+          type="file"
+          ref={fileInputRef}
+          accept="image/*"
+          className="hidden"
+          onChange={handleImageChange}
+        />
+
+        {/* Selected Image Thumbnail Preview with Remove Button */}
+        {selectedImage && (
+          <div className="mb-2 flex items-center gap-2 p-1.5 rounded-2xl bg-background-secondary-default border border-border-button-default animate-fade-in">
+            <div className="relative size-11 rounded-xl overflow-hidden shrink-0 border border-border-button-default">
+              <img
+                src={selectedImage}
+                alt="รูปถ่ายอาการสัตว์เลี้ยง"
+                className="size-full object-cover"
+              />
+              <button
+                type="button"
+                onClick={() => setSelectedImage(null)}
+                className="absolute top-0.5 right-0.5 size-4 rounded-full bg-black/75 text-white flex items-center justify-center hover:bg-black cursor-pointer transition-colors"
+                title="ลบรูปภาพ"
+              >
+                <RiCloseLine className="size-3" />
+              </button>
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-[11px] font-semibold text-text-primary truncate">
+                แนบรูปถ่ายอาการสัตว์เลี้ยงแล้ว
+              </p>
+              <p className="text-[10px] text-text-tertiary truncate">
+                กดส่งเพื่อให้สัตวแพทย์เวรช่วยดูรอยโรค
+              </p>
+            </div>
           </div>
+        )}
+
+        <div className="flex h-[40px] w-full items-center gap-1.5 rounded-full p-1 bg-background-secondary-default border border-border-button-default">
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            title="แนบรูปถ่ายอาการสัตว์เลี้ยง (แผล, ผื่น, อาเจียน)"
+            className="flex size-7 shrink-0 items-center justify-center rounded-full text-foreground-icon-secondary hover:text-foreground-icon-primary hover:bg-background-tertiary-default transition-colors cursor-pointer"
+          >
+            <RiAttachment2 className="size-3.5" />
+          </button>
 
           <input
             ref={inputRef}
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder="พิมพ์สอบถามอาการสัตว์เลี้ยง..."
+            placeholder={selectedImage ? "พิมพ์คำอธิบายภาพรอยโรคหรืออาการ..." : "พิมพ์สอบถามอาการสัตว์เลี้ยง..."}
             className="h-full min-w-0 flex-1 bg-transparent text-[11.5px] text-text-primary placeholder:text-text-tertiary outline-none"
           />
 
           <button
             type="submit"
-            disabled={!inputValue.trim()}
+            disabled={!inputValue.trim() && !selectedImage}
             className={cx(
               'flex size-7 shrink-0 items-center justify-center rounded-full text-white transition-opacity cursor-pointer',
-              inputValue.trim().length > 0
+              inputValue.trim().length > 0 || selectedImage
                 ? 'bg-button-primary opacity-100 hover:opacity-90'
                 : 'bg-neutral-300 dark:bg-neutral-700 opacity-50 cursor-not-allowed'
             )}
