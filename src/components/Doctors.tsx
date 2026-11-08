@@ -18,6 +18,7 @@ interface Doctor {
   degree: string;
   specialty: string;
   schedule: string;
+  avatarUrl?: string;
 }
 
 interface Department {
@@ -37,6 +38,7 @@ const DEPARTMENTS_DATA: Department[] = [
     doctors: [
       {
         id: 'doc-1',
+        avatarUrl: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=500&auto=format&fit=crop&q=80',
         name: 'สพ.ญ. วรินทร์ธร สุขเกษม',
         degree: 'วท.บ., สพ.บ. (เกียรตินิยม), วุฒิบัตรอายุรศาสตร์โรคหัวใจ',
         specialty: 'อายุรศาสตร์โรคหัวใจและหลอดเลือดสัตว์เลี้ยง',
@@ -44,6 +46,7 @@ const DEPARTMENTS_DATA: Department[] = [
       },
       {
         id: 'doc-2',
+        avatarUrl: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=500&auto=format&fit=crop&q=80',
         name: 'น.สพ. ปิยะวัฒน์ เจริญผล',
         degree: 'สพ.บ., ป.บัณฑิตคลินิกสัตว์เลี้ยงบำบัดวิกฤต',
         specialty: 'ภาวะหัวใจล้มเหลวเฉียบพลันและระบบไหลเวียนโลหิต',
@@ -59,6 +62,7 @@ const DEPARTMENTS_DATA: Department[] = [
     doctors: [
       {
         id: 'doc-3',
+        avatarUrl: 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=500&auto=format&fit=crop&q=80',
         name: 'น.สพ. ดร. ณัฐพล วัฒนศิริ',
         degree: 'สพ.บ., ปร.ด. ศัลยศาสตร์ทางสัตวแพทย์',
         specialty: 'ศัลยกรรมกระดูกและข้อต่อขั้นสูง (Orthopedics)',
@@ -66,6 +70,7 @@ const DEPARTMENTS_DATA: Department[] = [
       },
       {
         id: 'doc-4',
+        avatarUrl: 'https://images.unsplash.com/photo-1594824813637-8e68e4c76b1b?w=500&auto=format&fit=crop&q=80',
         name: 'สพ.ญ. กานต์พิชชา พงษ์ศิริ',
         degree: 'สพ.บ., วุฒิบัตรศัลยกรรมเนื้อเยื่ออ่อน',
         specialty: 'ศัลยกรรมเนื้อเยื่ออ่อนและการผ่าตัดส่องกล้องแผลเล็ก',
@@ -81,6 +86,7 @@ const DEPARTMENTS_DATA: Department[] = [
     doctors: [
       {
         id: 'doc-5',
+        avatarUrl: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=500&auto=format&fit=crop&q=80',
         name: 'สพ.ญ. ภัทรพร รัตนพาณิชย์',
         degree: 'สพ.บ., ประกาศนียบัตรจักษุวิทยาทางสัตวแพทย์ขั้นสูง',
         specialty: 'จุลศัลยกรรมตาและผ่าตัดสลายต้อกระจก',
@@ -96,6 +102,7 @@ const DEPARTMENTS_DATA: Department[] = [
     doctors: [
       {
         id: 'doc-6',
+        avatarUrl: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=500&auto=format&fit=crop&q=80',
         name: 'น.สพ. ธีรภัทร ชาญวิริยะ',
         degree: 'สพ.บ., วิทยาศาสตรมหาบัณฑิต (อายุรศาสตร์สัตว์ป่าและสัตว์พิเศษ)',
         specialty: 'อายุรศาสตร์และศัลยกรรมกระต่ายและสัตว์ฟันแทะ',
@@ -111,6 +118,7 @@ const DEPARTMENTS_DATA: Department[] = [
     doctors: [
       {
         id: 'doc-7',
+        avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500&auto=format&fit=crop&q=80',
         name: 'สพ.ญ. มัลลิกา ศิริทรัพย์',
         degree: 'สพ.บ. (เกียรตินิยมอันดับหนึ่ง), ISFM Cat Friendly Veterinarian',
         specialty: 'อายุรศาสตร์โรคแมวและต่อมไร้ท่อ',
@@ -118,6 +126,7 @@ const DEPARTMENTS_DATA: Department[] = [
       },
       {
         id: 'doc-8',
+        avatarUrl: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=500&auto=format&fit=crop&q=80',
         name: 'น.สพ. เอกรินทร์ สมบูรณ์ทรัพย์',
         degree: 'สพ.บ., ป.โท อายุรศาสตร์สัตว์เลี้ยง',
         specialty: 'โรคระบบทางเดินอาหารและระบบทางเดินปัสสาวะ',
@@ -133,6 +142,7 @@ const DEPARTMENTS_DATA: Department[] = [
     doctors: [
       {
         id: 'doc-9',
+        avatarUrl: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=500&auto=format&fit=crop&q=80',
         name: 'น.สพ. ชินดนัย กิตติคุณ',
         degree: 'สพ.บ., Cert. Emergency & Critical Care',
         specialty: 'เวชศาสตร์ฉุกเฉินและการกู้ชีพขั้นสูง',
@@ -140,6 +150,7 @@ const DEPARTMENTS_DATA: Department[] = [
       },
       {
         id: 'doc-10',
+        avatarUrl: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=500&auto=format&fit=crop&q=80',
         name: 'สพ.ญ. ลลิตา บุญประเสริฐ',
         degree: 'สพ.บ., สัตวแพทย์ประจำแผนกวิกฤต',
         specialty: 'การจัดการความเจ็บปวดและการดูแลผู้ป่วยวิกฤต (ICU)',
@@ -257,15 +268,24 @@ export default function Doctors({ onOpenBooking }: DoctorsProps = {}) {
                       className="group flex flex-col justify-between p-6 rounded-3xl bg-background-secondary-default border border-border-button-default hover:border-border-button-hover transition-all duration-200 shadow-sm hover:shadow"
                     >
                       <div className="space-y-4">
-                        {/* Blank Profile Picture (SVG Avatar) */}
-                        <div className="relative w-28 h-28 mx-auto rounded-full overflow-hidden bg-background-tertiary-default border-2 border-separator-border flex items-center justify-center">
-                          <svg
-                            className="w-20 h-20 text-text-placeholder translate-y-2"
-                            fill="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                          </svg>
+                        {/* Doctor Portrait Photo */}
+                        <div className="relative w-28 h-28 mx-auto rounded-full overflow-hidden bg-background-tertiary-default border-2 border-border-button-default shadow-xs flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                          {doctor.avatarUrl ? (
+                            <img
+                              src={doctor.avatarUrl}
+                              alt={doctor.name}
+                              loading="lazy"
+                              className="size-full object-cover"
+                            />
+                          ) : (
+                            <svg
+                              className="w-20 h-20 text-text-placeholder translate-y-2"
+                              fill="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                            </svg>
+                          )}
                         </div>
 
                         {/* รายละเอียดแพทย์ */}

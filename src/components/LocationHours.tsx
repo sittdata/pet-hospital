@@ -91,9 +91,32 @@ export const LocationHours: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Column: Google Maps Interactive View & Facade */}
+          {/* Right Column: Hospital Building Facade & Google Maps Interactive View */}
           <div className="lg:col-span-6 space-y-4">
-            <div className="rounded-3xl overflow-hidden border border-border-button-default shadow-xs relative bg-background-tertiary-default h-96">
+            {/* Real Hospital Facade & 24/7 Emergency Bay Photo */}
+            <div className="rounded-3xl overflow-hidden border border-border-button-default shadow-xs relative bg-background-tertiary-default h-52 group">
+              <img
+                src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&auto=format&fit=crop&q=80"
+                alt="อาคารโรงพยาบาลสัตว์ VetPaws และจุดจอดเทียบรถฉุกเฉิน 24 ชั่วโมง"
+                loading="lazy"
+                className="size-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent pointer-events-none" />
+              <div className="absolute bottom-3.5 inset-x-4 flex items-center justify-between text-white">
+                <div>
+                  <div className="text-caption-1-bold text-white flex items-center gap-1.5">
+                    <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span>จุดเทียบรถผู้ป่วยฉุกเฉิน (Emergency Drop-off Bay)</span>
+                  </div>
+                  <p className="text-[11px] text-white/85 mt-0.5">
+                    อาคาร VetPaws Hospital สาขาทองหล่อ พร้อมเลนพิเศษเทียบส่งเคสด่วน 24 ชั่วโมง
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Interactive Google Map */}
+            <div className="rounded-2xl overflow-hidden border border-border-button-default shadow-xs relative bg-background-tertiary-default h-52">
               <iframe
                 title="โรงพยาบาลสัตว์ VetPaws แผนที่"
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15502.827361849025!2d100.57469792196645!3d13.736109968817454!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30e29fa579737119%3A0xc3911b626466336a!2sThong%20Lo%20Rd%2C%20Khwaeng%20Khlong%20Tan%20Nuea%2C%20Khet%20Watthana%2C%20Krung%20Thep%20Maha%20Nakhon%2010110!5e0!3m2!1sen!2sth!4v1700000000000!5m2!1sen!2sth"

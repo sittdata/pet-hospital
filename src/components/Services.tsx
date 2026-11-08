@@ -63,23 +63,58 @@ export const Services: React.FC<ServicesProps> = ({ onOpenBooking }) => {
               }`}
             >
               <div>
-                <div className="flex items-center justify-between mb-4">
-                  <div
-                    className={`size-12 rounded-2xl flex items-center justify-center border border-border-button-default ${
-                      service.isEmergency ? 'bg-status-rose-background' : 'bg-background-secondary-default'
-                    }`}
-                  >
-                    {getIcon(service.iconName, service.isEmergency)}
+                {/* Facility / Equipment Image Banner */}
+                {service.imageUrl && (
+                  <div className="relative h-44 w-full rounded-2xl overflow-hidden mb-5 border border-border-button-default bg-background-secondary-default shadow-xs group">
+                    <img
+                      src={service.imageUrl}
+                      alt={service.title}
+                      loading="lazy"
+                      className="size-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent pointer-events-none" />
+
+                    {/* Floating Service Icon and Badge over Image */}
+                    <div className="absolute bottom-3 inset-x-3 flex items-center justify-between">
+                      <div
+                        className={`size-10 rounded-xl flex items-center justify-center backdrop-blur-md border border-white/25 shadow-xs ${
+                          service.isEmergency ? 'bg-status-rose-text text-white' : 'bg-background-primary-default/90 text-accent-600'
+                        }`}
+                      >
+                        {getIcon(service.iconName, service.isEmergency)}
+                      </div>
+                      {service.badge && (
+                        <Chip
+                          color={service.isEmergency ? 'rose' : 'lime'}
+                          variant="bold"
+                          className="shadow-sm backdrop-blur-xs"
+                        >
+                          {service.badge}
+                        </Chip>
+                      )}
+                    </div>
                   </div>
-                  {service.badge && (
-                    <Chip
-                      color={service.isEmergency ? 'rose' : 'lime'}
-                      variant="bold"
+                )}
+
+                {!service.imageUrl && (
+                  <div className="flex items-center justify-between mb-4">
+                    <div
+                      className={`size-12 rounded-2xl flex items-center justify-center border border-border-button-default ${
+                        service.isEmergency ? 'bg-status-rose-background' : 'bg-background-secondary-default'
+                      }`}
                     >
-                      {service.badge}
-                    </Chip>
-                  )}
-                </div>
+                      {getIcon(service.iconName, service.isEmergency)}
+                    </div>
+                    {service.badge && (
+                      <Chip
+                        color={service.isEmergency ? 'rose' : 'lime'}
+                        variant="bold"
+                      >
+                        {service.badge}
+                      </Chip>
+                    )}
+                  </div>
+                )}
 
                 <h3 className="text-title-3-semibold text-text-primary">{service.title}</h3>
                 <p className="text-caption-1-medium text-text-tertiary mb-3">{service.enTitle}</p>

@@ -47,6 +47,7 @@ export interface HospitalService {
   summary: string;
   features: string[];
   isEmergency?: boolean;
+  imageUrl?: string;
 }
 
 export interface AppointmentFormData {

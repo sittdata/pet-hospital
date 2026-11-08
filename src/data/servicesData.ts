@@ -14,7 +14,8 @@ export const servicesData: HospitalService[] = [
       'บริการรถพยาบาลสัตว์เลี้ยง (Pet Ambulance) พร้อมอุปกรณ์กู้ชีพเคลื่อนที่',
       'ตรวจแล็บด่วน ทราบผลเลือดและก๊าซในเลือดได้ภายใน 15 นาที'
     ],
-    isEmergency: true
+    isEmergency: true,
+    imageUrl: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?w=600&auto=format&fit=crop&q=80'
   },
   {
     id: 'surgery-theater',
@@ -29,7 +30,8 @@ export const servicesData: HospitalService[] = [
       'ผ่าตัดทำหมันแผลเล็กไหมละลายซ่อนใต้ผิวหนัง',
       'ระบบควบคุมความอบอุ่นของร่างกายระหว่างและหลังผ่าตัด ป้องกันภาวะช็อก'
     ],
-    isEmergency: false
+    isEmergency: false,
+    imageUrl: 'https://images.unsplash.com/photo-1551076805-e1869033e561?w=600&auto=format&fit=crop&q=80'
   },
   {
     id: 'diagnostic-imaging',
@@ -43,7 +45,8 @@ export const servicesData: HospitalService[] = [
       'อัลตราซาวด์ช่องท้องละเอียด ประเมินตับ ไต ม้าม และกระเพาะปัสสาวะ',
       'เก็บไฟล์ภาพเอกซเรย์ระบบ Cloud ส่งต่อให้เจ้าของผ่าน LINE ได้ทันที'
     ],
-    isEmergency: false
+    isEmergency: false,
+    imageUrl: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=600&auto=format&fit=crop&q=80'
   },
   {
     id: 'cat-friendly',
@@ -58,7 +61,8 @@ export const servicesData: HospitalService[] = [
       'โปรแกรมดูแลสุขภาพแมวสูงวัยและการคัดกรองโรคไตระยะเริ่มต้น',
       'ทีมสัตวแพทย์และเจ้าหน้าที่จับบังคับแมวด้วยความนุ่มนวลสูงสุด'
     ],
-    isEmergency: false
+    isEmergency: false,
+    imageUrl: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600&auto=format&fit=crop&q=80'
   },
   {
     id: 'exotic-center',
@@ -72,7 +76,8 @@ export const servicesData: HospitalService[] = [
       'ตู้บ่มอภิบาลสัตว์พิเศษปรับอุณหภูมิและความชื้นแม่นยำ',
       'ตรวจโรคติดเชื้อและพยาธิวิทยาทางเดินอาหารสัตว์ปีก'
     ],
-    isEmergency: false
+    isEmergency: false,
+    imageUrl: 'https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=600&auto=format&fit=crop&q=80'
   },
   {
     id: 'wellness-vaccine',
@@ -86,6 +91,7 @@ export const servicesData: HospitalService[] = [
       'ตรวจเลือด ตรวจค่าการทำงานของตับ ไต น้ำตาล เม็ดเลือดสมบูรณ์',
       'บริการใบรับรองแพทย์ตรวจสุขภาพเพื่อขึ้นเครื่องบินและออกนอกประเทศ'
     ],
-    isEmergency: false
+    isEmergency: false,
+    imageUrl: 'https://images.unsplash.com/photo-1587764379873-97837921fd44?w=600&auto=format&fit=crop&q=80'
   }
 ];
