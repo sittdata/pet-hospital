@@ -307,15 +307,38 @@ export default function Doctors({ onOpenBooking }: DoctorsProps = {}) {
           })}
           </div>
 
-          {/* Aceternity UI style progressive surface fade overlay & Show More button */}
+          {/* Aceternity UI style multi-layer progressive backdrop blur & frosted glass Show More button */}
           {activeTab === 'all' && !isExpanded && (
-            <div className="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-background-full via-background-full/90 to-transparent pointer-events-none flex items-end justify-center pb-6 z-10">
+            <div className="absolute inset-x-0 bottom-0 h-72 pointer-events-none flex items-end justify-center pb-8 z-10 overflow-hidden">
+              {/* Progressive Blur Layer 1 (Subtle top feather) */}
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 backdrop-blur-[2px] [mask-image:linear-gradient(to_top,black_50%,transparent_100%)]"
+              />
+              {/* Progressive Blur Layer 2 (Medium middle blur) */}
+              <div
+                aria-hidden="true"
+                className="absolute inset-x-0 bottom-0 h-48 backdrop-blur-[6px] [mask-image:linear-gradient(to_top,black_40%,transparent_100%)]"
+              />
+              {/* Progressive Blur Layer 3 (Deep frosted blur directly behind button) */}
+              <div
+                aria-hidden="true"
+                className="absolute inset-x-0 bottom-0 h-32 backdrop-blur-[12px] [mask-image:linear-gradient(to_top,black_30%,transparent_100%)]"
+              />
+
+              {/* Surface color wash for seamless blend with page background */}
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 bg-gradient-to-t from-background-full via-background-full/85 to-transparent"
+              />
+
+              {/* Aceternity Frosted Glass Pill Button */}
               <Button
                 variant="secondary"
                 size="medium"
                 trailingIcon={RiArrowDownSLine}
                 onClick={() => setIsExpanded(true)}
-                className="pointer-events-auto rounded-full shadow-lg border-border-button-default bg-background-primary-default hover:bg-background-secondary-default text-text-primary px-6 hover:shadow-xl transition-all"
+                className="relative z-10 pointer-events-auto rounded-full shadow-xl border-border-button-default bg-background-primary-default/90 backdrop-blur-md hover:bg-background-secondary-default text-text-primary px-7 py-2.5 text-body-medium font-medium transition-all duration-200 hover:scale-105 hover:shadow-2xl cursor-pointer"
               >
                 แสดงทีมแพทย์และศูนย์บริการทั้งหมด ({DEPARTMENTS_DATA.length} ศูนย์)
               </Button>
