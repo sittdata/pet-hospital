@@ -5,6 +5,7 @@ import { Hero } from './components/Hero';
 import { PetTreatmentExplorer } from './components/PetTreatmentExplorer';
 import { Services } from './components/Services';
 import Doctors from './components/Doctors';
+import { TestimonialsMarqueeGrid } from './components/TestimonialsMarqueeGrid';
 import { CustomerChatPhoneMockup } from './components/CustomerChatPhoneMockup';
 import { TypewriterText } from './components/TypewriterText';
 import { FAQ } from './components/FAQ';
@@ -196,6 +197,9 @@ export function App() {
 
         {/* Specialist Veterinary Team */}
         <Doctors onOpenBooking={handleOpenBooking} />
+
+        {/* Aceternity UI Style Testimonials Marquee Grid */}
+        <TestimonialsMarqueeGrid />
 
         {/* Interactive FAQ Section with BoardUI Accordion */}
         <FAQ />

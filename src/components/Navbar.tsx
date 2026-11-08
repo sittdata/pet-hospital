@@ -38,6 +38,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { label: 'ตามชนิดสัตว์', href: '#pet-treatments' },
     { label: 'ศูนย์การแพทย์', href: '#services' },
     { label: 'ทีมสัตวแพทย์', href: '#doctors' },
+    { label: 'รีวิว', href: '#testimonials' },
     { label: 'คำถามที่พบบ่อย', href: '#faq' },
     { label: 'ที่ตั้งและเวลา', href: '#location' },
   ];
