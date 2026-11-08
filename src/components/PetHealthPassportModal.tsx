@@ -409,71 +409,78 @@ export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({
                   return (
                     <div
                       key={vac.id}
-                      className="p-5 rounded-3xl bg-background-secondary-default/50 border border-border-button-default hover:border-accent-500/40 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4"
+                      className="p-5 rounded-3xl bg-background-secondary-default/50 border border-border-button-default hover:border-accent-500/40 transition-colors space-y-3"
                     >
-                      <div className="space-y-1.5 min-w-0 flex-1">
-                        <div className="flex items-center gap-2.5 flex-wrap">
-                          <h4 className="text-body-2-semibold text-text-primary">{vac.name}</h4>
-                          {derivedStatus === 'upcoming' ? (
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-background-primary-default text-text-secondary text-caption-2-medium border border-border-button-default">
-                              <StatusDot color="yellow" />
-                              <span>รอเข้ารับการฉีด</span>
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-status-rose-background text-status-rose-text text-caption-2-medium border border-border-button-default">
-                              <span className="size-1.5 rounded-full bg-status-rose-text shrink-0" />
-                              <span>เกินกำหนดนัด</span>
-                            </span>
-                          )}
+                      {/* Top Row: Title, Metadata & Actions */}
+                      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                        <div className="space-y-1.5 min-w-0 flex-1">
+                          <div className="flex items-center gap-2.5 flex-wrap">
+                            <h4 className="text-body-2-semibold text-text-primary">{vac.name}</h4>
+                            {derivedStatus === 'upcoming' ? (
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-background-primary-default text-text-secondary text-caption-2-medium border border-border-button-default shrink-0">
+                                <StatusDot color="yellow" />
+                                <span>รอเข้ารับการฉีด</span>
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-status-rose-background text-status-rose-text text-caption-2-medium border border-border-button-default shrink-0">
+                                <span className="size-1.5 rounded-full bg-status-rose-text shrink-0" />
+                                <span>เกินกำหนดนัด</span>
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="text-caption-1-regular text-text-secondary flex items-center gap-4 flex-wrap">
+                            {vac.dueDate && (
+                              <span className="inline-flex items-center gap-1.5 font-medium text-text-primary">
+                                <RiCalendarEventLine className="size-3.5 text-accent-500" />
+                                <span>กำหนดฉีด: {vac.dueDate}</span>
+                              </span>
+                            )}
+                            {vac.veterinarian && (
+                              <span className="inline-flex items-center gap-1.5 text-text-tertiary">
+                                <RiStethoscopeLine className="size-3.5" />
+                                <span>สัตวแพทย์: {vac.veterinarian}</span>
+                              </span>
+                            )}
+                          </div>
                         </div>
 
-                        <div className="text-caption-1-regular text-text-secondary flex items-center gap-4 flex-wrap">
-                          {vac.dueDate && (
-                            <span className="font-medium text-text-primary">
-                              กำหนดฉีด: {vac.dueDate}
-                            </span>
+                        {/* Action Buttons aligned neatly on the right */}
+                        <div className="shrink-0 flex items-center gap-2 flex-wrap">
+                          {onConsultVaccine && activePet && (
+                            <Button
+                              variant="secondary"
+                              size="small"
+                              leadingIcon={RiChatSmile2Fill}
+                              onClick={() => {
+                                onClose();
+                                onConsultVaccine(vac, activePet);
+                              }}
+                              title="เปิดแชทปรึกษาสัตวแพทย์เวรเรื่องวัคซีนนี้"
+                            >
+                              ปรึกษาหมอในแชท
+                            </Button>
                           )}
-                          {vac.veterinarian && (
-                            <span className="text-text-tertiary">
-                              สัตวแพทย์: {vac.veterinarian}
-                            </span>
-                          )}
-                        </div>
-
-                        {vac.notes && (
-                          <p className="text-caption-1-regular text-text-secondary bg-background-primary-default p-2.5 rounded-xl border border-border-button-default">
-                            {vac.notes}
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="shrink-0 flex items-center gap-2 flex-wrap">
-                        {onConsultVaccine && activePet && (
                           <Button
-                            variant="secondary"
+                            variant="primary"
                             size="small"
-                            leadingIcon={RiChatSmile2Fill}
+                            leadingIcon={RiCalendarEventLine}
                             onClick={() => {
                               onClose();
-                              onConsultVaccine(vac, activePet);
+                              onBookAppointment('ตรวจสุขภาพทั่วไปและฉีดวัคซีน', activePet?.petType);
                             }}
-                            title="เปิดแชทปรึกษาสัตวแพทย์เวรเรื่องวัคซีนนี้"
                           >
-                            ปรึกษาหมอในแชท
+                            นัดหมายฉีดวัคซีนนี้
                           </Button>
-                        )}
-                        <Button
-                          variant="primary"
-                          size="small"
-                          leadingIcon={RiCalendarEventLine}
-                          onClick={() => {
-                            onClose();
-                            onBookAppointment('ตรวจสุขภาพทั่วไปและฉีดวัคซีน', activePet?.petType);
-                          }}
-                        >
-                          นัดหมายฉีดวัคซีนนี้
-                        </Button>
+                        </div>
                       </div>
+
+                      {/* Full-width Notes Box below */}
+                      {vac.notes && (
+                        <div className="text-caption-1-regular text-text-secondary bg-background-primary-default p-3 rounded-2xl border border-border-button-default leading-relaxed">
+                          {vac.notes}
+                        </div>
+                      )}
                     </div>
                   );
                 })
