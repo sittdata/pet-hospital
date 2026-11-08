@@ -10,7 +10,6 @@ import {
   RiArrowDownSLine,
   RiArrowUpSLine
 } from '@remixicon/react';
-import { Button } from '@/components/base/buttons/button';
 import { cx } from '@/utils/cx';
 
 interface Doctor {
@@ -332,34 +331,32 @@ export default function Doctors({ onOpenBooking }: DoctorsProps = {}) {
                 className="absolute inset-0 bg-gradient-to-t from-background-full via-background-full/85 to-transparent"
               />
 
-              {/* Aceternity Frosted Glass Pill Button */}
-              <Button
-                variant="secondary"
-                size="medium"
-                trailingIcon={RiArrowDownSLine}
+              {/* Aceternity Style Frameless Text Trigger */}
+              <button
+                type="button"
                 onClick={() => setIsExpanded(true)}
-                className="relative z-10 pointer-events-auto rounded-full shadow-xl border-border-button-default bg-background-primary-default/90 backdrop-blur-md hover:bg-background-secondary-default text-text-primary px-7 py-2.5 text-body-medium font-medium transition-all duration-200 hover:scale-105 hover:shadow-2xl cursor-pointer"
+                className="relative z-10 pointer-events-auto inline-flex items-center gap-1.5 text-body-medium sm:text-headline-medium text-text-primary hover:text-accent-500 font-medium transition-colors duration-200 cursor-pointer group select-none"
               >
-                แสดงทีมแพทย์และศูนย์บริการทั้งหมด ({DEPARTMENTS_DATA.length} ศูนย์)
-              </Button>
+                <span>แสดงทีมแพทย์และศูนย์บริการทั้งหมด ({DEPARTMENTS_DATA.length} ศูนย์)</span>
+                <RiArrowDownSLine className="w-4 h-4 text-text-secondary group-hover:text-accent-500 group-hover:translate-y-0.5 transition-all" />
+              </button>
             </div>
           )}
 
           {/* Show less button when expanded */}
           {activeTab === 'all' && isExpanded && (
-            <div className="flex justify-center pt-10">
-              <Button
-                variant="ghost"
-                size="medium"
-                trailingIcon={RiArrowUpSLine}
+            <div className="flex justify-center pt-8">
+              <button
+                type="button"
                 onClick={() => {
                   setIsExpanded(false);
                   document.getElementById('doctors')?.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="text-text-secondary hover:text-text-primary rounded-full"
+                className="inline-flex items-center gap-1.5 text-body-medium text-text-secondary hover:text-text-primary transition-colors cursor-pointer group select-none"
               >
-                ย่อแสดงเฉพาะส่วน
-              </Button>
+                <span>ย่อแสดงเฉพาะส่วน</span>
+                <RiArrowUpSLine className="w-4 h-4 text-text-secondary group-hover:text-text-primary group-hover:-translate-y-0.5 transition-all" />
+              </button>
             </div>
           )}
         </div>
