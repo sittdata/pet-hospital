@@ -484,9 +484,10 @@ export const LiveChatWidget: React.FC<LiveChatWidgetProps> = ({
               </div>
 
               <div className="flex flex-col items-center gap-1.5 pt-1 w-full max-w-[290px]">
-                {/* Pet Vaccine Quick Chips using exact vaccine name */}
-                {passports.flatMap((pet) =>
-                  pet.vaccines.map((vac) => (
+                {/* Pet Vaccine Quick Chips using exact vaccine name (Only when logged in) */}
+                {isLoggedIn &&
+                  passports.flatMap((pet) =>
+                    pet.vaccines.map((vac) => (
                     <button
                       key={`${pet.id}-${vac.id}`}
                       type="button"
@@ -884,25 +885,21 @@ export const LiveChatWidget: React.FC<LiveChatWidgetProps> = ({
         )}
 
         <div className="flex h-[40px] w-full items-center gap-1.5 rounded-full p-1 bg-background-secondary-default border border-border-button-default">
-          <button
-            type="button"
-            onClick={() => {
-              if (!isLoggedIn) {
-                onRequireAuth?.();
-                return;
-              }
-              setShowVaccinePicker((prev) => !prev);
-            }}
-            title="เลือกวัคซีนในสมุดสุขภาพสัตว์เลี้ยง"
-            className={cx(
-              "flex size-7 shrink-0 items-center justify-center rounded-full transition-colors cursor-pointer",
-              showVaccinePicker
-                ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400"
-                : "text-foreground-icon-secondary hover:text-foreground-icon-primary hover:bg-background-tertiary-default"
-            )}
-          >
-            <RiMedicineBottleLine className="size-3.5" />
-          </button>
+          {isLoggedIn && (
+            <button
+              type="button"
+              onClick={() => setShowVaccinePicker((prev) => !prev)}
+              title="เลือกวัคซีนในสมุดสุขภาพสัตว์เลี้ยง"
+              className={cx(
+                "flex size-7 shrink-0 items-center justify-center rounded-full transition-colors cursor-pointer",
+                showVaccinePicker
+                  ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+                  : "text-foreground-icon-secondary hover:text-foreground-icon-primary hover:bg-background-tertiary-default"
+              )}
+            >
+              <RiMedicineBottleLine className="size-3.5" />
+            </button>
+          )}
 
           <button
             type="button"
