@@ -41,6 +41,8 @@ interface LiveChatWidgetProps {
   isOpen: boolean;
   onClose: () => void;
   onOpenBooking?: (serviceName?: string, doctorName?: string) => void;
+  isLoggedIn?: boolean;
+  onRequireAuth?: () => void;
 }
 
 const SUGGESTIONS = [
@@ -56,6 +58,8 @@ export const LiveChatWidget: React.FC<LiveChatWidgetProps> = ({
   isOpen,
   onClose,
   onOpenBooking,
+  isLoggedIn = false,
+  onRequireAuth,
 }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
@@ -223,6 +227,12 @@ export const LiveChatWidget: React.FC<LiveChatWidgetProps> = ({
     const text = (textToSend || inputValue).trim();
     const imageToSend = selectedImage;
     if (!text && !imageToSend) return;
+
+    // Intercept if unauthenticated: prompt sign-in before allowing message dispatch
+    if (!isLoggedIn) {
+      onRequireAuth?.();
+      return;
+    }
 
     const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
@@ -668,7 +678,13 @@ export const LiveChatWidget: React.FC<LiveChatWidgetProps> = ({
         <div className="flex h-[40px] w-full items-center gap-1.5 rounded-full p-1 bg-background-secondary-default border border-border-button-default">
           <button
             type="button"
-            onClick={() => fileInputRef.current?.click()}
+            onClick={() => {
+              if (!isLoggedIn) {
+                onRequireAuth?.();
+                return;
+              }
+              fileInputRef.current?.click();
+            }}
             title="แนบรูปถ่ายอาการสัตว์เลี้ยง (แผล, ผื่น, อาเจียน)"
             className="flex size-7 shrink-0 items-center justify-center rounded-full text-foreground-icon-secondary hover:text-foreground-icon-primary hover:bg-background-tertiary-default transition-colors cursor-pointer"
           >

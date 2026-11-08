@@ -324,6 +324,8 @@ export function App() {
             isOpen={liveChatOpen}
             onClose={() => setLiveChatOpen(false)}
             onOpenBooking={(service?: string, doctor?: string) => handleOpenBooking(service, doctor)}
+            isLoggedIn={!!currentUser}
+            onRequireAuth={() => handleOpenAuth('signin')}
           />
         )}
       </Suspense>
