@@ -10,6 +10,7 @@ import { Input } from "@/components/base/input/input";
 import { InputOtp } from "@/components/base/input-otp/input-otp";
 import { LinkButton } from "@/components/base/buttons/link-button";
 import { SocialButton } from "@/components/base/social-button/social-button";
+import { useLocale } from "react-aria-components";
 import { SOCIAL_PROVIDERS, type SocialProvider } from "@/components/base/social-button/social-providers";
 import { useTemplateCopy } from "@/components/foundations/template-copy/template-copy";
 import { cx } from "@/utils/cx";
@@ -53,11 +54,12 @@ export {
  */
 
 export type AuthLayout = "stacked" | "inline" | "grid";
-export type AuthMode = "signin" | "signup" | "verify";
+export type AuthMode = "signin" | "signup" | "verify" | "forgot-password";
 
 export interface AuthCardProps {
   /**
-   * `signin` (default), `signup`, or `verify` for the one-time-code step.
+   * `signin` (default), `signup`, `verify` for the one-time-code step,
+   * or `forgot-password` to request a password reset link.
    * `verify` swaps the email fields for OTP boxes and drops the providers:
    * the visitor has already chosen how they are signing in.
    */
@@ -70,11 +72,14 @@ export interface AuthCardProps {
   onComplete?: (code: string) => void;
   /** `verify` only: the resend action. */
   onResend?: () => void;
+  /** `signin` only: fires when the "Forgot password?" link is clicked. */
+  onForgotPassword?: () => void;
   /** How the provider buttons are arranged. Defaults to `stacked`. */
   layout?: AuthLayout;
   providers?: SocialProvider[];
   title?: ReactNode;
   description?: ReactNode;
+  cta?: ReactNode;
   /**
    * Artwork for the right half. Passing it turns the card into the split
    * layout: form on the left, media on the right, which drops to the form
@@ -133,6 +138,44 @@ const COPY = {
     switchLead: "Code not arriving?",
     switchAction: "Send a new one",
   },
+  "forgot-password": {
+    title: "Reset password",
+    description: "Enter your email to receive a password reset link.",
+    cta: "Send reset link",
+    switchLead: "Remember your password?",
+    switchAction: "Sign in",
+  },
+} as const;
+
+const TH_COPY = {
+  signin: {
+    title: "ยินดีต้อนรับกลับมา",
+    description: "เข้าสู่ระบบเพื่อดำเนินการต่อจากที่คุณค้างไว้",
+    cta: "เข้าสู่ระบบ",
+    switchLead: "ยังไม่มีบัญชี?",
+    switchAction: "สร้างบัญชีใหม่",
+  },
+  signup: {
+    title: "สร้างบัญชีของคุณ",
+    description: "เริ่มต้นใช้งานได้ทันทีในไม่กี่นาที",
+    cta: "สร้างบัญชี",
+    switchLead: "มีบัญชีอยู่แล้ว?",
+    switchAction: "เข้าสู่ระบบ",
+  },
+  verify: {
+    title: "ตรวจสอบกล่องจดหมายของคุณ",
+    description: "กรอกรหัสที่เราส่งให้เพื่อเข้าสู่ระบบ",
+    cta: "ยืนยันและดำเนินการต่อ",
+    switchLead: "ไม่ได้รับรหัส?",
+    switchAction: "ส่งรหัสใหม่อีกครั้ง",
+  },
+  "forgot-password": {
+    title: "รีเซ็ตรหัสผ่าน",
+    description: "กรอกอีเมลของคุณเพื่อรับลิงก์สำหรับตั้งรหัสผ่านใหม่",
+    cta: "ส่งลิงก์รีเซ็ตรหัสผ่าน",
+    switchLead: "จำรหัสผ่านได้แล้ว?",
+    switchAction: "เข้าสู่ระบบ",
+  },
 } as const;
 
 export function AuthCard({
@@ -141,10 +184,12 @@ export function AuthCard({
   codeLength = 6,
   onComplete,
   onResend,
+  onForgotPassword,
   layout = "stacked",
   providers = ["google", "apple", "github"],
   title,
   description,
+  cta,
   media,
   logo,
   centered = false,
@@ -157,13 +202,17 @@ export function AuthCard({
   headingLevel = 1,
   className,
 }: AuthCardProps) {
+  const { locale } = useLocale();
+  const isThai = locale?.startsWith("th");
+  const thCopy = isThai && mode in TH_COPY ? TH_COPY[mode as keyof typeof TH_COPY] : undefined;
+  const copy = thCopy ?? COPY[mode];
   const localize = useTemplateCopy();
   const TitleHeading = `h${headingLevel}` as const;
   const [remember, setRemember] = useState(true);
   const [code, setCode] = useState("");
-  const copy = COPY[mode];
   const signup = mode === "signup";
   const verify = mode === "verify";
+  const forgotPassword = mode === "forgot-password";
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -257,7 +306,7 @@ export function AuthCard({
           </div>
         ) : null}
 
-        {signup && !confirmPassword ? (
+        {signup ? (
           <Input name="name" label="Full name" placeholder="Ada Lovelace" isRequired />
         ) : null}
 
@@ -273,7 +322,7 @@ export function AuthCard({
         />
         )}
 
-        {verify ? null : signup && confirmPassword ? (
+        {verify || forgotPassword ? null : signup && confirmPassword ? (
           // Stacked, full width: a password field pair is easier to fill at
           // full width than in two half-width columns, and it keeps the whole
           // form on one rhythm.
@@ -306,24 +355,28 @@ export function AuthCard({
           />
         )}
 
-        {signup || verify ? null : (
+        {signup || verify || forgotPassword ? null : (
           <div className="flex items-center justify-between">
             <Checkbox size="sm" isSelected={remember} onChange={setRemember}>
-              Remember me
+              {isThai ? "จดจำฉันไว้" : "Remember me"}
             </Checkbox>
-            <LinkButton href="#">Forgot password?</LinkButton>
+            <LinkButton onClick={onForgotPassword}>
+              {isThai ? "ลืมรหัสผ่าน?" : "Forgot password?"}
+            </LinkButton>
           </div>
         )}
 
         <Button type="submit" className="w-full">
-          {copy.cta}
+          {cta ?? copy.cta}
         </Button>
 
         {/* The split layout carries its terms line under the card instead,
             through `footnote`, so it does not crowd the CTA. */}
         {signup && !footnote ? (
           <p className="text-caption-1-regular text-text-tertiary">
-            By creating an account you agree to our Terms of Service and Privacy Policy.
+            {isThai
+              ? "การสร้างบัญชีหมายถึงคุณยอมรับข้อกำหนดการใช้งานและนโยบายความเป็นส่วนตัว"
+              : "By creating an account you agree to our Terms of Service and Privacy Policy."}
           </p>
         ) : null}
       </form>
@@ -332,10 +385,10 @@ export function AuthCard({
           are the path this card is built around, and a bank of provider
           buttons above them buries the thing people came to fill in. The
           code step shows none — the visitor has already picked a method. */}
-      {!verify && providers.length > 0 ? (
+      {!verify && !forgotPassword && providers.length > 0 ? (
         <>
           <div className="my-5">
-            <Divider>or continue with</Divider>
+            <Divider>{isThai ? "หรือดำเนินการต่อด้วย" : "or continue with"}</Divider>
           </div>
           {social}
         </>
