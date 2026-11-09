@@ -3,8 +3,8 @@ import { HospitalService } from '../types';
 export const servicesData: HospitalService[] = [
   {
     id: 'emergency-24h',
-    title: 'ศูนย์ฉุกเฉินและกู้ชีพวิกฤต 24 ชั่วโมง',
-    enTitle: '24/7 Emergency & ICU Center',
+    title: 'ศูนย์ฉุกเฉินและบำบัดวิกฤต 24 ชั่วโมง',
+    enTitle: '24/7 Emergency & Critical Care Center',
     iconName: 'Ambulance',
     badge: 'พร้อมรับเคสตลอด 24 ชม.',
     summary: 'ทีมสัตวแพทย์และพยาบาลประจำการตลอดคืน พร้อมห้องผ่าตัดฉุกเฉิน ธนาคารเลือดสัตว์เลี้ยง และตู้ให้ออกซิเจน ICU ความดันบวก',
@@ -19,8 +19,8 @@ export const servicesData: HospitalService[] = [
   },
   {
     id: 'surgery-theater',
-    title: 'ศูนย์ศัลยกรรมและห้องผ่าตัดปลอดเชื้อ',
-    enTitle: 'Advanced Surgical Theater',
+    title: 'ศูนย์ศัลยกรรมและกระดูก (ห้องผ่าตัดปลอดเชื้อ)',
+    enTitle: 'Advanced Surgical Theater & Orthopedics',
     iconName: 'Activity',
     badge: 'Positive Pressure OR',
     summary: 'ห้องผ่าตัดมาตรฐานความดันบวกป้องกันการติดเชื้อ พร้อมเครื่องดมยาสลบระบบอัตโนมัติ และการผ่าตัดส่องกล้องแผลเล็ก (Laparoscopy)',
@@ -50,7 +50,7 @@ export const servicesData: HospitalService[] = [
   },
   {
     id: 'cat-friendly',
-    title: 'คลินิกแมวเฉพาะทาง Cat Friendly Clinic',
+    title: 'คลินิกแมวเฉพาะทาง Cat Friendly Clinic (ISFM)',
     enTitle: 'Certified Feline Clinic',
     iconName: 'HeartHandshake',
     badge: 'ISFM Gold Standard',
@@ -66,7 +66,7 @@ export const servicesData: HospitalService[] = [
   },
   {
     id: 'exotic-center',
-    title: 'ศูนย์สัตว์พิเศษและสัตว์เลื้อยคลาน',
+    title: 'ศูนย์สัตว์พิเศษและสัตว์เลื้อยคลาน (Exotic Pets)',
     enTitle: 'Exotic & Avian Care Center',
     iconName: 'Feather',
     summary: 'ดูแลและรักษากระต่าย แกสบี้ ชินชิลล่า นก และสัตว์เลื้อยคลาน โดยสัตวแพทย์ที่ได้รับวุฒิบัตรและฝึกอบรมด้านสัตว์พิเศษโดยเฉพาะ',

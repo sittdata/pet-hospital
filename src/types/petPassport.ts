@@ -1,4 +1,4 @@
-export type VaccineStatus = 'completed' | 'upcoming' | 'overdue';
+export type VaccineStatus = 'completed' | 'upcoming' | 'overdue' | 'scheduled';
 
 export interface VaccineRecord {
   id: string;
@@ -9,6 +9,10 @@ export interface VaccineRecord {
   veterinarian?: string;
   lotNumber?: string;
   notes?: string;
+  appointmentDate?: string;
+  appointmentTime?: string;
+  appointmentBranch?: string;
+  appointmentRefCode?: string;
 }
 
 export interface TreatmentRecord {
@@ -21,7 +25,7 @@ export interface TreatmentRecord {
   notes?: string;
 }
 
-export type PassportPetType = 'cat' | 'dog' | 'exotic' | 'bird' | 'aquatic';
+export type PassportPetType = 'cat' | 'dog' | 'exotic' | 'bird' | 'aquatic' | 'small';
 
 export interface PetPassport {
   id: string;

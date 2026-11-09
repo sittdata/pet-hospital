@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   RiPhoneFill,
   RiCalendarEventLine,
@@ -52,11 +52,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* ข้อ 2: ปรับความสูง Navbar ให้ใหญ่ขึ้น (h-20 บนมือถือ / h-24 บนจอปกติ) */}
           <div className="flex items-center justify-between h-20 sm:h-24 gap-2 sm:gap-4">
             
-            {/* ข้อ 1: Logo & Brand ไม่มีพื้นหลัง ใช้ไฟล์ /logo.png */}
+            {/* High-res WebP Navbar Logo */}
             <a href="#" className="flex items-center gap-2 sm:gap-3 shrink-0 group">
               <div className="flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                 <img 
-                  src="/logo.png" 
+                  src="/logo-nav.webp" 
                   alt="VetPaws Logo" 
                   className="h-10 sm:h-12 w-auto object-contain" 
                 />

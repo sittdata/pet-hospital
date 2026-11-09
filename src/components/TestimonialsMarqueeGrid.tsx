@@ -25,14 +25,14 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ item }) => {
               <RiStarFill key={i} className="size-4 fill-amber-400 text-amber-400" />
             ))}
           </div>
-          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-accent-600 bg-accent-500/10 px-2 py-0.5 rounded-full">
+          <span className="inline-flex items-center gap-1 text-caption-2-medium text-accent-600 bg-accent-500/10 px-2 py-0.5 rounded-full">
             <RiShieldCheckFill className="size-3" />
             ผู้รับบริการจริง
           </span>
         </div>
 
         {/* Testimonial Quote */}
-        <p className="text-body-regular text-text-primary leading-relaxed text-sm sm:text-base">
+        <p className="text-body-regular text-text-primary">
           &ldquo;{item.quote}&rdquo;
         </p>
       </div>
@@ -59,7 +59,7 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ item }) => {
           <p className="text-caption-2-medium text-text-secondary truncate">
             {item.petName} ({item.petType})
           </p>
-          <p className="text-[11px] text-text-tertiary truncate">
+          <p className="text-caption-2-regular text-text-tertiary truncate">
             {item.serviceCenter}
           </p>
         </div>
@@ -105,7 +105,7 @@ export const TestimonialsMarqueeGrid: React.FC = () => {
         <h2 className="text-title-1-semibold sm:text-large-title-bold text-text-primary tracking-tight">
           ความประทับใจจากครอบครัวสัตว์เลี้ยง
         </h2>
-        <p className="mt-3 text-body-medium text-text-secondary max-w-2xl mx-auto leading-relaxed">
+        <p className="mt-3 text-body-medium text-text-secondary max-w-2xl mx-auto">
           เสียงสะท้อนจริงจากเจ้าของสัตว์เลี้ยงที่ไว้วางใจให้เราดูแลและรักษาตลอด 24 ชั่วโมง
         </p>
       </div>

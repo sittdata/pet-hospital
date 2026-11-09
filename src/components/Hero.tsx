@@ -20,16 +20,15 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
       <div className="absolute bottom-0 left-0 -ml-24 -mb-24 size-96 rounded-full bg-status-blue-background/30 blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
-        {/* Mobile/Responsive Only: 3D Pet Cards Deck Placed Above Headline */}
-        <div className="block lg:hidden w-full mb-4 animate-boardui-condense">
-          <HeroPetCardDeck onOpenBooking={onOpenBooking} />
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-x-10 lg:gap-y-4 items-start">
           
+          {/* 3D Pet Cards Deck (Mobile: 1st above headline; Desktop: top of right column) */}
+          <div className="order-1 lg:order-2 lg:col-span-6 w-full animate-boardui-condense">
+            <HeroPetCardDeck onOpenBooking={onOpenBooking} />
+          </div>
+
           {/* Left Column: Clinical Core Presentation + Heatmap Chart Card */}
-          <div className="lg:col-span-6 space-y-6">
+          <div className="order-2 lg:order-1 lg:col-span-6 lg:row-span-2 space-y-6">
             {/* Main Headline */}
             <h1 className="text-title-1-semibold xs:text-large-title-bold sm:text-display-1-bold text-text-primary tracking-tight leading-[1.15]">
               เคียงข้างทุกชีวิตสัตว์เลี้ยง <br />
@@ -74,14 +73,8 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
             </div>
           </div>
 
-          {/* Right Column: 3D Pet Medical Passport Deck (Desktop) + Patient Workflow Live Task List */}
-          <div className="lg:col-span-6 space-y-4 animate-boardui-condense">
-            {/* Bento Card 1: 3D Fanned Pet Medical Passport Deck (Desktop only) */}
-            <div className="hidden lg:block">
-              <HeroPetCardDeck onOpenBooking={onOpenBooking} />
-            </div>
-
-            {/* Patient Workflow Live Task List */}
+          {/* Right Column Bottom: Patient Workflow Live Task List */}
+          <div className="order-3 lg:order-3 lg:col-span-6 space-y-4 animate-boardui-condense">
             <HospitalTaskList />
           </div>
 

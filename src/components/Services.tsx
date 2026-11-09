@@ -10,17 +10,20 @@ import {
   RiShieldCheckLine,
   RiCheckLine,
   RiArrowRightLine,
+  RiChatSmile2Line,
 } from '@remixicon/react';
+import { cx } from '@/utils/cx';
 import { Button } from '@/components/base/buttons/button';
 import { Chip } from '@/components/base/badges/chip';
 
 interface ServicesProps {
   onOpenBooking: (serviceName?: string) => void;
+  onConsultDepartment?: (departmentName: string) => void;
 }
 
-export const Services: React.FC<ServicesProps> = ({ onOpenBooking }) => {
-  const getIcon = (name: string, isEmergency?: boolean) => {
-    const iconClass = isEmergency ? 'size-6 text-status-rose-text' : 'size-6 text-accent-500';
+export const Services: React.FC<ServicesProps> = ({ onOpenBooking, onConsultDepartment }) => {
+  const getIcon = (name: string, customColor?: string) => {
+    const iconClass = cx('size-6', customColor || 'text-accent-500');
     switch (name) {
       case 'Ambulance':
         return <RiFirstAidKitLine className={iconClass} />;
@@ -56,11 +59,12 @@ export const Services: React.FC<ServicesProps> = ({ onOpenBooking }) => {
           {servicesData.map((service: HospitalService) => (
             <div
               key={service.id}
-              className={`rounded-3xl p-6 sm:p-7 border transition-all duration-200 flex flex-col justify-between ${
+              className={cx(
+                'rounded-3xl p-6 sm:p-7 border transition-all duration-200 flex flex-col justify-between shadow-xs',
                 service.isEmergency
-                  ? 'bg-status-rose-background/40 border-status-rose-text/30 shadow-xs hover:border-status-rose-text'
-                  : 'bg-background-primary-default border-border-button-default shadow-xs hover:border-accent-400 hover:shadow-md'
-              }`}
+                  ? 'bg-status-rose-background/40 border-status-rose-text/30 hover:border-status-rose-text'
+                  : 'bg-background-primary-default border-border-button-default hover:border-accent-400 hover:shadow-md'
+              )}
             >
               <div>
                 {/* Facility / Equipment Image Banner */}
@@ -77,11 +81,14 @@ export const Services: React.FC<ServicesProps> = ({ onOpenBooking }) => {
                     {/* Floating Service Icon and Badge over Image */}
                     <div className="absolute bottom-3 inset-x-3 flex items-center justify-between">
                       <div
-                        className={`size-10 rounded-xl flex items-center justify-center backdrop-blur-md border border-white/25 shadow-xs ${
-                          service.isEmergency ? 'bg-status-rose-text text-white' : 'bg-background-primary-default/90 text-accent-600'
-                        }`}
+                        className={cx(
+                          'size-10 rounded-xl flex items-center justify-center backdrop-blur-md border shadow-xs',
+                          service.isEmergency
+                            ? 'bg-status-rose-text text-white border-status-rose-text/40'
+                            : 'bg-background-primary-default/90 text-accent-600 border-border-button-default'
+                        )}
                       >
-                        {getIcon(service.iconName, service.isEmergency)}
+                        {getIcon(service.iconName, service.isEmergency ? 'text-white' : 'text-accent-600')}
                       </div>
                       {service.badge && (
                         <Chip
@@ -99,11 +106,14 @@ export const Services: React.FC<ServicesProps> = ({ onOpenBooking }) => {
                 {!service.imageUrl && (
                   <div className="flex items-center justify-between mb-4">
                     <div
-                      className={`size-12 rounded-2xl flex items-center justify-center border border-border-button-default ${
-                        service.isEmergency ? 'bg-status-rose-background' : 'bg-background-secondary-default'
-                      }`}
+                      className={cx(
+                        'size-12 rounded-2xl flex items-center justify-center border',
+                        service.isEmergency
+                          ? 'bg-status-rose-background border-status-rose-text/30'
+                          : 'bg-background-secondary-default border-border-button-default'
+                      )}
                     >
-                      {getIcon(service.iconName, service.isEmergency)}
+                      {getIcon(service.iconName, service.isEmergency ? 'text-status-rose-text' : 'text-accent-500')}
                     </div>
                     {service.badge && (
                       <Chip
@@ -136,11 +146,20 @@ export const Services: React.FC<ServicesProps> = ({ onOpenBooking }) => {
                 <Button
                   variant={service.isEmergency ? 'danger' : 'secondary'}
                   size="medium"
-                  trailingIcon={RiArrowRightLine}
-                  onClick={() => onOpenBooking(service.title)}
+                  leadingIcon={service.isEmergency ? undefined : RiChatSmile2Line}
+                  trailingIcon={service.isEmergency ? RiArrowRightLine : undefined}
+                  onClick={() => {
+                    if (service.isEmergency) {
+                      onOpenBooking(service.title);
+                    } else if (onConsultDepartment) {
+                      onConsultDepartment(service.title);
+                    } else {
+                      onOpenBooking(service.title);
+                    }
+                  }}
                   className="w-full justify-center"
                 >
-                  {service.isEmergency ? 'ติดต่อฉุกเฉิน / นัดหมายด่วน' : 'นัดหมายตรวจแผนกนี้'}
+                  {service.isEmergency ? 'ติดต่อฉุกเฉิน / นัดหมายด่วน' : 'ปรึกษาอาการแผนกนี้'}
                 </Button>
               </div>
             </div>

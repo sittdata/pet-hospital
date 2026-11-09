@@ -56,7 +56,7 @@ const DEPARTMENTS_DATA: Department[] = [
   },
   {
     id: 'surgery',
-    name: 'ศูนย์ศัลยกรรมและกระดูก',
+    name: 'ศูนย์ศัลยกรรมและกระดูก (ห้องผ่าตัดปลอดเชื้อ)',
     icon: RiScissors2Line,
     description: 'ผ่าตัดเนื้อเยื่ออ่อน ผ่าตัดกระดูก ข้อต่อ ผ่าตัดส่องกล้อง และศัลยกรรมระบบประสาท',
     doctors: [
@@ -80,7 +80,7 @@ const DEPARTMENTS_DATA: Department[] = [
   },
   {
     id: 'eye',
-    name: 'ศูนย์โรคตาและจักษุกรรม',
+    name: 'ศูนย์โรคตาและจักษุกรรมสัตว์เลี้ยง',
     icon: RiEyeLine,
     description: 'ตรวจวินิจฉัยต้อกระจก ต้อหิน แผลหลุมกระจกตา และผ่าตัดจุลศัลยกรรมตา',
     doctors: [
@@ -96,7 +96,7 @@ const DEPARTMENTS_DATA: Department[] = [
   },
   {
     id: 'exotic',
-    name: 'ศูนย์สัตว์เลี้ยงพิเศษ',
+    name: 'ศูนย์สัตว์พิเศษและสัตว์เลื้อยคลาน (Exotic Pets)',
     icon: RiPsychotherapyLine,
     description: 'เชี่ยวชาญการดูแลกระต่าย กระรอก นก ชูก้าไกลเดอร์ สัตว์เลื้อยคลาน และสัตว์ฟันแทะ',
     doctors: [
@@ -164,7 +164,7 @@ export interface DoctorsProps {
   onOpenBooking?: (serviceName?: string, doctorName?: string) => void;
 }
 
-export default function Doctors({ onOpenBooking }: DoctorsProps = {}) {
+export default function Doctors(_props: DoctorsProps = {}) {
   const [activeTab, setActiveTab] = useState<string>('all');
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
@@ -296,27 +296,16 @@ export default function Doctors({ onOpenBooking }: DoctorsProps = {}) {
                           <p className="text-caption-1-semibold text-accent-600">
                             {doctor.specialty}
                           </p>
-                          <p className="text-body-2-regular text-text-tertiary text-xs line-clamp-2">
+                          <p className="text-caption-1-regular text-text-tertiary line-clamp-2">
                             {doctor.degree}
                           </p>
                         </div>
                       </div>
 
                       {/* ตารางออกตรวจ */}
-                      <div className="mt-6 pt-4 border-t border-separator-border flex items-center justify-between gap-2 text-body-2-regular text-text-secondary text-xs">
-                        <div className="flex items-center gap-1.5 min-w-0">
-                          <RiCalendarCheckLine className="w-4 h-4 text-foreground-icon-tertiary shrink-0" />
-                          <span className="truncate">{doctor.schedule}</span>
-                        </div>
-                        {onOpenBooking && (
-                          <button
-                            type="button"
-                            onClick={() => onOpenBooking(dept.name, doctor.name)}
-                            className="shrink-0 px-2.5 py-1 rounded-full bg-accent-50 text-accent-700 hover:bg-accent-100 transition-colors font-medium text-caption-2-bold"
-                          >
-                            นัดตรวจ
-                          </button>
-                        )}
+                      <div className="mt-6 pt-4 border-t border-separator-border flex items-center gap-2 text-caption-1-regular text-text-secondary">
+                        <RiCalendarCheckLine className="w-4 h-4 text-foreground-icon-tertiary shrink-0" />
+                        <span className="truncate">{doctor.schedule}</span>
                       </div>
                     </div>
                   ))}
@@ -355,7 +344,7 @@ export default function Doctors({ onOpenBooking }: DoctorsProps = {}) {
               <button
                 type="button"
                 onClick={() => setIsExpanded(true)}
-                className="relative z-10 pointer-events-auto inline-flex items-center gap-1.5 text-body-medium sm:text-headline-medium text-text-primary hover:text-accent-500 font-medium transition-colors duration-200 cursor-pointer group select-none"
+                className="relative z-10 pointer-events-auto inline-flex items-center gap-1.5 text-body-medium sm:text-headline-medium text-text-primary hover:text-accent-500 transition-colors duration-200 cursor-pointer group select-none"
               >
                 <span>แสดงทีมแพทย์และศูนย์บริการทั้งหมด ({DEPARTMENTS_DATA.length} ศูนย์)</span>
                 <RiArrowDownSLine className="w-4 h-4 text-text-secondary group-hover:text-accent-500 group-hover:translate-y-0.5 transition-all" />

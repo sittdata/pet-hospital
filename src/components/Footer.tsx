@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  RiHeartPulseFill,
   RiPhoneFill,
   RiMailLine,
   RiMapPin2Line,
@@ -17,15 +16,19 @@ export const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-border-button-default">
           {/* Brand & Mission */}
           <div className="lg:col-span-5 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="size-11 rounded-2xl bg-gradient-to-b from-accent-500 to-accent-600 flex items-center justify-center text-white shadow-xs">
-                <RiHeartPulseFill className="size-6 text-white" />
+            <a href="#" className="flex items-center gap-3 group w-fit">
+              <div className="size-12 rounded-2xl bg-blue-900 flex items-center justify-center p-1.5 shadow-xs border border-blue-800/40 group-hover:scale-105 transition-transform">
+                <img 
+                  src="/logo-nav.webp" 
+                  alt="VetPaws Animal Hospital Logo" 
+                  className="h-8.5 w-auto object-contain" 
+                />
               </div>
               <div>
                 <span className="font-bold text-title-3-semibold text-text-primary tracking-tight">VetPaws Animal Hospital</span>
                 <p className="text-caption-1-medium text-text-tertiary">VetPaws Animal Hospital (24 Hours)</p>
               </div>
-            </div>
+            </a>
 
             <p className="text-body-medium text-text-secondary leading-relaxed max-w-md">
               สถานพยาบาลสัตว์ชั้นนำ บริการทางการแพทย์เฉพาะทางตลอด 24 ชั่วโมง 

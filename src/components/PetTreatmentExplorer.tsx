@@ -14,8 +14,18 @@ import { Chip } from '@/components/base/badges/chip';
 import { Breadcrumb, BreadcrumbItem } from '@/components/base/breadcrumb/breadcrumb';
 import { cx } from '@/utils/cx';
 
+export interface TreatmentBookingContext {
+  category?: string;
+  treatmentTitle?: string;
+  symptomsSummary?: string;
+}
+
 interface PetTreatmentExplorerProps {
-  onSelectBooking: (petType: PetType, serviceTitle: string) => void;
+  onSelectBooking: (
+    petType: PetType,
+    serviceTitle: string,
+    context?: TreatmentBookingContext
+  ) => void;
 }
 
 // ponytail: using curated high-res CDN pet photography; swap to locally hosted static assets if offline self-hosting required
@@ -132,23 +142,22 @@ export const PetTreatmentExplorer: React.FC<PetTreatmentExplorerProps> = ({ onSe
                 </div>
 
                 {/* Bottom Details */}
-                <div className="space-y-0.5 w-full relative z-10">
-                  <div className="flex items-center justify-between gap-1">
-                    <h3
-                      className={cx(
-                        'text-title-3-semibold transition-colors',
-                        isSelected ? 'text-accent-500' : 'text-text-primary group-hover:text-accent-500'
-                      )}
-                    >
-                      {cat.name}
-                    </h3>
-                    <span className="text-[11px] font-medium text-text-tertiary">
+                <div className="space-y-1 w-full relative z-10">
+                  <h3
+                    className={cx(
+                      'text-title-3-semibold leading-snug transition-colors line-clamp-1',
+                      isSelected ? 'text-accent-500' : 'text-text-primary group-hover:text-accent-500'
+                    )}
+                    title={cat.name}
+                  >
+                    {cat.name}
+                  </h3>
+                  <div className="flex items-center justify-between gap-2 text-caption-1-medium text-text-tertiary">
+                    <span className="truncate">{cat.enName}</span>
+                    <span className="shrink-0 text-caption-2-medium bg-background-secondary-default px-2 py-0.5 rounded-full border border-border-button-default whitespace-nowrap">
                       {catTreatmentsCount} บริการ
                     </span>
                   </div>
-                  <p className="text-caption-1-medium text-text-tertiary truncate">
-                    {cat.enName}
-                  </p>
                 </div>
               </button>
             );
@@ -296,7 +305,13 @@ export const PetTreatmentExplorer: React.FC<PetTreatmentExplorerProps> = ({ onSe
                       variant="secondary"
                       size="small"
                       leadingIcon={RiCalendarEventLine}
-                      onClick={() => onSelectBooking(selectedPet, treatment.title)}
+                      onClick={() =>
+                        onSelectBooking(selectedPet, treatment.title, {
+                          category: treatment.category,
+                          treatmentTitle: treatment.title,
+                          symptomsSummary: treatment.symptoms.slice(0, 3).join(', '),
+                        })
+                      }
                     >
                       จองโปรแกรมนี้
                     </Button>

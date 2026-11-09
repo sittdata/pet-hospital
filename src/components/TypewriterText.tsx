@@ -6,6 +6,7 @@ export interface TypewriterTextProps {
   deletingSpeed?: number;
   pauseDelay?: number;
   className?: string;
+  loop?: boolean;
 }
 
 export function TypewriterText({
@@ -14,23 +15,28 @@ export function TypewriterText({
   deletingSpeed = 30,
   pauseDelay = 3500,
   className,
+  loop = true,
 }: TypewriterTextProps) {
   const [wordIndex, setWordIndex] = useState(0);
   const [currentText, setCurrentText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
+    if (!words.length) return;
     const fullWord = words[wordIndex % words.length];
 
     if (!isDeleting && currentText === fullWord) {
+      if (!loop && words.length <= 1) return;
       const timeout = setTimeout(() => setIsDeleting(true), pauseDelay);
       return () => clearTimeout(timeout);
     }
 
     if (isDeleting && currentText === '') {
-      setIsDeleting(false);
-      setWordIndex((prev) => (prev + 1) % words.length);
-      return;
+      const timeout = setTimeout(() => {
+        setIsDeleting(false);
+        setWordIndex((prev) => (prev + 1) % words.length);
+      }, typingSpeed);
+      return () => clearTimeout(timeout);
     }
 
     const nextSpeed = isDeleting ? deletingSpeed : typingSpeed;
@@ -43,7 +49,7 @@ export function TypewriterText({
     }, nextSpeed);
 
     return () => clearTimeout(timeout);
-  }, [currentText, isDeleting, wordIndex, words, typingSpeed, deletingSpeed, pauseDelay]);
+  }, [currentText, isDeleting, wordIndex, words, typingSpeed, deletingSpeed, pauseDelay, loop]);
 
   return (
     <span className={className}>

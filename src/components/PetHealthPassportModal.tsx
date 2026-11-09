@@ -10,6 +10,7 @@ import {
   RiFileTextLine,
   RiInformationLine,
   RiChatSmile2Fill,
+  RiHospitalLine,
 } from '@remixicon/react';
 import { PetPassport, VaccineRecord, VaccineStatus } from '../types/petPassport';
 import {
@@ -19,18 +20,25 @@ import {
 import { Button } from '@/components/base/buttons/button';
 import { Avatar } from '@/components/base/avatar/avatar';
 import { StatusDot } from '@/components/base/badges/status-dot';
+import { DatePicker } from '@/components/base/date-picker/date-picker';
+import { parseDate, today, getLocalTimeZone } from '@internationalized/date';
 
 interface PetHealthPassportModalProps {
   isOpen: boolean;
   onClose: () => void;
   onBookAppointment: (serviceName?: string, petType?: string) => void;
+  onBookVaccine?: (vaccine: VaccineRecord, pet: PetPassport) => void;
   initialPetId?: string;
   onConsultVaccine?: (vaccine: VaccineRecord, pet: PetPassport) => void;
+  currentUser?: { name: string; email: string } | null;
 }
 
-export function deriveVaccineStatus(vac: VaccineRecord): VaccineStatus {
+function deriveVaccineStatus(vac: VaccineRecord): VaccineStatus {
   if (vac.dateAdministered) {
     return 'completed';
+  }
+  if (vac.status === 'scheduled') {
+    return 'scheduled';
   }
   if (vac.dueDate) {
     const today = new Date();
@@ -49,15 +57,19 @@ export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({
   isOpen,
   onClose,
   onBookAppointment,
+  onBookVaccine,
+  initialPetId,
   onConsultVaccine,
+  currentUser,
 }) => {
-  const [passports, setPassports] = useState<PetPassport[]>([]);
+  const [passports, setPassports] = useState<PetPassport[]>(() => getStoredPassports(currentUser?.email));
+  const [selectedPetId, setSelectedPetId] = useState<string | null>(initialPetId || null);
   const [activeTab, setActiveTab] = useState<'vaccines' | 'treatments'>('vaccines');
   const [showAddVaccine, setShowAddVaccine] = useState(false);
 
   // New Vaccine Form State
   const [vacName, setVacName] = useState('');
-  const [vacDueDate, setVacDueDate] = useState('');
+  const [vacDueDate, setVacDueDate] = useState<string>(() => today(getLocalTimeZone()).toString());
   const [vacVet, setVacVet] = useState('สพ.ญ. ดร. นลิน พิพิธกุล');
   const [vacNotes, setVacNotes] = useState('');
 
@@ -71,7 +83,7 @@ export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({
 
   const resetForm = useCallback(() => {
     setVacName('');
-    setVacDueDate('');
+    setVacDueDate(today(getLocalTimeZone()).toString());
     setVacNotes('');
     setVacVet('สพ.ญ. ดร. นลิน พิพิธกุล');
     setShowAddVaccine(false);
@@ -84,13 +96,26 @@ export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({
 
   // Load passports on mount / open
   useEffect(() => {
-    if (isOpen) {
-      const data = getStoredPassports();
-      setPassports(data);
-    } else {
-      resetForm();
+    if (!isOpen) {
+      const resetTimer = setTimeout(() => resetForm(), 0);
+      return () => clearTimeout(resetTimer);
     }
-  }, [isOpen, resetForm]);
+    const timer = setTimeout(() => {
+      const data = getStoredPassports(currentUser?.email);
+      setPassports(data);
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [isOpen, currentUser?.email, resetForm]);
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setPassports(getStoredPassports(currentUser?.email));
+    };
+    window.addEventListener('vetpaws:passports_updated', handleUpdate);
+    return () => {
+      window.removeEventListener('vetpaws:passports_updated', handleUpdate);
+    };
+  }, [currentUser?.email]);
 
   // Focus trap, initial focus, body scroll lock & Escape key handling
   useEffect(() => {
@@ -157,7 +182,10 @@ export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({
     };
   }, [isOpen, handleClose]);
 
-  const activePet = passports[0];
+  const activePet =
+    (selectedPetId ? passports.find((p) => p.id === selectedPetId) : null) ||
+    (initialPetId ? passports.find((p) => p.id === initialPetId) : null) ||
+    passports[0];
   const petVaccines: VaccineRecord[] = activePet?.vaccines ?? [];
   const petTreatments = activePet?.treatments ?? [];
 
@@ -185,7 +213,7 @@ export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({
     });
 
     setPassports(updatedPassports);
-    saveStoredPassports(updatedPassports);
+    saveStoredPassports(updatedPassports, currentUser?.email);
     resetForm();
   };
 
@@ -239,20 +267,89 @@ export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({
         </div>
 
         {/* Modal Scrollable Body */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-7 space-y-6">
-          {/* Pet Bio Summary Card (Clean, Single Pet Focus) */}
-          {activePet && (
-            <div className="p-5 rounded-3xl bg-background-secondary-default/50 border border-border-button-default flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
-              <div className="flex items-center gap-4">
-                {activePet.avatarUrl ? (
-                  <img
-                    src={activePet.avatarUrl}
-                    alt={activePet.name}
-                    className="size-16 rounded-2xl object-cover border border-border-button-default shadow-xs"
-                  />
-                ) : (
-                  <Avatar initials={activePet.name.slice(0, 2)} size="lg" />
-                )}
+        {passports.length === 0 ? (
+          <div className="flex-1 overflow-y-auto p-6 sm:p-12 flex flex-col items-center justify-center text-center">
+            <div className="w-full max-w-md mx-auto space-y-6">
+              <div className="flex flex-col items-center gap-3">
+                <div className="size-16 rounded-3xl bg-accent-500/10 text-accent-600 dark:text-accent-400 flex items-center justify-center border border-border-button-default shadow-xs">
+                  <RiHospitalLine className="size-8" />
+                </div>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption-1-medium bg-accent-500/10 text-accent-700 dark:text-accent-300 border border-accent-500/20 shadow-xs">
+                  <span className="size-1.5 rounded-full bg-accent-500" />
+                  <span>เวชระเบียนทางการ</span>
+                </span>
+              </div>
+
+              <div className="space-y-2">
+                <h3 className="text-title-2-medium text-text-primary">
+                  ไม่พบประวัติสัตว์เลี้ยงในระบบ
+                </h3>
+                <p className="text-body-regular text-text-secondary leading-relaxed">
+                  บัญชีนี้ยังไม่มีประวัติสัตว์เลี้ยงที่ลงทะเบียนเข้ารับการรักษากับ VetPaws Animal Hospital ประวัติดิจิทัลและตารางวัคซีนจะแสดงผลเมื่อสัตว์เลี้ยงได้รับการลงทะเบียนนัดหมายเข้ารับการตรวจ
+                </p>
+              </div>
+
+              <div className="pt-2">
+                <Button
+                  variant="primary"
+                  size="medium"
+                  leadingIcon={RiCalendarEventLine}
+                  onClick={() => {
+                    handleClose();
+                    onBookAppointment();
+                  }}
+                  className="w-full sm:w-auto justify-center mx-auto"
+                >
+                  นัดหมายตรวจล่วงหน้า
+                </Button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="flex-1 overflow-y-auto p-4 sm:p-7 space-y-6">
+            {/* Multi-Pet Selector (when user has multiple registered pets) */}
+            {passports.length > 1 && (
+              <div className="flex items-center gap-2 overflow-x-auto pb-1">
+                <span className="text-caption-2-medium text-text-tertiary shrink-0">
+                  สัตว์เลี้ยง ({passports.length}):
+                </span>
+                {passports.map((pet) => {
+                  const isSelected = activePet?.id === pet.id;
+                  return (
+                    <button
+                      key={pet.id}
+                      type="button"
+                      onClick={() => setSelectedPetId(pet.id)}
+                      className={`px-3 py-1.5 rounded-full text-caption-1-medium transition-colors shrink-0 cursor-pointer border flex items-center gap-1.5 ${
+                        isSelected
+                          ? 'bg-accent-500 text-white border-accent-600 shadow-xs font-semibold'
+                          : 'bg-background-secondary-default text-text-secondary border-border-button-default hover:bg-background-secondary-hover'
+                      }`}
+                    >
+                      <span>{pet.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Pet Bio Summary Card (Clean, Single Pet Focus) */}
+            {activePet && (
+              <div className="p-5 rounded-3xl bg-background-secondary-default/50 border border-border-button-default flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+                <div className="flex items-center gap-4">
+                  {activePet.avatarUrl ? (
+                    <img
+                      src={activePet.avatarUrl}
+                      alt={activePet.name}
+                      className="size-16 rounded-2xl object-cover border border-border-button-default shadow-xs"
+                    />
+                  ) : (
+                    <Avatar
+                      initials={activePet.name.trim().slice(0, 2)}
+                      size="lg"
+                      className="size-16 rounded-2xl text-title-3-semibold"
+                    />
+                  )}
                 <div>
                   <h3 className="text-title-3-semibold text-text-primary">{activePet.name}</h3>
                   <p className="text-body-medium text-text-secondary">
@@ -361,14 +458,18 @@ export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({
                 </div>
                 <div>
                   <label className="block text-caption-2-medium text-text-secondary mb-1">
-                    กำหนดวันที่ควรเข้ารับการฉีด *
+                    กำหนดวันที่ควรเข้ารับการฉีด <span className="text-status-rose-text">*</span>
                   </label>
-                  <input
-                    type="date"
-                    required
-                    value={vacDueDate}
-                    onChange={(e) => setVacDueDate(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-background-primary-default border border-border-button-default text-body-regular text-text-primary focus:outline-hidden focus:border-border-focus-ring"
+                  <DatePicker
+                    aria-label="กำหนดวันที่ควรเข้ารับการฉีด"
+                    value={vacDueDate ? parseDate(vacDueDate) : today(getLocalTimeZone())}
+                    onChange={(newDate) => {
+                      if (newDate) {
+                        setVacDueDate(newDate.toString());
+                      }
+                    }}
+                    minValue={today(getLocalTimeZone())}
+                    className="w-full"
                   />
                 </div>
                 <div>
@@ -437,7 +538,12 @@ export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({
                         <div className="space-y-1.5 min-w-0 flex-1">
                           <div className="flex items-center gap-2.5 flex-wrap">
                             <h4 className="text-body-2-semibold text-text-primary">{vac.name}</h4>
-                            {derivedStatus === 'upcoming' ? (
+                            {derivedStatus === 'scheduled' ? (
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-status-lime-background text-status-lime-text text-caption-2-medium border border-border-button-default shrink-0">
+                                <StatusDot color="green" />
+                                <span>นัดหมายแล้ว</span>
+                              </span>
+                            ) : derivedStatus === 'upcoming' ? (
                               <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-background-primary-default text-text-secondary text-caption-2-medium border border-border-button-default shrink-0">
                                 <StatusDot color="yellow" />
                                 <span>รอเข้ารับการฉีด</span>
@@ -451,11 +557,22 @@ export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({
                           </div>
 
                           <div className="text-caption-1-regular text-text-secondary flex items-center gap-4 flex-wrap">
-                            {vac.dueDate && (
-                              <span className="inline-flex items-center gap-1.5 font-medium text-text-primary">
-                                <RiCalendarEventLine className="size-3.5 text-accent-500" />
-                                <span>กำหนดฉีด: {vac.dueDate}</span>
+                            {vac.appointmentDate ? (
+                              <span className="inline-flex items-center gap-1.5 font-medium text-status-lime-text">
+                                <RiCalendarEventLine className="size-3.5" />
+                                <span>
+                                  วันนัด: {vac.appointmentDate}
+                                  {vac.appointmentTime ? ` (${vac.appointmentTime})` : ''}
+                                  {vac.appointmentBranch ? ` • ${vac.appointmentBranch}` : ''}
+                                </span>
                               </span>
+                            ) : (
+                              vac.dueDate && (
+                                <span className="inline-flex items-center gap-1.5 font-medium text-text-primary">
+                                  <RiCalendarEventLine className="size-3.5 text-accent-500" />
+                                  <span>กำหนดฉีด: {vac.dueDate}</span>
+                                </span>
+                              )
                             )}
                             {vac.veterinarian && (
                               <span className="inline-flex items-center gap-1.5 text-text-tertiary">
@@ -483,15 +600,19 @@ export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({
                             </Button>
                           )}
                           <Button
-                            variant="primary"
+                            variant={derivedStatus === 'scheduled' ? 'secondary' : 'primary'}
                             size="small"
                             leadingIcon={RiCalendarEventLine}
                             onClick={() => {
-                              handleClose();
-                              onBookAppointment('ตรวจสุขภาพทั่วไปและฉีดวัคซีน', activePet?.petType);
+                              if (onBookVaccine && activePet) {
+                                onBookVaccine(vac, activePet);
+                              } else {
+                                handleClose();
+                                onBookAppointment('ศูนย์ตรวจสุขภาพ ฉีดวัคซีน และเวชศาสตร์ป้องกัน', activePet?.petType);
+                              }
                             }}
                           >
-                            นัดหมายฉีดวัคซีนนี้
+                            {derivedStatus === 'scheduled' ? 'เปลี่ยนวันนัดหมาย' : 'นัดหมายฉีดวัคซีนนี้'}
                           </Button>
                         </div>
                       </div>
@@ -567,6 +688,7 @@ export const PetHealthPassportModal: React.FC<PetHealthPassportModalProps> = ({
             </div>
           )}
         </div>
+      )}
 
         {/* Modal Footer */}
         <div className="px-5 sm:px-7 py-3.5 border-t border-border-button-default bg-background-secondary-default/50 flex items-center justify-end">
