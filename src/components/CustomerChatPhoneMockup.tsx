@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cx } from '@/utils/cx';
 import { Button, ButtonLink } from '@/components/base/buttons/button';
@@ -42,7 +42,7 @@ const SUGGESTIONS = [
 
 const DEMO_USER_PROMPT = 'สวัสดีครับ สุนัขพันธุ์ชิบะ อายุ 2 ปี มีอาการอาเจียนเป็นฟองสีขาว ซึม ไม่ยอมแตะอาหารตั้งแต่เช้า อันตรายไหมครับ?';
 const DEMO_AI_REPLY = 'สวัสดีครับคุณเจ้าของ ขณะนี้ระบบ AI ได้รับข้อมูลแล้ว เนื่องจากขณะนี้มีผู้ติดต่อจำนวนมาก ระบบขอประเมินอาการเบื้องต้นให้ระหว่างรอทีมสัตวแพทย์เข้ามาตอบข้อความสักครู่นะครับ';
-const DEMO_DOCTOR_REPLY = 'สวัสดีค่ะคุณเจ้าของ หมอสุภัทรานะคะ จากอาการที่แจ้ง หมอแนะนำให้งดน้ำและอาหารก่อนตามที่ระบบประเมินเลยนะคะ เดี๋ยวหมอจะเปิดคิวห้องตรวจด่วนรอรับน้องไว้ให้เลยค่ะ คุณเจ้าของสะดวกพาน้องเข้ามาตรวจที่สาขาไหนคะ?';
+const DEMO_DOCTOR_REPLY = 'สวัสดีค่ะคุณเจ้าของ หมอลลิตานะคะ จากอาการที่แจ้ง หมอแนะนำให้งดน้ำและอาหารก่อนตามที่ระบบประเมินเลยนะคะ เดี๋ยวหมอจะเปิดคิวห้องตรวจด่วนรอรับน้องไว้ให้เลยค่ะ คุณเจ้าของสะดวกพาน้องเข้ามาตรวจที่สาขาไหนคะ?';
 
 const EASE_SPRING = [0.16, 1, 0.3, 1] as const;
 
@@ -76,8 +76,10 @@ export function CustomerChatPhoneMockup({
     scrollToBottom();
   }, [messages, isTyping]);
 
+  const startDemoSimulationRef = useRef<() => void>(() => {});
+
   // Run showcase typing demo on infinite loop with realistic Human-in-the-loop handoff
-  const startDemoSimulation = () => {
+  const startDemoSimulation = useCallback(() => {
     clearAllTimeouts();
     setMessages([]);
     setInputValue('');
@@ -126,7 +128,7 @@ export function CustomerChatPhoneMockup({
 
               // Step 3: Real Vet doctor joins & starts typing
               const t4 = window.setTimeout(() => {
-                setTypingLabel('พญ. สุภัทรา (สัตวแพทย์เวร) กำลังพิมพ์ตอบกลับ...');
+                setTypingLabel('สพ.ญ. ลลิตา (สัตวแพทย์เวร) กำลังพิมพ์ตอบกลับ...');
                 setIsTyping(true);
 
                 // Step 4: Real Vet doctor sends personal response!
@@ -137,7 +139,7 @@ export function CustomerChatPhoneMockup({
                     {
                       id: 'demo-doc-1',
                       sender: 'doctor',
-                      senderName: 'พญ. สุภัทรา (สัตวแพทย์เวรประจำการ)',
+                      senderName: 'สพ.ญ. ลลิตา บุญประเสริฐ (สัตวแพทย์เวรประจำการ)',
                       timestamp: '9:39',
                       text: DEMO_DOCTOR_REPLY,
                     },
@@ -146,7 +148,7 @@ export function CustomerChatPhoneMockup({
 
                   // Finished -> wait 5.5 seconds to let visitors read full real conversation -> restart
                   const loopTimeout = window.setTimeout(() => {
-                    startDemoSimulation();
+                    startDemoSimulationRef.current?.();
                   }, 5500);
                   timeoutsRef.current.push(loopTimeout);
                 }, 2200);
@@ -165,12 +167,21 @@ export function CustomerChatPhoneMockup({
     // Pause 1.4s at empty recommendation state before typing starts
     const initialDelay = window.setTimeout(typeNextChar, 1400);
     timeoutsRef.current.push(initialDelay);
-  };
+  }, []);
 
   useEffect(() => {
-    startDemoSimulation();
-    return () => clearAllTimeouts();
-  }, []);
+    startDemoSimulationRef.current = startDemoSimulation;
+  }, [startDemoSimulation]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      startDemoSimulation();
+    }, 0);
+    return () => {
+      clearTimeout(timer);
+      clearAllTimeouts();
+    };
+  }, [startDemoSimulation]);
 
   return (
     <div className={cx('relative mx-auto w-full max-w-[330px] select-none', className)}>
@@ -247,7 +258,7 @@ export function CustomerChatPhoneMockup({
                 <div className="relative shrink-0">
                   <img
                     src="/images/vets/vet_female_cat.jpg"
-                    alt="พญ. สุภัทรา สัตวแพทย์เวร"
+                    alt="สพ.ญ. ลลิตา บุญประเสริฐ สัตวแพทย์เวร"
                     className="size-8 rounded-full object-cover ring-1.5 ring-emerald-500/40 shadow-2xs"
                   />
                   <span className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full bg-emerald-500 ring-2 ring-background-primary-default" />
@@ -255,14 +266,14 @@ export function CustomerChatPhoneMockup({
                 </div>
                 <div className="flex flex-col min-w-0">
                   <div className="flex items-center gap-1.5 min-w-0">
-                    <span className="text-[12px] font-semibold text-text-primary whitespace-nowrap">
+                    <span className="text-caption-1-semibold text-text-primary whitespace-nowrap">
                       ศูนย์เวชศาสตร์ฉุกเฉิน
                     </span>
-                    <Badge color="primary" className="text-[9px] py-0 px-1 shrink-0 whitespace-nowrap">
+                    <Badge color="primary" className="text-caption-2-medium py-0 px-1 shrink-0 whitespace-nowrap">
                       24 ชม.
                     </Badge>
                   </div>
-                  <span className="text-[10px] text-text-secondary flex items-center gap-1 truncate">
+                  <span className="text-caption-2-regular text-text-secondary flex items-center gap-1 truncate">
                     {isTyping ? (
                       <span className="text-accent-600 dark:text-accent-400 font-medium animate-pulse truncate">
                         {typingLabel}
@@ -291,7 +302,7 @@ export function CustomerChatPhoneMockup({
                   variant="danger"
                   size="xs"
                   leadingIcon={RiPhoneLine}
-                  className="rounded-full px-2 py-1 text-[11px]"
+                  className="rounded-full px-2 py-1 text-caption-2-medium"
                   title="โทรหาสัตวแพทย์ฉุกเฉิน"
                 >
                   โทรด่วน
@@ -325,7 +336,7 @@ export function CustomerChatPhoneMockup({
                       <h2 className="text-title-3-semibold text-text-primary tracking-tight">
                         ปรึกษาอาการสัตว์เลี้ยง 24 ชม.
                       </h2>
-                      <p className="text-[11px] text-text-secondary max-w-[260px] leading-relaxed">
+                      <p className="text-caption-2-regular text-text-secondary max-w-[260px]">
                         ระบบ AI ช่วยบันทึกอาการเบื้องต้น เพื่อส่งต่อให้ทีมสัตวแพทย์เวรตอบกลับจริงทันที
                       </p>
                     </div>
@@ -335,7 +346,7 @@ export function CustomerChatPhoneMockup({
                         <div
                           key={suggestion}
                           className={cx(
-                            "w-full rounded-full border px-3 py-1.5 text-[11px] text-text-secondary shadow-2xs transition-colors text-center",
+                            "w-full rounded-full border px-3 py-1.5 text-caption-2-regular text-text-secondary shadow-2xs transition-colors text-center",
                             index === 0
                               ? "bg-accent-500/10 border-accent-500/30 text-accent-700 dark:text-accent-300 font-medium"
                               : "bg-background-primary-default border-border-button-default"
@@ -349,7 +360,7 @@ export function CustomerChatPhoneMockup({
                 ) : (
                   <div key="messages-list" className="space-y-2.5">
                     <div className="text-center my-1">
-                      <span className="text-[10px] text-text-tertiary bg-background-secondary-default/80 px-2 py-0.5 rounded-full">
+                      <span className="text-caption-2-regular text-text-tertiary bg-background-secondary-default/80 px-2 py-0.5 rounded-full">
                         วันนี้ • มีสัตวแพทย์เวรประจำการ 24 ชม.
                       </span>
                     </div>
@@ -368,7 +379,7 @@ export function CustomerChatPhoneMockup({
                           )}
                         >
                           {msg.sender === 'user' ? (
-                            <div className="bg-button-primary text-white px-3 py-2 rounded-2xl rounded-tr-xs shadow-xs text-caption-1-regular leading-relaxed">
+                            <div className="bg-button-primary text-white px-3 py-2 rounded-2xl rounded-tr-xs shadow-xs text-caption-1-regular">
                               {msg.text}
                             </div>
                           ) : msg.sender === 'doctor' ? (
@@ -377,25 +388,25 @@ export function CustomerChatPhoneMockup({
                               <div className="flex items-center gap-1.5 ps-0.5">
                                 <img
                                   src="/images/vets/vet_female_cat.jpg"
-                                  alt="พญ. สุภัทรา"
+                                  alt="สพ.ญ. ลลิตา บุญประเสริฐ"
                                   className="size-4 rounded-full object-cover ring-1 ring-emerald-500/40"
                                 />
-                                <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+                                <span className="text-caption-2-semibold text-emerald-600 dark:text-emerald-400">
                                   {msg.senderName}
                                 </span>
                               </div>
-                              <div className="bg-emerald-500/10 border border-emerald-500/25 text-text-primary px-3 py-2 rounded-2xl rounded-tl-xs text-caption-1-regular leading-relaxed">
+                              <div className="bg-gradient-to-br from-emerald-600 via-emerald-600 to-teal-700 text-white shadow-xs px-3.5 py-2.5 rounded-2xl rounded-tl-xs text-caption-1-regular leading-relaxed">
                                 {msg.text}
                               </div>
                             </div>
                           ) : (
                             /* Automated AI Triage Holding Message */
                             <div className="space-y-1.5">
-                              <div className="flex items-center gap-1 ps-1 text-[10px] text-text-tertiary">
+                              <div className="flex items-center gap-1 ps-1 text-caption-2-regular text-text-tertiary">
                                 <RiSparklingLine className="size-3 text-accent-500" />
                                 <span>{msg.senderName}</span>
                               </div>
-                              <div className="bg-background-secondary-default border border-border-button-default text-text-primary px-3 py-2 rounded-2xl rounded-tl-xs text-caption-1-regular leading-relaxed">
+                              <div className="bg-background-secondary-default border border-border-button-default text-text-primary px-3 py-2 rounded-2xl rounded-tl-xs text-caption-1-regular">
                                 {msg.text}
                               </div>
 
@@ -411,21 +422,21 @@ export function CustomerChatPhoneMockup({
                                   <div className="flex items-center justify-between gap-2 border-b border-separator-border pb-1.5">
                                     <div className="flex items-center gap-1.5 shrink-0">
                                       <RiAlertLine className="size-3.5 text-amber-500 shrink-0" />
-                                      <span className="text-[11px] font-semibold text-text-primary">
+                                      <span className="text-caption-2-semibold text-text-primary">
                                         ผลประเมินด่วน
                                       </span>
                                     </div>
-                                    <span className="inline-flex items-center shrink-0 whitespace-nowrap rounded-full bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 text-[10px] text-amber-600 dark:text-amber-400 font-medium">
+                                    <span className="inline-flex items-center shrink-0 whitespace-nowrap rounded-full bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 text-caption-2-medium text-amber-600 dark:text-amber-400">
                                       เฝ้าระวัง (Yellow Alert)
                                     </span>
                                   </div>
 
                                   {/* Suspected Diagnoses */}
                                   <div className="space-y-0.5">
-                                    <span className="text-[10px] text-text-tertiary">
+                                    <span className="text-caption-2-regular text-text-tertiary">
                                       ข้อสันนิษฐานอาการ:
                                     </span>
-                                    <ul className="text-[11px] text-text-secondary space-y-0.5 ps-0.5">
+                                    <ul className="text-caption-2-regular text-text-secondary space-y-0.5 ps-0.5">
                                       <li className="flex items-start gap-1">
                                         <RiHeartPulseLine className="size-3 text-accent-500 shrink-0 mt-0.5" />
                                         <span>กระเพาะอาหารอักเสบเฉียบพลัน (Gastritis)</span>
@@ -439,11 +450,11 @@ export function CustomerChatPhoneMockup({
 
                                   {/* Care Instructions */}
                                   <div className="bg-background-secondary-default rounded-xl p-2 border border-separator-border space-y-0.5">
-                                    <span className="text-[11px] text-text-primary font-medium flex items-center gap-1">
+                                    <span className="text-caption-2-medium text-text-primary flex items-center gap-1">
                                       <RiCheckLine className="size-3 text-emerald-500" />
                                       คำแนะนำปฐมพยาบาลเบื้องต้น:
                                     </span>
-                                    <p className="text-[10.5px] text-text-secondary leading-snug">
+                                    <p className="text-caption-2-regular text-text-secondary leading-snug">
                                       • งดอาหารและน้ำ 2 ชม. ป้องกันอาการสำลัก
                                       <br />
                                       • ตรวจดูเยื่อเมือกเหงือก ต้องไม่ซีดหรือขาว
@@ -458,9 +469,9 @@ export function CustomerChatPhoneMockup({
                                       size="xs"
                                       leadingIcon={RiCalendarCheckLine}
                                       onClick={() =>
-                                        onOpenBooking?.('บริการตรวจวินิจฉัยและรักษาอายุรกรรม')
+                                        onOpenBooking?.('ศูนย์อายุรกรรมและโรคแมวเฉพาะทาง')
                                       }
-                                      className="w-full justify-center text-[11px] py-1"
+                                      className="w-full justify-center text-caption-2-medium py-1"
                                     >
                                       จองคิวตรวจสัตวแพทย์ด่วน
                                     </Button>
@@ -469,7 +480,7 @@ export function CustomerChatPhoneMockup({
                                       variant="secondary"
                                       size="xs"
                                       leadingIcon={RiPhoneLine}
-                                      className="w-full justify-center text-[11px] py-1 text-status-rose-text"
+                                      className="w-full justify-center text-caption-2-medium py-1 text-status-rose-text"
                                     >
                                       สายด่วนฉุกเฉิน 24 ชม.
                                     </ButtonLink>
@@ -478,7 +489,7 @@ export function CustomerChatPhoneMockup({
                               )}
                             </div>
                           )}
-                          <span className="text-[9px] text-text-tertiary mt-0.5 px-1">{msg.timestamp}</span>
+                          <span className="text-caption-2-regular text-text-tertiary mt-0.5 px-1">{msg.timestamp}</span>
                         </motion.div>
                       ))}
 
@@ -492,7 +503,7 @@ export function CustomerChatPhoneMockup({
                           transition={{ duration: 0.25, ease: EASE_SPRING }}
                           className="me-auto flex items-center gap-1.5 bg-background-secondary-default border border-border-button-default px-3 py-1.5 rounded-2xl rounded-tl-xs shadow-xs"
                         >
-                          <span className="text-[11px] text-text-secondary">{typingLabel}</span>
+                          <span className="text-caption-2-regular text-text-secondary">{typingLabel}</span>
                           <div className="flex items-center gap-1 ps-0.5">
                             {[0, 1, 2].map((i) => (
                               <motion.span
@@ -533,13 +544,13 @@ export function CustomerChatPhoneMockup({
                     value={inputValue}
                     readOnly
                     placeholder="พิมพ์สอบถามอาการสัตว์เลี้ยง..."
-                    className="h-full min-w-0 flex-1 bg-transparent text-[11.5px] text-text-primary placeholder:text-text-tertiary outline-none select-none cursor-default"
+                    className="h-full min-w-0 flex-1 bg-transparent text-caption-1-regular text-text-primary placeholder:text-text-tertiary outline-none select-none cursor-default"
                   />
 
                   <div
                     className={cx(
                       "flex size-7 shrink-0 items-center justify-center rounded-full text-white transition-opacity",
-                      inputValue.trim().length > 0 ? "bg-button-primary opacity-100" : "bg-neutral-300 dark:bg-neutral-700 opacity-50"
+                      inputValue.trim().length > 0 ? "bg-button-primary opacity-100" : "bg-background-tertiary-default text-text-tertiary opacity-50"
                     )}
                   >
                     <RiArrowUpLine className="size-3.5" />
@@ -550,7 +561,7 @@ export function CustomerChatPhoneMockup({
 
             {/* iPhone Home Indicator Bar */}
             <div className="py-1.5 bg-background-primary-default flex justify-center shrink-0">
-              <div className="w-24 h-1 rounded-full bg-neutral-400 dark:bg-neutral-600" />
+              <div className="w-24 h-1 rounded-full bg-border-button-hover" />
             </div>
 
           </div>
