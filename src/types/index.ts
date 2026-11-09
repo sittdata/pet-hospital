@@ -60,6 +60,7 @@ export interface AppointmentFormData {
   preferredTimeSlot: 'morning' | 'afternoon' | 'evening';
   isEmergencyCase: boolean;
   symptomsDescription: string;
+  symptomPhotos?: string[];
   ownerName: string;
   ownerPhone: string;
   ownerLineId?: string;

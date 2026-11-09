@@ -2,7 +2,7 @@ import { useState, lazy, Suspense } from 'react';
 import { PetType } from './types';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
-import { PetTreatmentExplorer } from './components/PetTreatmentExplorer';
+import { PetTreatmentExplorer, type TreatmentBookingContext } from './components/PetTreatmentExplorer';
 import { Services } from './components/Services';
 import Doctors from './components/Doctors';
 import { TestimonialsMarqueeGrid } from './components/TestimonialsMarqueeGrid';
@@ -23,9 +23,15 @@ import {
   RiHospitalFill,
 } from '@remixicon/react';
 import { StatCards, type Stat } from '@/components/application/dashboard/stat-cards';
+import { PetPassport, VaccineRecord } from './types/petPassport';
+import { getStoredPassports, saveStoredPassports } from './data/petPassportData';
+import { getDepartmentConsultData, type DepartmentConsultData } from './data/departmentConsultData';
 
 const BookingModal = lazy(() =>
   import('./components/BookingModal').then((m) => ({ default: m.BookingModal }))
+);
+const VaccineBookingModal = lazy(() =>
+  import('./components/VaccineBookingModal').then((m) => ({ default: m.VaccineBookingModal }))
 );
 const AuthModal = lazy(() =>
   import('./components/AuthModal').then((m) => ({ default: m.AuthModal }))
@@ -40,14 +46,40 @@ const LiveChatWidget = lazy(() =>
   import('./components/LiveChatWidget').then((m) => ({ default: m.LiveChatWidget }))
 );
 
+const CONSULTATION_PHRASES = [
+  'ปรึกษาอาการสัตว์เลี้ยงตลอด 24 ชม.',
+  'คัดกรองอาการฉุกเฉินเบื้องต้นใน 5 วินาที',
+  'ส่งต่อสัตวแพทย์เวรเฉพาะทางตอบกลับจริง',
+  'เปิดคิวตรวจด่วนพร้อมรับมือทุกสถานการณ์',
+];
+
 export function App() {
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [bookingPetType, setBookingPetType] = useState<PetType>('cat');
   const [bookingService, setBookingService] = useState<string>('');
   const [bookingDoctor, setBookingDoctor] = useState<string>('');
+  const [bookingInitialSymptoms, setBookingInitialSymptoms] = useState<string>('');
 
   // Digital Pet Health Passport State
   const [passportModalOpen, setPassportModalOpen] = useState(false);
+
+  // Dedicated Vaccine Booking Modal State
+  const [vaccineBookingData, setVaccineBookingData] = useState<{
+    pet: PetPassport;
+    vaccine: VaccineRecord;
+  } | null>(null);
+
+  const handleVaccineBookingSuccess = (updatedPet: PetPassport) => {
+    const currentPassports = getStoredPassports(currentUser?.email);
+    const exists = currentPassports.some((p) => p.id === updatedPet.id);
+    const updatedPassports = exists
+      ? currentPassports.map((p) => (p.id === updatedPet.id ? updatedPet : p))
+      : [updatedPet, ...currentPassports];
+    saveStoredPassports(updatedPassports, currentUser?.email);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('vetpaws:passports_updated'));
+    }
+  };
 
   // Change Password State
   const [changePasswordModalOpen, setChangePasswordModalOpen] = useState(false);
@@ -62,6 +94,14 @@ export function App() {
     veterinarian?: string;
     status: string;
   } | null>(null);
+  const [departmentChatContext, setDepartmentChatContext] = useState<DepartmentConsultData | null>(null);
+
+  const handleConsultDepartment = (departmentName: string) => {
+    const deptContext = getDepartmentConsultData(departmentName);
+    setVaccineChatContext(null);
+    setDepartmentChatContext(deptContext);
+    setLiveChatOpen(true);
+  };
 
   // BoardUI Auth State
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -73,15 +113,26 @@ export function App() {
     setAuthModalOpen(true);
   };
 
-  const handleOpenBooking = (serviceName?: string, doctorName?: string) => {
-    if (serviceName) setBookingService(serviceName);
+  const handleOpenBooking = (serviceName?: string, doctorName?: string, initialSymptoms?: string) => {
+    setBookingService(serviceName || 'ศูนย์ตรวจสุขภาพ ฉีดวัคซีน และเวชศาสตร์ป้องกัน');
     setBookingDoctor(doctorName || '');
+    setBookingInitialSymptoms(initialSymptoms || '');
     setBookingModalOpen(true);
   };
 
-  const handleSelectTreatmentBooking = (petType: PetType, serviceTitle: string) => {
+  const handleSelectTreatmentBooking = (
+    petType: PetType,
+    serviceTitle: string,
+    context?: TreatmentBookingContext
+  ) => {
     setBookingPetType(petType);
     setBookingService(serviceTitle);
+    setBookingDoctor('');
+    if (context?.symptomsSummary) {
+      setBookingInitialSymptoms(`สนใจตรวจโปรแกรม: ${serviceTitle} (อาการที่สังเกต: ${context.symptomsSummary})`);
+    } else {
+      setBookingInitialSymptoms(`สนใจตรวจโปรแกรม: ${serviceTitle}`);
+    }
     setBookingModalOpen(true);
   };
 
@@ -100,11 +151,11 @@ export function App() {
       icon: RiScissors2Fill,
       label: "จำนวนเคสผ่าตัดต่อปี",
       value: "10,000+",
-      delta: "Grooming & Spa",
+      delta: "ศัลยกรรมและความปลอดภัย",
       deltaColor: "lime",
       tone: "blue",
       hint: "บริการศัลยกรรมและผ่าตัดดูแลรักษาสัตว์เลี้ยงกว่า 10,000 เคสต่อปี",
-      caption: "มาตรฐานสุขอนามัยสัตว์เลี้ยง",
+      caption: "มาตรฐานห้องผ่าตัดปลอดเชื้อ",
     },
     {
       icon: RiStethoscopeFill,
@@ -155,7 +206,7 @@ export function App() {
               {/* Explanatory Content (Mobile: 1st, Desktop: Right Column Top) */}
               <div className="space-y-2 lg:col-start-6 lg:col-span-7 lg:row-start-1">
                 <h2 className="text-title-1-medium text-text-primary tracking-tight">
-                  <TypewriterText words={['ปรึกษาอาการสัตว์เลี้ยงตลอด 24 ชม.']} />
+                  <TypewriterText words={CONSULTATION_PHRASES} />
                   <br />
                   <span className="text-accent-600">ดูแลโดยทีมสัตวแพทย์จริง มั่นใจกว่า 421,000+ เคส</span>
                 </h2>
@@ -182,7 +233,7 @@ export function App() {
                     variant="primary"
                     size="medium"
                     leadingIcon={RiCalendarEventLine}
-                    onClick={() => handleOpenBooking('บริการตรวจวินิจฉัยและรักษาอายุรกรรม')}
+                    onClick={() => handleOpenBooking('ศูนย์อายุรกรรมและโรคแมวเฉพาะทาง')}
                   >
                     จองคิวนัดตรวจล่วงหน้า
                   </Button>
@@ -205,7 +256,10 @@ export function App() {
         <PetTreatmentExplorer onSelectBooking={handleSelectTreatmentBooking} />
 
         {/* Medical Services Catalog */}
-        <Services onOpenBooking={handleOpenBooking} />
+        <Services
+          onOpenBooking={handleOpenBooking}
+          onConsultDepartment={handleConsultDepartment}
+        />
 
         {/* Specialist Veterinary Team */}
         <Doctors onOpenBooking={handleOpenBooking} />
@@ -224,7 +278,7 @@ export function App() {
       <Footer />
 
       {/* Floating 24/7 Hotline & Quick Booking Bar */}
-      {!bookingModalOpen && !authModalOpen && !passportModalOpen && (
+      {!bookingModalOpen && !authModalOpen && !passportModalOpen && !vaccineBookingData && (
         <aside
           aria-label="Quick Emergency, Booking and Live Chat Actions"
           className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-3 sm:right-4 z-40 flex items-center gap-1.5 sm:gap-2 p-1.5 rounded-full bg-background-primary-default/90 backdrop-blur-md border border-border-button-default shadow-xl sm:p-0 sm:bg-transparent sm:backdrop-blur-none sm:border-0 sm:shadow-none transition-all"
@@ -271,11 +325,16 @@ export function App() {
           <PetHealthPassportModal
             isOpen={passportModalOpen}
             onClose={() => setPassportModalOpen(false)}
+            currentUser={currentUser}
             onBookAppointment={(serviceName, petType) => {
-              if (petType === 'cat' || petType === 'dog' || petType === 'exotic') {
+              if (petType === 'cat' || petType === 'dog' || petType === 'exotic' || petType === 'small') {
                 setBookingPetType(petType as PetType);
               }
-              handleOpenBooking(serviceName || 'ตรวจสุขภาพทั่วไปและฉีดวัคซีน');
+              handleOpenBooking(serviceName || 'ศูนย์ตรวจสุขภาพ ฉีดวัคซีน และเวชศาสตร์ป้องกัน');
+            }}
+            onBookVaccine={(vaccine, pet) => {
+              setPassportModalOpen(false);
+              setVaccineBookingData({ pet, vaccine });
             }}
             onConsultVaccine={(vac, pet) => {
               setPassportModalOpen(false);
@@ -293,16 +352,43 @@ export function App() {
         )}
       </Suspense>
 
+      {/* Fast-Track 1-Step Vaccine Booking Modal (Code Splitting with Suspense) */}
+      <Suspense fallback={null}>
+        {vaccineBookingData && (
+          <VaccineBookingModal
+            key={`${vaccineBookingData.pet.id}-${vaccineBookingData.vaccine.id}-${vaccineBookingData.vaccine.status}-${vaccineBookingData.vaccine.appointmentDate || ''}`}
+            isOpen={!!vaccineBookingData}
+            onClose={() => setVaccineBookingData(null)}
+            pet={vaccineBookingData.pet}
+            vaccine={vaccineBookingData.vaccine}
+            currentUser={currentUser}
+            onSuccessBooking={handleVaccineBookingSuccess}
+            onViewPassport={() => {
+              setVaccineBookingData(null);
+              setPassportModalOpen(true);
+            }}
+          />
+        )}
+      </Suspense>
+
       {/* Interactive Booking Modal (Code Splitting with Suspense) */}
       <Suspense fallback={null}>
         {bookingModalOpen && (
           <BookingModal
-            key={`${bookingPetType}-${bookingService}-${bookingDoctor}`}
+            key={`${bookingPetType}-${bookingService}-${bookingDoctor}-${bookingInitialSymptoms}`}
             isOpen={bookingModalOpen}
             onClose={() => setBookingModalOpen(false)}
             initialPetType={bookingPetType}
             initialService={bookingService}
             initialDoctor={bookingDoctor}
+            initialSymptoms={bookingInitialSymptoms}
+            currentUser={currentUser}
+            onRequireAuth={() => handleOpenAuth('signin')}
+            onLoginSuccess={(user) => setCurrentUser(user)}
+            onViewPassport={() => {
+              setBookingModalOpen(false);
+              setPassportModalOpen(true);
+            }}
           />
         )}
       </Suspense>
@@ -316,7 +402,9 @@ export function App() {
             initialMode={authMode}
             onSuccess={(user) => {
               setCurrentUser(user);
-              setPassportModalOpen(true);
+              if (!liveChatOpen && !bookingModalOpen) {
+                setPassportModalOpen(true);
+              }
             }}
           />
         )}
@@ -338,12 +426,18 @@ export function App() {
         {liveChatOpen && (
           <LiveChatWidget
             isOpen={liveChatOpen}
-            onClose={() => setLiveChatOpen(false)}
+            onClose={() => {
+              setLiveChatOpen(false);
+              setDepartmentChatContext(null);
+            }}
             onOpenBooking={(service?: string, doctor?: string) => handleOpenBooking(service, doctor)}
             isLoggedIn={!!currentUser}
+            currentUser={currentUser}
             onRequireAuth={() => handleOpenAuth('signin')}
             initialVaccineContext={vaccineChatContext}
             onClearInitialVaccineContext={() => setVaccineChatContext(null)}
+            initialDepartmentContext={departmentChatContext}
+            onClearInitialDepartmentContext={() => setDepartmentChatContext(null)}
           />
         )}
       </Suspense>

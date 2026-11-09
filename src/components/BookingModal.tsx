@@ -10,15 +10,21 @@ import {
   RiPhoneFill,
   RiCompass3Line,
   RiAlarmWarningFill,
+  RiCameraLine,
+  RiImageAddLine,
+  RiLoader4Line,
 } from '@remixicon/react';
+import { cx } from '@/utils/cx';
 import { PetType, AppointmentFormData } from '../types';
 import { CatIcon, DogIcon, RabbitIcon, SmallPetIcon } from './icons/PetIcons';
 import { Button, ButtonLink } from '@/components/base/buttons/button';
-import { SocialButton } from '@/components/base/social-button/social-button';
 import { StatusDot } from '@/components/base/badges/status-dot';
 import { Chip } from '@/components/base/badges/chip';
 import { DatePicker } from '@/components/base/date-picker/date-picker';
+import { Select, SelectItem } from '@/components/base/select/select';
 import { parseDate, today, getLocalTimeZone } from '@internationalized/date';
+import { getStoredPassports, saveStoredPassports, createPassportFromAppointment } from '../data/petPassportData';
+import { TreatmentRecord } from '../types/petPassport';
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -26,6 +32,11 @@ interface BookingModalProps {
   initialPetType?: PetType;
   initialService?: string;
   initialDoctor?: string;
+  initialSymptoms?: string;
+  currentUser?: { name: string; email: string } | null;
+  onRequireAuth?: () => void;
+  onLoginSuccess?: (user: { name: string; email: string }) => void;
+  onViewPassport?: () => void;
 }
 
 const EMERGENCY_KEYWORDS = [
@@ -35,14 +46,15 @@ const EMERGENCY_KEYWORDS = [
 ];
 
 const STANDARD_SERVICES = [
-  'ตรวจสุขภาพทั่วไปและฉีดวัคซีน',
-  'คลินิกแมวปลอดความเครียด (ISFM)',
-  'ศูนย์ศัลยกรรมและผ่าตัดกระดูก/ข้อ',
-  'ศูนย์สัตว์พิเศษ Exotic Pets',
-  'ตรวจหัวใจและเอคโค่ (Echo)',
-  'ศูนย์รังสีวินิจฉัย CT Scan / Ultrasound',
-  'ศูนย์ฟื้นฟูและกายภาพบำบัดธาราบำบัด',
-  'ศูนย์ฉุกเฉินและกู้ชีพ 24 ชม.',
+  'ศูนย์ตรวจสุขภาพ ฉีดวัคซีน และเวชศาสตร์ป้องกัน',
+  'คลินิกแมวเฉพาะทาง Cat Friendly Clinic (ISFM)',
+  'ศูนย์อายุรกรรมและโรคแมวเฉพาะทาง',
+  'ศูนย์ศัลยกรรมและกระดูก (ห้องผ่าตัดปลอดเชื้อ)',
+  'ศูนย์หัวใจและหลอดเลือด',
+  'ศูนย์โรคตาและจักษุกรรมสัตว์เลี้ยง',
+  'ศูนย์สัตว์พิเศษและสัตว์เลื้อยคลาน (Exotic Pets)',
+  'ศูนย์วินิจฉัยภาพทางการแพทย์ดิจิทัล',
+  'ศูนย์ฉุกเฉินและบำบัดวิกฤต 24 ชั่วโมง',
 ];
 
 const getTomorrowLocalDateString = (): string => {
@@ -54,12 +66,191 @@ const getTomorrowLocalDateString = (): string => {
   return `${year}-${month}-${day}`;
 };
 
+function getInitialPhone(currentUser?: { name: string; email: string } | null): string {
+  if (typeof window === 'undefined') return '';
+  try {
+    const saved = localStorage.getItem('vetpaws_user_phone');
+    if (saved && saved.trim()) return saved.trim();
+
+    const raw = localStorage.getItem('vetpaws_appointments');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        if (currentUser?.email) {
+          for (let i = parsed.length - 1; i >= 0; i--) {
+            const item = parsed[i];
+            if (
+              item &&
+              item.userEmail === currentUser.email &&
+              item.rawPhone &&
+              typeof item.rawPhone === 'string' &&
+              item.rawPhone.trim()
+            ) {
+              return item.rawPhone.trim();
+            }
+          }
+        }
+        for (let i = parsed.length - 1; i >= 0; i--) {
+          const item = parsed[i];
+          if (item && item.rawPhone && typeof item.rawPhone === 'string' && item.rawPhone.trim()) {
+            return item.rawPhone.trim();
+          }
+        }
+      }
+    }
+  } catch {
+    // ignore
+  }
+  if (currentUser?.email && currentUser.email.toLowerCase().includes('demo')) {
+    return '0891234567';
+  }
+  return '';
+}
+
+function formatPetAge(yearsStr: string, monthsStr: string): string {
+  const y = parseInt(yearsStr, 10);
+  const m = parseInt(monthsStr, 10);
+  const hasY = !isNaN(y) && y > 0;
+  const hasM = !isNaN(m) && m > 0;
+
+  if (hasY && hasM) return `${y} ปี ${m} เดือน`;
+  if (hasY) return `${y} ปี`;
+  if (hasM) return `${m} เดือน`;
+  if ((!isNaN(y) && y === 0 && !isNaN(m) && m === 0) || (isNaN(y) && !isNaN(m) && m === 0)) {
+    return 'ไม่ถึง 1 เดือน';
+  }
+  return '';
+}
+
+function parseInitialAge(ageStr?: string): { years: string; months: string } {
+  if (!ageStr) return { years: '', months: '' };
+  if (ageStr === 'ไม่ถึง 1 เดือน') return { years: '0', months: '0' };
+  const yMatch = ageStr.match(/(\d+)\s*ปี/);
+  const mMatch = ageStr.match(/(\d+)\s*เดือน/);
+  return {
+    years: yMatch ? yMatch[1] : '',
+    months: mMatch ? mMatch[1] : '',
+  };
+}
+
+const MAX_SYMPTOM_PHOTOS = 3;
+const MAX_PHOTO_BYTES = 5 * 1024 * 1024; // 5MB
+const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'heic'];
+
+function isSupportedImageFile(file: File): boolean {
+  if (file.type && file.type.startsWith('image/')) return true;
+  const ext = file.name.split('.').pop()?.toLowerCase();
+  return ext ? ALLOWED_EXTENSIONS.includes(ext) : false;
+}
+
+function compressImageToDataUrl(file: File, maxDim = 1200, quality = 0.8): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const isHeic = file.name.toLowerCase().endsWith('.heic') || file.type === 'image/heic';
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('ไม่สามารถอ่านไฟล์รูปภาพได้'));
+    reader.onload = (e) => {
+      const result = e.target?.result;
+      if (typeof result !== 'string' || !result.startsWith('data:image/')) {
+        if (isHeic) {
+          reject(new Error(`เบราว์เซอร์ไม่รองรับการประมวลผลไฟล์ HEIC ("${file.name}") กรุณาแปลงเป็น JPG, PNG หรือ WebP`));
+        } else {
+          reject(new Error(`ไฟล์ "${file.name}" ไม่ใช่ไฟล์รูปภาพที่ถูกต้อง`));
+        }
+        return;
+      }
+
+      const img = new Image();
+      img.onerror = () => {
+        if (isHeic) {
+          reject(new Error(`เบราว์เซอร์ไม่รองรับการประมวลผลไฟล์ HEIC ("${file.name}") กรุณาแปลงเป็น JPG, PNG หรือ WebP`));
+        } else {
+          reject(new Error(`ไฟล์รูปภาพ "${file.name}" เสียหายหรือไม่สามารถเปิดได้`));
+        }
+      };
+
+      img.onload = () => {
+        try {
+          let { width, height } = img;
+          if (width <= 0 || height <= 0) {
+            reject(new Error(`ไฟล์รูปภาพ "${file.name}" มีขนาดไม่ถูกต้อง`));
+            return;
+          }
+
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            if (result.length < 300 * 1024) {
+              resolve(result);
+            } else {
+              reject(new Error('ไม่สามารถประมวลผลภาพบนเบราว์เซอร์นี้ได้'));
+            }
+            return;
+          }
+
+          // Pre-fill white background to prevent transparent PNGs turning pitch black on JPEG conversion
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, width, height);
+          ctx.drawImage(img, 0, 0, width, height);
+
+          try {
+            const webp = canvas.toDataURL('image/webp', quality);
+            if (webp && webp.startsWith('data:image/webp')) {
+              resolve(webp);
+              return;
+            }
+          } catch {
+            // fallback to JPEG
+          }
+
+          try {
+            const jpeg = canvas.toDataURL('image/jpeg', quality);
+            if (jpeg && jpeg.startsWith('data:image/jpeg')) {
+              resolve(jpeg);
+              return;
+            }
+          } catch {
+            // fallback
+          }
+
+          if (result.length < 300 * 1024) {
+            resolve(result);
+          } else {
+            reject(new Error('ขนาดไฟล์หลังประมวลผลยังคงใหญ่เกินไป'));
+          }
+        } catch {
+          reject(new Error(`เกิดข้อผิดพลาดในการปรับขนาดภาพ "${file.name}"`));
+        }
+      };
+
+      img.src = result;
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
 export const BookingModal: React.FC<BookingModalProps> = ({
   isOpen,
   onClose,
   initialPetType = 'cat',
   initialService = '',
   initialDoctor = '',
+  initialSymptoms = '',
+  currentUser = null,
+  onRequireAuth,
+  onViewPassport,
 }) => {
   const [step, setStep] = useState<number>(1);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -68,24 +259,178 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const [dismissedEmergencyKey, setDismissedEmergencyKey] = useState<string | null>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
-  const [formData, setFormData] = useState<AppointmentFormData>(() => ({
-    petType: initialPetType,
-    petName: '',
-    petBreed: '',
-    petAge: '',
-    serviceCategory: initialService || 'ตรวจสุขภาพทั่วไปและฉีดวัคซีน',
-    preferredDate: getTomorrowLocalDateString(),
-    preferredTimeSlot: 'morning',
-    isEmergencyCase: false,
-    symptomsDescription: initialDoctor ? `ระบุแพทย์: ${initialDoctor}` : '',
-    ownerName: '',
-    ownerPhone: '',
-    ownerLineId: '',
-  }));
+  const [formData, setFormData] = useState<AppointmentFormData>(() => {
+    let defaultSymptoms = '';
+    if (initialSymptoms) {
+      defaultSymptoms = initialDoctor
+        ? `${initialSymptoms} | ระบุแพทย์: ${initialDoctor}`
+        : initialSymptoms;
+    } else if (initialDoctor) {
+      defaultSymptoms = `ระบุแพทย์: ${initialDoctor}`;
+    }
 
+    return {
+      petType: initialPetType,
+      petName: '',
+      petBreed: '',
+      petAge: '',
+      serviceCategory: initialService || 'ศูนย์ตรวจสุขภาพ ฉีดวัคซีน และเวชศาสตร์ป้องกัน',
+      preferredDate: getTomorrowLocalDateString(),
+      preferredTimeSlot: 'morning',
+      isEmergencyCase: false,
+      symptomsDescription: defaultSymptoms,
+      symptomPhotos: [],
+      ownerName: currentUser?.name || '',
+      ownerPhone: getInitialPhone(currentUser),
+      ownerLineId: '',
+    };
+  });
+
+  const [ageYears, setAgeYears] = useState<string>(() => parseInitialAge(formData.petAge).years);
+  const [ageMonths, setAgeMonths] = useState<string>(() => parseInitialAge(formData.petAge).months);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [photoError, setPhotoError] = useState<string | null>(null);
+  const [isProcessingPhotos, setIsProcessingPhotos] = useState<boolean>(false);
+  const [previewPhotoUrl, setPreviewPhotoUrl] = useState<string | null>(null);
+  const previewPhotoUrlRef = useRef<string | null>(null);
+  useEffect(() => {
+    previewPhotoUrlRef.current = previewPhotoUrl;
+  }, [previewPhotoUrl]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const onCloseRef = useRef(onClose);
+  const handleRemovePhoto = (indexToRemove: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      symptomPhotos: (prev.symptomPhotos || []).filter((_, idx) => idx !== indexToRemove),
+    }));
+    setPhotoError(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handlePhotoFilesSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setPhotoError(null);
+    const currentPhotos = formData.symptomPhotos || [];
+    const availableSlots = MAX_SYMPTOM_PHOTOS - currentPhotos.length;
+
+    if (availableSlots <= 0) {
+      setPhotoError('สามารถแนบรูปถ่ายได้สูงสุด 3 รูปเท่านั้น');
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
+
+    const fileList = Array.from(files);
+    const filesToProcess = fileList.slice(0, availableSlots);
+
+    for (const f of filesToProcess) {
+      if (!isSupportedImageFile(f)) {
+        setPhotoError(`ไฟล์ "${f.name}" ไม่ใช่ไฟล์รูปภาพที่รองรับ (รองรับ JPG, PNG, WebP, HEIC)`);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        return;
+      }
+      if (f.size > MAX_PHOTO_BYTES) {
+        setPhotoError(`ไฟล์ "${f.name}" มีขนาดเกิน 5MB (ขนาดสูงสุดไม่เกิน 5MB ต่อรูป)`);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        return;
+      }
+    }
+
+    if (fileList.length > availableSlots) {
+      setPhotoError(`สามารถแนบเพิ่มได้อีก ${availableSlots} รูปเท่านั้น ระบบเลือกเฉพาะ ${availableSlots} รูปแรก`);
+    }
+
+    setIsProcessingPhotos(true);
+    try {
+      const compressedList = await Promise.all(
+        filesToProcess.map((file) => compressImageToDataUrl(file))
+      );
+      setFormData((prev) => ({
+        ...prev,
+        symptomPhotos: [...(prev.symptomPhotos || []), ...compressedList].slice(0, MAX_SYMPTOM_PHOTOS),
+      }));
+      if (fileList.length <= availableSlots) {
+        setPhotoError(null);
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'เกิดข้อผิดพลาดในการประมวลผลรูปภาพ';
+      setPhotoError(msg);
+    } finally {
+      setIsProcessingPhotos(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const [prevUser, setPrevUser] = useState(currentUser);
+  if (currentUser !== prevUser) {
+    setPrevUser(currentUser);
+    if (currentUser) {
+      const phone = getInitialPhone(currentUser);
+      setFormData((prev) => ({
+        ...prev,
+        ownerName: currentUser.name || prev.ownerName,
+        ownerPhone: prev.ownerPhone.trim() ? prev.ownerPhone : phone,
+      }));
+      setErrors((prev) => {
+        if (!prev.ownerName && !prev.ownerPhone) return prev;
+        const next = { ...prev };
+        if (currentUser.name) delete next.ownerName;
+        if (phone) delete next.ownerPhone;
+        return next;
+      });
+    }
+  }
+
+  const handleAgeKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (['e', 'E', '+', '-', '.', ' '].includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+
+  const handleYearsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.trim();
+    if (val === '') {
+      setAgeYears('');
+      setFormData((prev) => ({ ...prev, petAge: formatPetAge('', ageMonths) }));
+      return;
+    }
+    const num = parseInt(val, 10);
+    if (isNaN(num)) {
+      setAgeYears('');
+      setFormData((prev) => ({ ...prev, petAge: formatPetAge('', ageMonths) }));
+      return;
+    }
+    const clamped = Math.min(Math.max(num, 0), 35);
+    const clampedStr = String(clamped);
+    setAgeYears(clampedStr);
+    setFormData((prev) => ({ ...prev, petAge: formatPetAge(clampedStr, ageMonths) }));
+  };
+
+  const handleMonthsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.trim();
+    if (val === '') {
+      setAgeMonths('');
+      setFormData((prev) => ({ ...prev, petAge: formatPetAge(ageYears, '') }));
+      return;
+    }
+    const num = parseInt(val, 10);
+    if (isNaN(num)) {
+      setAgeMonths('');
+      setFormData((prev) => ({ ...prev, petAge: formatPetAge(ageYears, '') }));
+      return;
+    }
+    const clamped = Math.min(Math.max(num, 0), 11);
+    const clampedStr = String(clamped);
+    setAgeMonths(clampedStr);
+    setFormData((prev) => ({ ...prev, petAge: formatPetAge(ageYears, clampedStr) }));
+  };
+
+    const onCloseRef = useRef(onClose);
   useEffect(() => {
     onCloseRef.current = onClose;
   });
@@ -94,8 +439,17 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     setIsSuccess(false);
     setDismissedEmergencyKey(null);
     setStep(1);
+    setPhotoError(null);
+    setPreviewPhotoUrl(null);
     onCloseRef.current();
   }, []);
+
+  const handleViewPassport = useCallback(() => {
+    handleResetAndClose();
+    if (onViewPassport) {
+      onViewPassport();
+    }
+  }, [handleResetAndClose, onViewPassport]);
 
   const previousActiveElement = useRef<HTMLElement | null>(null);
 
@@ -118,6 +472,18 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     }, 50);
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (previewPhotoUrlRef.current) {
+          setPreviewPhotoUrl(null);
+          return;
+        }
+      }
+
+      const dialogs = document.querySelectorAll('[role="dialog"]');
+      if (dialogs.length > 0 && dialogs[dialogs.length - 1] !== modalRef.current) {
+        return;
+      }
+
       if (e.key === 'Escape') {
         handleResetAndClose();
         return;
@@ -201,17 +567,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const handlePrev = () => {
     setStep((prev) => prev - 1);
   };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validateStep(3)) return;
-
+  const executeSubmission = (activeUser?: { name: string; email: string } | null) => {
     setIsSubmitting(true);
     setTimeout(() => {
       const refCode = `VETPAWS-${Math.floor(1000 + Math.random() * 9000)}`;
       setBookingRefCode(refCode);
 
-      // Safe save to localStorage with sanitized customer PII
       try {
         const raw = localStorage.getItem('vetpaws_appointments');
         const parsed = raw ? JSON.parse(raw) : [];
@@ -230,6 +591,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           return parts.map((p) => (p.length > 1 ? p.charAt(0) + '***' : '***')).join(' ');
         };
 
+        const user = activeUser || currentUser;
+
         const sanitizedAppointment = {
           refCode,
           petType: formData.petType,
@@ -241,14 +604,79 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           preferredTimeSlot: formData.preferredTimeSlot,
           isEmergencyCase: formData.isEmergencyCase,
           symptomsDescription: formData.symptomsDescription,
+          symptomPhotos: formData.symptomPhotos && formData.symptomPhotos.length > 0 ? formData.symptomPhotos : undefined,
           ownerName: maskName(formData.ownerName),
           ownerPhone: maskPhone(formData.ownerPhone),
+          rawPhone: formData.ownerPhone.trim(),
+          userEmail: user?.email || undefined,
           ownerLineId: formData.ownerLineId ? '***' : '',
           createdAt: new Date().toISOString(),
         };
 
         existing.push(sanitizedAppointment);
-        localStorage.setItem('vetpaws_appointments', JSON.stringify(existing));
+        try {
+          localStorage.setItem('vetpaws_appointments', JSON.stringify(existing));
+        } catch {
+          // If storage quota exceeded, prune older appointments to preserve storage headroom
+          try {
+            const pruned = existing.slice(-20);
+            localStorage.setItem('vetpaws_appointments', JSON.stringify(pruned));
+          } catch {
+            const lightweight = existing.slice(-10).map((item, idx, arr) =>
+              idx === arr.length - 1 ? item : { ...item, symptomPhotos: undefined }
+            );
+            localStorage.setItem('vetpaws_appointments', JSON.stringify(lightweight));
+          }
+        }
+        localStorage.setItem('vetpaws_user_phone', formData.ownerPhone.trim());
+
+        if (user?.email) {
+          const userPassports = getStoredPassports(user.email);
+          const petExists = userPassports.some(
+            (p) => p.name.trim().toLowerCase() === formData.petName.trim().toLowerCase()
+          );
+          if (!petExists) {
+            createPassportFromAppointment(formData, user.email);
+          } else {
+            const timeSlotLabel =
+              formData.preferredTimeSlot === 'morning'
+                ? 'ช่วงเช้า (09:00 - 12:00 น.)'
+                : formData.preferredTimeSlot === 'afternoon'
+                  ? 'ช่วงบ่าย (13:00 - 17:00 น.)'
+                  : 'ช่วงเย็น (17:00 - 20:00 น.)';
+
+            const photoNoteSuffix =
+              formData.symptomPhotos && formData.symptomPhotos.length > 0
+                ? ` [แนบรูปอาการ ${formData.symptomPhotos.length} รูป]`
+                : '';
+
+            const subsequentTreatment: TreatmentRecord = {
+              id: `treat-${Date.now()}`,
+              date: formData.preferredDate || new Date().toISOString().split('T')[0],
+              diagnosis: 'นัดหมายตรวจติดตามอาการ / เข้ารับบริการโรงพยาบาล',
+              veterinarian: 'รอยืนยันสัตวแพทย์เจ้าของไข้',
+              clinicDepartment: formData.serviceCategory || 'ศูนย์ตรวจสุขภาพ ฉีดวัคซีน และเวชศาสตร์ป้องกัน',
+              treatment: formData.symptomsDescription?.trim()
+                ? `บันทึกอาการ: ${formData.symptomsDescription.trim()}`
+                : 'นัดหมายรับการตรวจรักษา',
+              notes: `นัดหมายตรวจล่วงหน้า (${timeSlotLabel})${photoNoteSuffix}`,
+            };
+
+            const updatedPassports = userPassports.map((pet) => {
+              if (pet.name.trim().toLowerCase() === formData.petName.trim().toLowerCase()) {
+                return {
+                  ...pet,
+                  treatments: [subsequentTreatment, ...(pet.treatments || [])],
+                };
+              }
+              return pet;
+            });
+            saveStoredPassports(updatedPassports, user.email);
+          }
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('vetpaws:passports_updated'));
+          }
+        }
       } catch (err) {
         console.error('Storage error', err);
       }
@@ -256,6 +684,22 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       setIsSubmitting(false);
       setIsSuccess(true);
     }, 700);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // หากยังไม่เข้าสู่ระบบ ให้เด้งไปหน้าล็อกอินก่อนยืนยันนัดหมายตามข้อกำหนด
+    if (!currentUser) {
+      if (onRequireAuth) {
+        onRequireAuth();
+      }
+      return;
+    }
+
+    if (!validateStep(3)) return;
+
+    executeSubmission(currentUser);
   };
 
   return (
@@ -407,20 +851,58 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       <span className="text-text-tertiary">ผู้ติดต่อ:</span>
                       <span className="font-semibold text-text-primary">{formData.ownerName} ({formData.ownerPhone})</span>
                     </div>
+                    {formData.symptomsDescription && (
+                      <div className="pt-2 border-t border-border-button-default/60 text-caption-2-medium">
+                        <span className="text-text-tertiary">อาการเบื้องต้น: </span>
+                        <span className="text-text-secondary">{formData.symptomsDescription}</span>
+                      </div>
+                    )}
+                    {formData.symptomPhotos && formData.symptomPhotos.length > 0 && (
+                      <div className="pt-2 border-t border-border-button-default/60">
+                        <div className="text-caption-2-medium text-text-tertiary mb-2 flex items-center gap-1.5">
+                          <RiCameraLine className="size-3.5 text-accent-500" />
+                          <span>รูปถ่ายอาการที่แนบ ({formData.symptomPhotos.length} รูป):</span>
+                        </div>
+                        <div className="flex items-center gap-2 flex-wrap" data-testid="success-symptom-photos">
+                          {formData.symptomPhotos.map((photo, idx) => (
+                            <img
+                              key={idx}
+                              src={photo}
+                              alt={`รูปถ่ายอาการ ${idx + 1}`}
+                              className="size-14 rounded-xl object-cover border border-border-button-default shadow-2xs cursor-pointer hover:opacity-85 transition-opacity"
+                              onClick={() => setPreviewPhotoUrl(photo)}
+                              title="คลิกเพื่อดูรูปขยาย"
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <p className="text-caption-1-medium text-text-tertiary max-w-sm mx-auto leading-relaxed">
                     เจ้าหน้าที่แผนกเวชระเบียนจะติดต่อกลับผ่านเบอร์โทรศัพท์เพื่อยืนยันคิวตรวจและแพทย์ประจำการภายใน 15-30 นาที
                   </p>
 
-                  <Button
-                    variant="primary"
+                  <div className="space-y-2 max-w-sm mx-auto w-full pt-1">
+                    {currentUser && (
+                      <Button
+                        variant="primary"
+                        size="medium"
+                        onClick={handleViewPassport}
+                        className="w-full justify-center"
+                      >
+                        ดูสมุดสุขภาพดิจิทัล →
+                      </Button>
+                    )}
+                    <Button
+                      variant={currentUser ? 'secondary' : 'primary'}
                     size="medium"
                     onClick={handleResetAndClose}
                     className="w-full justify-center"
                   >
                     เรียบร้อย
                   </Button>
+                  </div>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -472,7 +954,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                         {errors.petName && <p className="text-caption-2-medium text-status-rose-text mt-1">{errors.petName}</p>}
                       </div>
 
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                           <label htmlFor="booking-pet-breed" className="block text-caption-1-semibold text-text-primary mb-1">สายพันธุ์ (ถ้ามี)</label>
                           <input
@@ -485,15 +967,47 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                           />
                         </div>
                         <div>
-                          <label htmlFor="booking-pet-age" className="block text-caption-1-semibold text-text-primary mb-1">อายุโดยประมาณ</label>
-                          <input
-                            id="booking-pet-age"
-                            type="text"
-                            placeholder="เช่น 2 ปี 4 เดือน"
-                            value={formData.petAge}
-                            onChange={(e) => setFormData({ ...formData, petAge: e.target.value })}
-                            className="w-full px-3.5 py-2.5 rounded-xl border border-border-button-default text-body-medium text-text-primary bg-background-primary-default focus:outline-none focus:ring-2 focus:ring-border-focus-ring"
-                          />
+                          <label className="block text-caption-1-semibold text-text-primary mb-1">อายุโดยประมาณ</label>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <div className="relative">
+                                <input
+                                  id="booking-pet-age-years"
+                                  type="number"
+                                  min="0"
+                                  max="35"
+                                  placeholder="0"
+                                  value={ageYears}
+                                  onKeyDown={handleAgeKeyDown}
+                                  onChange={handleYearsChange}
+                                  aria-label="อายุ (ปี)"
+                                  className="w-full px-3 py-2.5 pe-9 rounded-xl border border-border-button-default text-body-medium text-text-primary bg-background-primary-default focus:outline-none focus:ring-2 focus:ring-border-focus-ring"
+                                />
+                                <span className="absolute inset-y-0 end-2.5 flex items-center text-caption-1-medium text-text-tertiary pointer-events-none select-none">
+                                  ปี
+                                </span>
+                              </div>
+                            </div>
+                            <div>
+                              <div className="relative">
+                                <input
+                                  id="booking-pet-age-months"
+                                  type="number"
+                                  min="0"
+                                  max="11"
+                                  placeholder="0"
+                                  value={ageMonths}
+                                  onKeyDown={handleAgeKeyDown}
+                                  onChange={handleMonthsChange}
+                                  aria-label="อายุ (เดือน)"
+                                  className="w-full px-3 py-2.5 pe-11 rounded-xl border border-border-button-default text-body-medium text-text-primary bg-background-primary-default focus:outline-none focus:ring-2 focus:ring-border-focus-ring"
+                                />
+                                <span className="absolute inset-y-0 end-2.5 flex items-center text-caption-1-medium text-text-tertiary pointer-events-none select-none">
+                                  เดือน
+                                </span>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
 
@@ -508,6 +1022,114 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                           className="w-full px-3.5 py-2.5 rounded-xl border border-border-button-default text-body-medium text-text-primary bg-background-primary-default focus:outline-none focus:ring-2 focus:ring-border-focus-ring"
                         />
                       </div>
+
+                      {/* Optional Symptoms Photo Upload */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <label className="block text-caption-1-semibold text-text-primary">
+                            แนบรูปถ่ายอาการ <span className="text-caption-2-medium text-text-tertiary font-normal">(ไม่บังคับ - สูงสุด 3 รูป)</span>
+                          </label>
+                          <span className="text-caption-2-medium text-text-tertiary">
+                            {formData.symptomPhotos?.length || 0}/3 รูป
+                          </span>
+                        </div>
+
+                        <input
+                          ref={fileInputRef}
+                          id="booking-symptoms-photos"
+                          type="file"
+                          accept="image/*,.jpg,.jpeg,.png,.webp,.heic,.HEIC"
+                          multiple
+                          onChange={handlePhotoFilesSelected}
+                          className="hidden"
+                          aria-label="เลือกรูปถ่ายอาการ"
+                          data-testid="symptom-photos-input"
+                        />
+
+                        {/* Thumbnails & Upload Button Row */}
+                        <div className="flex items-center gap-2.5 flex-wrap">
+                          {formData.symptomPhotos && formData.symptomPhotos.map((photo, index) => (
+                            <div
+                              key={index}
+                              data-testid="symptom-photo-thumbnail"
+                              className="relative size-20 rounded-xl overflow-hidden border border-border-button-default bg-background-secondary-default shadow-2xs group shrink-0"
+                            >
+                              <img
+                                src={photo}
+                                alt={`รูปถ่ายอาการ ${index + 1}`}
+                                className="size-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                                onClick={() => setPreviewPhotoUrl(photo)}
+                                title="คลิกเพื่อดูรูปขยาย"
+                              />
+                              <button
+                                type="button"
+                                data-testid={`remove-symptom-photo-${index}`}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleRemovePhoto(index);
+                                }}
+                                className="absolute top-1 end-1 size-5 rounded-full bg-background-primary-default/95 text-text-secondary hover:text-status-rose-text hover:bg-background-primary-default border border-border-button-default flex items-center justify-center shadow-xs cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-border-focus-ring"
+                                aria-label={`ลบรูปถ่ายที่ ${index + 1}`}
+                              >
+                                <RiCloseLine className="size-3.5" />
+                              </button>
+                            </div>
+                          ))}
+
+                          {(!formData.symptomPhotos || formData.symptomPhotos.length < 3) && (
+                            <button
+                              type="button"
+                              data-testid="add-symptom-photo-button"
+                              onClick={() => fileInputRef.current?.click()}
+                              disabled={isProcessingPhotos}
+                              className={cx(
+                                "flex items-center justify-center rounded-xl border-2 border-dashed border-border-button-default hover:border-accent-500 hover:bg-background-secondary-default text-text-tertiary hover:text-accent-500 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-border-focus-ring disabled:opacity-50 disabled:pointer-events-none",
+                                (!formData.symptomPhotos || formData.symptomPhotos.length === 0)
+                                  ? "w-full py-3 px-4 gap-3 flex-row"
+                                  : "size-20 flex-col gap-1 shrink-0"
+                              )}
+                              aria-label="แนบรูปถ่ายอาการ"
+                            >
+                              {(!formData.symptomPhotos || formData.symptomPhotos.length === 0) ? (
+                                <>
+                                  <div className="size-8 rounded-lg bg-accent-500/10 text-accent-500 flex items-center justify-center shrink-0">
+                                    {isProcessingPhotos ? (
+                                      <RiLoader4Line className="size-4.5 animate-spin" />
+                                    ) : (
+                                      <RiCameraLine className="size-4.5" />
+                                    )}
+                                  </div>
+                                  <div className="text-start flex-1 min-w-0">
+                                    <div className="text-caption-1-semibold text-text-primary">
+                                      {isProcessingPhotos ? 'กำลังประมวลผลรูปภาพ...' : 'เพิ่มรูปถ่ายอาการ (เช่น แผล ผื่น จุดผิดปกติ)'}
+                                    </div>
+                                    <div className="text-caption-2-medium text-text-tertiary truncate">
+                                      JPG, PNG, WebP หรือ HEIC (ไม่เกิน 5MB ต่อรูป)
+                                    </div>
+                                  </div>
+                                </>
+                              ) : (
+                                <>
+                                  {isProcessingPhotos ? (
+                                    <RiLoader4Line className="size-5 shrink-0 animate-spin text-accent-500" />
+                                  ) : (
+                                    <RiImageAddLine className="size-5 shrink-0" />
+                                  )}
+                                  <span className="text-caption-2-medium">
+                                    {isProcessingPhotos ? 'ประมวลผล...' : 'เพิ่มรูป'}
+                                  </span>
+                                </>
+                              )}
+                            </button>
+                          )}
+                        </div>
+
+                        {photoError && (
+                          <p className="text-caption-2-medium text-status-rose-text animate-fade-in" data-testid="symptom-photo-error">
+                            {photoError}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   )}
 
@@ -515,22 +1137,31 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   {step === 2 && (
                     <div className="space-y-4 animate-fade-in">
                       <div>
-                        <label htmlFor="booking-service" className="block text-caption-1-semibold text-text-primary mb-1">แผนก / บริการที่ต้องการ</label>
-                        <select
-                          id="booking-service"
-                          value={formData.serviceCategory}
-                          onChange={(e) => setFormData({ ...formData, serviceCategory: e.target.value })}
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-border-button-default text-body-medium text-text-primary bg-background-primary-default focus:outline-none focus:ring-2 focus:ring-border-focus-ring"
+                        <label className="block text-caption-1-semibold text-text-primary mb-1">แผนก / บริการที่ต้องการ</label>
+                        <Select
+                          aria-label="แผนก / บริการที่ต้องการ"
+                          selectedKey={formData.serviceCategory}
+                          onSelectionChange={(key) => setFormData({ ...formData, serviceCategory: String(key) })}
+                          className="w-full"
+                          triggerClassName="w-full justify-between rounded-xl px-3.5 py-2.5 text-body-medium bg-background-primary-default border-border-button-default shadow-xs"
+                          popoverClassName="w-[var(--trigger-width)] min-w-[280px]"
                         >
                           {!STANDARD_SERVICES.includes(formData.serviceCategory) && (
-                            <option value={formData.serviceCategory}>{formData.serviceCategory}</option>
+                            <SelectItem id={formData.serviceCategory} textValue={formData.serviceCategory}>
+                              {formData.serviceCategory}
+                            </SelectItem>
                           )}
                           {STANDARD_SERVICES.map((s) => (
-                            <option key={s} value={s}>
-                              {s === 'ศูนย์ฉุกเฉินและกู้ชีพ 24 ชม.' ? `${s} (เคสเร่งด่วน)` : s}
-                            </option>
+                            <SelectItem key={s} id={s} textValue={s}>
+                              <div className="flex items-center gap-2">
+                                <span className={s === 'ศูนย์ฉุกเฉินและบำบัดวิกฤต 24 ชั่วโมง' ? 'size-2 rounded-full bg-status-rose-text shrink-0' : 'size-2 rounded-full bg-accent-500 shrink-0'} />
+                                <span className={s === 'ศูนย์ฉุกเฉินและบำบัดวิกฤต 24 ชั่วโมง' ? 'font-medium text-status-rose-text' : undefined}>
+                                  {s === 'ศูนย์ฉุกเฉินและบำบัดวิกฤต 24 ชั่วโมง' ? `${s} (เคสเร่งด่วน)` : s}
+                                </span>
+                              </div>
+                            </SelectItem>
                           ))}
-                        </select>
+                        </Select>
                       </div>
 
                       <div>
@@ -595,46 +1226,24 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   {/* STEP 3: Owner Contact */}
                   {step === 3 && (
                     <div className="space-y-4 animate-fade-in">
-                      {/* Quick Auto-Fill with BoardUI Social Buttons */}
-                      <div className="p-3 rounded-2xl bg-background-secondary-default border border-border-button-default space-y-2">
-                        <span className="block text-caption-2-medium text-text-tertiary">
-                          กรอกข้อมูลอัตโนมัติด้วยบัญชีโซเชียล:
-                        </span>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                          <SocialButton
-                            brand="google"
-                            appearance="white"
-                            size="small"
-                            fullWidth
-                            type="button"
-                            onClick={() => {
-                              setFormData((prev) => ({
-                                ...prev,
-                                ownerName: prev.ownerName || 'กิตติศักดิ์ วงศ์วิริยะ',
-                                ownerPhone: prev.ownerPhone || '0891234567',
-                              }));
-                            }}
-                          >
-                            ดึงข้อมูลด้วย Google
-                          </SocialButton>
-                          <SocialButton
-                            brand="apple"
-                            appearance="black"
-                            size="small"
-                            fullWidth
-                            type="button"
-                            onClick={() => {
-                              setFormData((prev) => ({
-                                ...prev,
-                                ownerName: prev.ownerName || 'กิตติศักดิ์ วงศ์วิริยะ',
-                                ownerPhone: prev.ownerPhone || '0891234567',
-                              }));
-                            }}
-                          >
-                            ดึงข้อมูลด้วย Apple
-                          </SocialButton>
+                      {/* Auth Status (แสดงเมื่อเข้าสู่ระบบแล้ว) */}
+                      {currentUser && (
+                        <div className="p-3.5 rounded-2xl bg-status-lime-background/50 border border-status-lime-text/30 flex items-center justify-between gap-3 text-caption-1-medium">
+                          <div className="flex items-center gap-2.5 text-status-lime-text min-w-0">
+                            <div className="size-7 rounded-full bg-status-lime-text/10 flex items-center justify-center shrink-0">
+                              <RiCheckLine className="size-4" />
+                            </div>
+                            <div className="truncate">
+                              <span className="text-text-primary font-semibold">เข้าสู่ระบบแล้วในชื่อ:</span>{' '}
+                              <strong className="text-status-lime-text font-bold">{currentUser.name}</strong>{' '}
+                              <span className="text-text-secondary">({currentUser.email})</span>
+                            </div>
+                          </div>
+                          <Chip color="lime" variant="bold" className="shrink-0 text-caption-2-medium">
+                            ยืนยันตัวตนแล้ว
+                          </Chip>
                         </div>
-                      </div>
+                      )}
 
                       <div>
                         <label htmlFor="booking-owner-name" className="block text-caption-1-semibold text-text-primary mb-1">
@@ -683,13 +1292,39 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       </div>
 
                       {/* Summary preview */}
-                      <div className="p-3.5 bg-background-secondary-default rounded-2xl border border-border-button-default text-caption-1-medium text-text-secondary space-y-1">
+                      <div className="p-3.5 bg-background-secondary-default rounded-2xl border border-border-button-default text-caption-1-medium text-text-secondary space-y-1.5">
                         <div className="font-bold text-text-primary flex items-center gap-1.5">
                           <RiHeartPulseFill className="size-4 text-accent-500" />
                           <span>สรุปข้อมูลการนัดหมาย:</span>
                         </div>
                         <div>น้อง {formData.petName || '—'} ({formData.petType}) เข้ารับบริการ {formData.serviceCategory}</div>
                         <div className="text-text-tertiary">วันที่ {formData.preferredDate} ({formData.preferredTimeSlot})</div>
+                        {formData.symptomsDescription && (
+                          <div className="text-text-secondary pt-1.5 border-t border-border-button-default/60">
+                            <span className="text-text-tertiary">อาการที่ระบุ: </span>
+                            <span>{formData.symptomsDescription}</span>
+                          </div>
+                        )}
+                        {formData.symptomPhotos && formData.symptomPhotos.length > 0 && (
+                          <div className="pt-2 border-t border-border-button-default/60">
+                            <div className="text-caption-2-medium text-text-tertiary mb-1.5 flex items-center gap-1.5">
+                              <RiCameraLine className="size-3.5 text-accent-500" />
+                              <span>รูปถ่ายอาการที่แนบ ({formData.symptomPhotos.length} รูป):</span>
+                            </div>
+                            <div className="flex items-center gap-2 flex-wrap" data-testid="step3-symptom-photos">
+                              {formData.symptomPhotos.map((photo, idx) => (
+                                <img
+                                  key={idx}
+                                  src={photo}
+                                  alt={`รูปถ่ายอาการ ${idx + 1}`}
+                                  className="size-12 rounded-lg object-cover border border-border-button-default shadow-2xs cursor-pointer hover:opacity-85 transition-opacity"
+                                  onClick={() => setPreviewPhotoUrl(photo)}
+                                  title="คลิกเพื่อดูรูปขยาย"
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
@@ -710,21 +1345,25 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
                     {step < 3 ? (
                       <Button
+                        key="btn-next"
                         type="button"
                         variant="primary"
                         size="medium"
                         trailingIcon={RiArrowRightLine}
                         onClick={handleNext}
+                        data-testid="booking-next-button"
                       >
                         ถัดไป
                       </Button>
                     ) : (
                       <Button
+                        key="btn-submit"
                         type="submit"
                         variant="primary"
                         size="medium"
                         disabled={isSubmitting}
                         leadingIcon={RiCheckLine}
+                        data-testid="booking-submit-button"
                       >
                         {isSubmitting ? 'กำลังส่งคำขอ...' : 'ยืนยันคำขอนัดหมาย'}
                       </Button>
@@ -736,6 +1375,41 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           </>
         )}
       </div>
+
+      {/* Fullsize Photo Preview Lightbox */}
+      {previewPhotoUrl && (
+        <div
+          className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-fade-in"
+          onClick={(e) => {
+            e.stopPropagation();
+            setPreviewPhotoUrl(null);
+          }}
+          role="dialog"
+          aria-modal="true"
+          aria-label="รูปถ่ายอาการขนาดใหญ่"
+          data-testid="photo-preview-lightbox"
+        >
+          <div
+            className="relative max-w-2xl max-h-[85vh] flex flex-col items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={previewPhotoUrl}
+              alt="รูปถ่ายอาการขยายใหญ่"
+              className="max-h-[80vh] max-w-full rounded-2xl object-contain border border-border-button-default shadow-2xl bg-background-primary-default"
+            />
+            <button
+              type="button"
+              onClick={() => setPreviewPhotoUrl(null)}
+              aria-label="ปิดรูปถ่ายขยาย"
+              data-testid="close-photo-preview-lightbox"
+              className="absolute top-2 end-2 size-8 rounded-full bg-background-primary-default/90 text-text-primary hover:bg-background-primary-default flex items-center justify-center border border-border-button-default shadow-md cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-border-focus-ring"
+            >
+              <RiCloseLine className="size-5" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
