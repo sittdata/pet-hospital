@@ -58,17 +58,17 @@ const DIAGNOSTIC_IMAGING: DepartmentConsultData = {
 
 const CAT_FRIENDLY: DepartmentConsultData = {
   departmentId: 'cat-friendly',
-  departmentTitle: 'คลินิกแมวเฉพาะทาง Cat Friendly Clinic (ISFM)',
+  departmentTitle: 'ศูนย์พักพิงและรับฝากบริบาลสัตว์เลี้ยง',
   doctorName: 'สพ.ญ. มัลลิกา ศิริทรัพย์',
-  doctorTitle: 'ISFM Certified Cat Friendly Veterinarian',
+  doctorTitle: 'สัตวแพทย์ประจำศูนย์บริบาลและรับฝากสัตว์เลี้ยง',
   doctorAvatar: '/images/vets/vet_cat_hd.jpg',
   greetingPrompt:
-    'สวัสดีค่ะ หมอมัลลิกา จากคลินิกแมวเฉพาะทาง Cat Friendly Clinic ค่ะ น้องแมวมักซ่อนอาการป่วย หากน้องมีอาการปัสสาวะผิดปกติ ซึม ไม่กินอาหาร หายใจแปลกๆ หรือต้องการตรวจคัดกรองโรคไต ปรึกษาหมอได้ทันทีนะคะ',
+    'สวัสดีค่ะ หมอมัลลิกา จากศูนย์พักพิงและรับฝากบริบาลสัตว์เลี้ยงค่ะ เราดูแลน้องๆ ในห้องพักปรับอากาศแยกสัดส่วน ปลอดเชื้อ มีสัตวแพทย์ตรวจเช็กสุขภาพทุกวัน พร้อมกล้องวงจรปิดให้คุณพ่อคุณแม่ดูน้องได้ตลอด 24 ชม. สอบถามโปรแกรมเข้าพักหรือแจ้งรายละเอียดน้องได้เลยนะคะ',
   quickSymptoms: [
-    'แมวปัสสาวะไม่ออก เบ่งฉี่ ร้องเจ็บ หรือฉี่กะปริบกะปรอย',
-    'แมวซึม เบื่ออาหาร ไม่ยอมดื่มน้ำ นอนนิ่งผิดปกติ',
-    'แมวหายใจเร็ว อ้าปากหายใจ จาม หรือมีน้ำมูกเรื้อรัง',
-    'ปรึกษาคัดกรองโรคไตระยะเริ่มต้น / สุขภาพแมวสูงวัย',
+    'สอบถามราคาและห้องพักสัตว์เลี้ยงรายวัน / รายสัปดาห์',
+    'น้องมีโรคประจำตัวหรือต้องป้อนยา/ฉีดยาระหว่างเข้าพัก',
+    'ต้องการพาเข้าตรวจสุขภาพและฉีดวัคซีนก่อนเข้าพัก',
+    'ขอดูภาพห้องพักและระบบกล้อง CCTV ส่องดูน้อง 24 ชม.',
   ],
 };
 
@@ -112,6 +112,7 @@ export const DEPARTMENT_CONSULT_MAP: Record<string, DepartmentConsultData> = {
   'diagnostic-imaging': DIAGNOSTIC_IMAGING,
   'ศูนย์วินิจฉัยภาพทางการแพทย์ดิจิทัล': DIAGNOSTIC_IMAGING,
   'cat-friendly': CAT_FRIENDLY,
+  'ศูนย์พักพิงและรับฝากบริบาลสัตว์เลี้ยง': CAT_FRIENDLY,
   'คลินิกแมวเฉพาะทาง Cat Friendly Clinic (ISFM)': CAT_FRIENDLY,
   'exotic-center': EXOTIC_CENTER,
   'ศูนย์สัตว์พิเศษและสัตว์เลื้อยคลาน (Exotic Pets)': EXOTIC_CENTER,
@@ -130,7 +131,7 @@ export function getDepartmentConsultData(serviceTitleOrId: string): DepartmentCo
   if (clean.includes('วินิจฉัยภาพ') || clean.includes('เอ็กซเรย์') || clean.includes('imaging')) {
     return DEPARTMENT_CONSULT_MAP['diagnostic-imaging'];
   }
-  if (clean.includes('แมว') || clean.includes('feline') || clean.includes('isfm')) {
+  if (clean.includes('พักพิง') || clean.includes('ฝาก') || clean.includes('โรงแรม') || clean.includes('shelter') || clean.includes('boarding') || clean.includes('แมว') || clean.includes('feline')) {
     return DEPARTMENT_CONSULT_MAP['cat-friendly'];
   }
   if (clean.includes('สัตว์พิเศษ') || clean.includes('exotic')) {
